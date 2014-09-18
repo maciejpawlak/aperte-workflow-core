@@ -14,6 +14,24 @@
 
 <script type="text/javascript">
 //<![CDATA[
+
+    function sticky_relocate() {
+        var window_top = $(window).scrollTop();
+        var div_top = $('.fixed-element-anchor').offset().top;
+        if (window_top > div_top) {
+            $('.fixed-element').addClass('sticky');
+            $('.fixed-element').width($("#vaadin-widgets").width());
+        } else {
+            $('.fixed-element').removeClass('sticky');
+        }
+    }
+
+
+    $(function () {
+        $(window).scroll(sticky_relocate);
+        sticky_relocate();
+    });
+
 	
 	var vaadinWidgetsCount = 0;
 	var vaadinWidgetsLoadedCount = 0;
