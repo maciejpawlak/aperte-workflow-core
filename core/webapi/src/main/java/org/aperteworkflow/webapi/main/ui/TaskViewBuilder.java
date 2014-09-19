@@ -4,13 +4,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import pl.net.bluesoft.rnd.processtool.model.BpmTask;
 import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
-import pl.net.bluesoft.rnd.processtool.model.ProcessInstance;
-import pl.net.bluesoft.rnd.processtool.model.config.*;
-import pl.net.bluesoft.rnd.processtool.ui.widgets.IWidgetDataProvider;
-import pl.net.bluesoft.rnd.processtool.ui.widgets.ProcessHtmlWidget;
+import pl.net.bluesoft.rnd.processtool.model.config.ProcessStateAction;
 import pl.net.bluesoft.rnd.processtool.web.domain.IHtmlTemplateProvider;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 import static pl.net.bluesoft.util.lang.Strings.hasText;
 
@@ -103,7 +101,10 @@ public class TaskViewBuilder extends AbstractViewBuilder<TaskViewBuilder> {
                 .attr("class", btnClass)
                 .attr("disabled", "true")
                 .attr("type", "button")
-                .attr("id", actionButtonId);
+                .attr("id", actionButtonId)
+                .attr("data-toggle", "tooltip")
+                .attr("data-placement", "bottom")
+                .attr("title", i18Source.getMessage(action.getDescription()));
         parent.appendChild(buttonNode);
 
 
@@ -131,7 +132,7 @@ public class TaskViewBuilder extends AbstractViewBuilder<TaskViewBuilder> {
                 .append("', '")
                 .append(task.getInternalTaskId())
                 .append("');  });");
-        scriptBuilder.append("$('#").append(actionButtonId).append("').tooltip({title: '").append(i18Source.getMessage(action.getDescription())).append("'});");
+        scriptBuilder.append("$('#").append(actionButtonId).append("').tooltip();");
     }
 
     private void addClaimActionButton(Element parent) {

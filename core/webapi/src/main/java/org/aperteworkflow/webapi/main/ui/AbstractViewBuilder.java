@@ -564,7 +564,10 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
 		Element buttonNode = parent.ownerDocument().createElement("button")
                 .attr("class", buttonClass != null ? "btn btn-" + buttonClass : "btn")
                 .attr("disabled", "true")
-                .attr("id", actionButtonId);
+                .attr("id", actionButtonId)
+                .attr("data-toggle", "tooltip")
+                .attr("data-placement", "bottom")
+                .attr("title", i18Source.getMessage(descriptionKey));
 
 		Element buttonIcon = parent.ownerDocument().createElement("span")
                 .attr("class", iconClass != null ? "glyphicon glyphicon-" + iconClass : "glyphicon");
@@ -575,7 +578,7 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
 		buttonNode.appendText(i18Source.getMessage(messageKey));
 
 		scriptBuilder.append("$('#").append(actionButtonId).append("').click(function() { ").append(clickFunction).append("('").append(getViewedObjectId()).append("');  });");
-		scriptBuilder.append("$('#").append(actionButtonId).append("').tooltip({title: '").append(i18Source.getMessage(descriptionKey)).append("'});");
+		scriptBuilder.append("$('#").append(actionButtonId).append("').tooltip();");
 	}
 
 	protected abstract String getCancelButtonHtmlId();
