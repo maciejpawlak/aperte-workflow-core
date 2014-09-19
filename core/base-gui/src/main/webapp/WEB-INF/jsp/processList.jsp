@@ -14,6 +14,7 @@
 				<th style="width:10%;"><spring:message code="processes.list.table.process.assignee" /></th>
 				<th style="width:10%;"><spring:message code="processes.list.table.process.clientType" /></th>
 				<th style="width:10%;"><spring:message code="processes.list.table.process.creationdate" /></th>
+                <th style="width:10%;"><spring:message code="processes.list.table.process.title" /></th>
 		</thead>
 		<tbody></tbody>
 	</table>
@@ -35,7 +36,8 @@
 				 { "sName":"creator", "bSortable": true ,"bVisible":parsedProcess.creator,"mData": "creator" },
 				 { "sName":"assignee", "bSortable": true ,"bVisible":parsedProcess.assignee,"mData": function(object){return generateAssigneColumn(object);} },
 				 { "sName":"clientType","bVisible":true ,"bVisible":parsedProcess.clientType, "bSortable": true,"mData": function(object){ if(object.highlight) return '<font color="red">'+object.clientType+'<span class="glyphicon glyphicon-exclamation-sign" style="margin-left: 5px" /></font>'; else return object.clientType;}},
-				 { "sName":"creationDate", "bSortable": true ,"bVisible":parsedProcess.creationDate,"mData": function(object){return $.format.date(object.creationDate, 'dd-MM-yy, HH:mm:ss');}}
+				 { "sName":"creationDate", "bSortable": true ,"bVisible":parsedProcess.creationDate,"mData": function(object){return $.format.date(object.creationDate, 'dd-MM-yy, HH:mm:ss');}},
+				 { "sName":"title", "bSortable": true ,"bVisible":parsedProcess.title, "mData": "title"}
 			 ],
 			 [[ 4, "desc" ],[ 5, "desc" ]]
 			);
