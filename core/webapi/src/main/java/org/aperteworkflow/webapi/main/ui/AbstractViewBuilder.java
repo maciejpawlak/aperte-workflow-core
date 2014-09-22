@@ -73,6 +73,8 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
         scriptBuilder.append("<script type=\"text/javascript\">");
         final Document document = Jsoup.parse("");
 
+        buildActionButtons(document);
+
         final Element widgetsNode = document.createElement("div")
                 .attr("id", getVaadinWidgetsHtmlId())
                 .attr("class", "vaadin-widgets-view");
@@ -80,7 +82,6 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
 
         buildWidgets(document, widgetsNode);
 
-        buildActionButtons(document);
 
         buildAdditionalData(document);
 
@@ -410,7 +411,8 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
         Element actionsNode = document.createElement("div")
                 //.attr("id", "actions-list")
                 .attr("id", getActionsListHtmlId())
-                .attr("class", "actions-view");
+                .attr("class", "actions-view")
+                .addClass("fixed-element-action-buttons");
         document.appendChild(actionsNode);
 
         Element genericActionButtons = document.createElement("div")
@@ -423,6 +425,8 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
 
         actionsNode.appendChild(genericActionButtons);
         actionsNode.appendChild(specificActionButtons);
+
+        document.appendElement("div").addClass("fixed-element-anchor-action-buttons");
 
         /* Check if the viewed object is in a terminal state */
 
@@ -560,7 +564,10 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
 		Element buttonNode = parent.ownerDocument().createElement("button")
                 .attr("class", buttonClass != null ? "btn btn-" + buttonClass : "btn")
                 .attr("disabled", "true")
-                .attr("id", actionButtonId);
+                .attr("id", actionButtonId)
+                .attr("data-toggle", "tooltip")
+                .attr("data-placement", "bottom")
+                .attr("title", i18Source.getMessage(descriptionKey));
 
 		Element buttonIcon = parent.ownerDocument().createElement("span")
                 .attr("class", iconClass != null ? "glyphicon glyphicon-" + iconClass : "glyphicon");
@@ -571,7 +578,7 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
 		buttonNode.appendText(i18Source.getMessage(messageKey));
 
 		scriptBuilder.append("$('#").append(actionButtonId).append("').click(function() { ").append(clickFunction).append("('").append(getViewedObjectId()).append("');  });");
-		scriptBuilder.append("$('#").append(actionButtonId).append("').tooltip({title: '").append(i18Source.getMessage(descriptionKey)).append("'});");
+		scriptBuilder.append("$('#").append(actionButtonId).append("').tooltip();");
 	}
 
 	protected abstract String getCancelButtonHtmlId();
