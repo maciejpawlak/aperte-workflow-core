@@ -17,18 +17,33 @@
 
     function sticky_relocate() {
         var window_top = $(window).scrollTop();
-        if( $('.fixed-element-anchor').offset() != null )
-        {
-            var div_top = $('.fixed-element-anchor').offset().top;
-            if (window_top > div_top) {
-                $('.fixed-element').addClass('sticky');
-                $('.fixed-element').width($(".fixed-element-anchor").width());
-            } else {
-                $('.fixed-element').removeClass('sticky');
-            }
-        }
-    }
 
+        var anchors =  $('[class*=fixed-element-anchor-]')
+        anchors.each(function(i, e)
+        {
+            var clses = e.classList;
+            var id = null
+            for(var i = 0;i<clses.length;i++)
+            {
+                if(clses[i].match(/^fixed-element-anchor-.*$/))
+                    {
+                        id = clses[i].substr("fixed-element-anchor-".length)
+                        break
+                    }
+            }
+
+            var anchor = $(e)
+            var el = $('.fixed-element-' + id)
+
+            var div_top = anchor.offset().top;
+                        if (window_top > div_top) {
+                            el.addClass('sticky');
+                            el.width(anchor.width());
+                        } else {
+                            el.removeClass('sticky');
+                        }
+        })
+    }
 
     $(function () {
         $(window).scroll(sticky_relocate);

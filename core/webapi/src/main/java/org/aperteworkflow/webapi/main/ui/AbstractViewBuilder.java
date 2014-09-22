@@ -412,7 +412,7 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
                 //.attr("id", "actions-list")
                 .attr("id", getActionsListHtmlId())
                 .attr("class", "actions-view")
-                .addClass("fixed-element");
+                .addClass("fixed-element-action-buttons");
         document.appendChild(actionsNode);
 
         Element genericActionButtons = document.createElement("div")
@@ -426,7 +426,7 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
         actionsNode.appendChild(genericActionButtons);
         actionsNode.appendChild(specificActionButtons);
 
-        document.appendElement("div").addClass("fixed-element-anchor");
+        document.appendElement("div").addClass("fixed-element-anchor-action-buttons");
 
         /* Check if the viewed object is in a terminal state */
 
