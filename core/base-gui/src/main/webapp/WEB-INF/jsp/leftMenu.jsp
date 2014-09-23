@@ -267,6 +267,7 @@
 		reloadQueuesLoopTimer.play(true);
 		reloadQueues();
 		queueViewManager.loadQueue(newQueueName, queueType, ownerLogin, queueDesc);
+		window.scrollTo(0,0);
 	}
  
  </script>
