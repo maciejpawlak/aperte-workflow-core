@@ -56,7 +56,7 @@ public class TaskViewBuilder extends AbstractViewBuilder<TaskViewBuilder> {
         }
     }
 
-    private boolean isSubstitutingUser() {
+    protected boolean isSubstitutingUser() {
         return ctx.getUserSubstitutionDAO().isSubstitutedBy(task.getAssignee(), user.getLogin());
     }
 

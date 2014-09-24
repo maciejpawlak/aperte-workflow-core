@@ -13,12 +13,7 @@ import javax.persistence.*;
 @Entity
 @Table(name="pt_process_instance_s_l_attr")
 @org.hibernate.annotations.Table(
-        appliesTo="pt_process_instance_s_l_attr",
-        indexes = {
-                @Index(name = "idx_p_s_l_attribute_process_id_key",
-                        columnNames = {"process_instance_id", "key_"}
-                )
-        })
+        appliesTo="pt_process_instance_s_l_attr")
 public class ProcessInstanceSimpleLargeAttribute extends AbstractProcessInstanceAttribute {
 	public static final String _VALUE = "value";
 

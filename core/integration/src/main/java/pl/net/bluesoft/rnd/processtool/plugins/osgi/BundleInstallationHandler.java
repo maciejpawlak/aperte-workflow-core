@@ -19,9 +19,13 @@ import pl.net.bluesoft.rnd.processtool.steps.ProcessToolProcessStep;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.ProcessHtmlWidget;
 import pl.net.bluesoft.rnd.processtool.web.controller.IOsgiWebController;
 import pl.net.bluesoft.rnd.processtool.web.controller.OsgiController;
+import pl.net.bluesoft.rnd.processtool.web.domain.IContentProvider;
 import pl.net.bluesoft.rnd.processtool.web.domain.IWidgetScriptProvider;
+import pl.net.bluesoft.rnd.processtool.web.view.AbstractTaskListView;
+import pl.net.bluesoft.rnd.processtool.web.view.ITasksListViewBeanFactory;
 import pl.net.bluesoft.rnd.processtool.web.view.TaskListView;
-import pl.net.bluesoft.rnd.processtool.web.view.TasksListViewBeanFactory;
+import pl.net.bluesoft.rnd.processtool.web.view.TaskListViewProcessFactory;
+import pl.net.bluesoft.rnd.processtool.web.widgets.impl.FileWidgetContentProvider;
 import pl.net.bluesoft.rnd.processtool.web.widgets.impl.FileWidgetJavaScriptProvider;
 import pl.net.bluesoft.rnd.util.AnnotationUtil;
 import pl.net.bluesoft.rnd.util.i18n.impl.PropertiesBasedI18NProvider;
@@ -590,20 +594,81 @@ public class BundleInstallationHandler {
         {
             try
             {
-                Class<? extends TasksListViewBeanFactory> viewClass =
-                        (Class<? extends TasksListViewBeanFactory>)bundleHelper.getBundle().loadClass(cls);
+                Class<? extends AbstractTaskListView> viewClass =
+                        (Class<? extends AbstractTaskListView>)bundleHelper.getBundle().loadClass(cls);
                 TaskListView viewAnnotation = viewClass.getAnnotation(TaskListView.class);
 
-                String viewName = viewAnnotation.name();
-                String fileName = viewAnnotation.file();
+                String fileName = viewAnnotation.fileName();
+                if(fileName == null || fileName.isEmpty()) {
+                    throw new RuntimeException("Error during task list factory registration: no file name declarated");
+                }
+
+                String queueId = viewAnnotation.queueId();
+                if(queueId == null || queueId.isEmpty()) {
+                    throw new RuntimeException("Error during task list factory registration: no queueId declarated");
+                }
+
+                String queueDisplayedName = viewAnnotation.queueDisplayedName();
+                if(queueDisplayedName == null || queueDisplayedName.isEmpty()) {
+                    throw new RuntimeException("Error during task list factory registration: no queueDisplayedName declarated");
+                }
+
+                String queueDisplayedDescription = viewAnnotation.queueDisplayedDescription();
+                if(queueDisplayedDescription == null || queueDisplayedDescription.isEmpty()) {
+                    throw new RuntimeException("Error during task list factory registration: no queueDisplayedDescription declarated");
+                }
+
+                Integer priority = viewAnnotation.priority();
+                if(fileName == null || fileName.isEmpty()) {
+                    throw new RuntimeException("Error during task list factory registration: no file name declarated");
+                }
+
+                AbstractTaskListView.QueueTypes queueType = viewAnnotation.queueType();
+                if(queueType == null) {
+                    throw new RuntimeException("Error during task list factory registration: no queueType declarated");
+                }
+
+
+                Class<? extends ITasksListViewBeanFactory> mainFactoryClass = viewAnnotation.mainFactory();
+                if(mainFactoryClass == null) {
+                    throw new RuntimeException("Error during task list factory registration: no mainFactoryClass declarated");
+                }
+
+                TaskListViewProcessFactory[] factories = viewAnnotation.processFactories();
+
                 if (eventType == Bundle.ACTIVE)
                 {
-                    TasksListViewBeanFactory taskView = viewClass.getConstructor().newInstance();
-                    processToolRegistry.getGuiRegistry().registerTasksListView(viewName, taskView);
+
+                    ITasksListViewBeanFactory mainFactoryInstance = mainFactoryClass
+                            .getConstructor()
+                            .newInstance();
+
+                    IContentProvider contentProvider =
+                            new FileWidgetContentProvider(fileName, bundleHelper);
+
+                    AbstractTaskListView taskView = viewClass
+                            .getConstructor(IContentProvider.class, ITasksListViewBeanFactory.class)
+                            .newInstance(contentProvider, mainFactoryInstance);
+
+                    /* Add process factories */
+                    for(TaskListViewProcessFactory factoryAnnotation: factories) {
+                        ITasksListViewBeanFactory processFactory = factoryAnnotation.factoryClass()
+                                .getConstructor()
+                                .newInstance();
+                        taskView.setProcessFactory(factoryAnnotation.processName(), processFactory);
+                    }
+
+                    taskView.setPriority(priority);
+                    taskView.setQueueId(queueId);
+                    taskView.setQueueType(queueType);
+                    taskView.setQueueDisplayedName(queueDisplayedName);
+                    taskView.setQueueDisplayedDesc(queueDisplayedDescription);
+
+                    processToolRegistry.getGuiRegistry().registerTasksListView(queueId, taskView);
                 }
                 else
                 {
-                    processToolRegistry.getGuiRegistry().unregisterTasksListView(viewName);
+                    processToolRegistry.getGuiRegistry().unregisterTasksListView(queueId);
                 }
             }
             catch (Throwable e)

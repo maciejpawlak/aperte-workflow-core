@@ -9,10 +9,7 @@ import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.HandlingResult;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -62,7 +59,7 @@ public class AuditLogContext {
 	}
 
 	private static AuditLogDefinition getDefinition(IAttributesProvider provider) {
-		List<AuditLogHandler> handlers = getRegistry().getDataRegistry().getAuditLogHandlers();
+		Collection<AuditLogHandler> handlers = getRegistry().getDataRegistry().getAuditLogHandlers();
 
 		for (AuditLogHandler handler : handlers) {
 			AuditLogDefinition definition = handler.getAuditLogDefnition(provider);
@@ -79,7 +76,7 @@ public class AuditLogContext {
 			return;
 		}
 
-		List<AuditLogHandler> handlers = getRegistry().getDataRegistry().getAuditLogHandlers();
+        Collection<AuditLogHandler> handlers = getRegistry().getDataRegistry().getAuditLogHandlers();
 
 		for (AuditLogHandler handler : handlers) {
 			handler.postProcess(provider, result);
