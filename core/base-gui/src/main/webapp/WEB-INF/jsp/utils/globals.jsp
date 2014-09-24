@@ -7,6 +7,9 @@
 <script type="text/javascript">
 	var dispatcherPortlet = '<portlet:resourceURL id="dispatcher"/>';
 
+	var queueListPortlet = '<portlet:resourceURL id="loadQueue"/>';
+    var processListPortlet = '<portlet:resourceURL id="loadProcessesList"/>';
+    var claimTaskFromQueuePortlet = '<portlet:resourceURL id="claimTaskFromQueue"/>';
     var portletNamespace = '&<portlet:namespace/>';
 
     var dataTableLanguage =

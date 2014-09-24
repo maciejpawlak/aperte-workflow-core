@@ -27,6 +27,8 @@ public interface IHtmlTemplateProvider extends TemplateLoader
 	String BPM_SESSION_PARAMETER = "bpmSession";
     String ATTRIBUTES_PROVIDER = "attributesProvider";
     String SETTINGS_PROVIDER = "settingsProvider";
+    String OWNER_LOGIN_PARAMTER = "ownerLogin";
+    String QUEUE_ID_PARAMTER = "queueId";
     /** Add template */
 	void addTemplate(String templateName, String template);
 	

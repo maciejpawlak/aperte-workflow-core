@@ -81,7 +81,7 @@ public abstract class AbstractSaveProcessor {
     }
 
     private void saveHtmlWidgets() {
-		List<HandlingResult> auditResult = AuditLogContext.withContext(getConsumer(), new AuditLogContext.Callback() {
+		Collection<HandlingResult> auditResult = AuditLogContext.withContext(getConsumer(), new AuditLogContext.Callback() {
 			@Override
 			public void invoke() throws Exception {
 				for (HtmlWidget widgetToSave : widgets) {

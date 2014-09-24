@@ -1,7 +1,7 @@
 package pl.net.bluesoft.rnd.processtool.web.view;
 
 /**
- * @author: Maciej
+ * @author: mpawlak@bluesoft.net.pl
  */
 public interface IBpmTaskQueryCondition
 {

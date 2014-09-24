@@ -34,10 +34,7 @@ import pl.net.bluesoft.rnd.processtool.model.token.AccessToken;
 import pl.net.bluesoft.rnd.processtool.plugins.DataRegistry;
 import pl.net.bluesoft.rnd.processtool.token.IAccessTokenFactory;
 import pl.net.bluesoft.rnd.processtool.token.ITokenService;
-import pl.net.bluesoft.rnd.processtool.web.view.BpmTaskBeanFactory;
-import pl.net.bluesoft.rnd.processtool.web.view.ProcessInstanceFilter;
-import pl.net.bluesoft.rnd.processtool.web.view.ProcessInstanceFilterSortingColumn;
-import pl.net.bluesoft.rnd.processtool.web.view.TasksListViewBeanFactory;
+import pl.net.bluesoft.rnd.processtool.web.view.*;
 import pl.net.bluesoft.rnd.pt.ext.jbpm.service.JbpmService;
 import pl.net.bluesoft.rnd.pt.ext.jbpm.service.query.BpmTaskNotificationQuery;
 import pl.net.bluesoft.rnd.pt.ext.jbpm.service.query.BpmTaskQuery;
@@ -375,7 +372,7 @@ public class ProcessToolJbpmSession extends AbstractProcessToolSession implement
         return new BpmTaskQuery(dataRegistry.getHibernateDialect())
                 .user(queueFilter.getFilterOwnerLogin())
                 .virtualQueues(queueFilter.getQueueTypes())
-                .queryConditions(new BpmTaskBeanFactory().getBpmTaskQueryCondition())
+                .queryConditions(new BpmTaskQueryCondition())
                 .count();
 	}
 
@@ -498,22 +495,27 @@ public class ProcessToolJbpmSession extends AbstractProcessToolSession implement
 		BpmTaskQuery taskFilterQuery = new BpmTaskQuery(dataRegistry.getHibernateDialect());
 
         if(filter.getViewName()==null || filter.getViewName().isEmpty())
-            taskFilterQuery.queryConditions(new BpmTaskBeanFactory().getBpmTaskQueryCondition());
+            taskFilterQuery.queryConditions(new BpmTaskQueryCondition());
         else
         {
-            TasksListViewBeanFactory taskViewBeanFactory = registry.getGuiRegistry().getTasksListView(filter.getViewName());
-            taskFilterQuery.queryConditions(taskViewBeanFactory.getBpmTaskQueryCondition());
+            AbstractTaskListView taskView = registry.getGuiRegistry().getTasksListView(filter.getViewName());
+
+            taskFilterQuery.queryConditions(taskView.getBpmTaskQueryCondition());
         }
 
+        if (!filter.getQueueTypes().isEmpty()) {
+            taskFilterQuery.virtualQueues(filter.getQueueTypes());
+        }
 
    		/* Queues filter do not have owner */
 		if (filter.getFilterOwnerLogin() != null) {
 			taskFilterQuery.user(filter.getFilterOwnerLogin());
 		}
 
-		if (!filter.getQueueTypes().isEmpty()) {
-			taskFilterQuery.virtualQueues(filter.getQueueTypes());
-		}
+        if (!filter.getOwnerLogins().isEmpty()) {
+            taskFilterQuery.owners(filter.getOwnerLogins());
+        }
+
 
    		/* Add condition for task names if any exists */
 		if (!filter.getTaskNames().isEmpty()) {

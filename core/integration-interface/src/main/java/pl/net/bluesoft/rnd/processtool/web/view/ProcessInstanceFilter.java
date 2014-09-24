@@ -120,16 +120,16 @@ public class ProcessInstanceFilter  {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public Set<QueueType> getQueueTypes() {
 		return queueTypes;
 	}
-	
+
 	public QueueType getFirstQueueType()
 	{
 		for(QueueType queueType: queueTypes)
 			return queueType;
-		
+
 		return null;
 	}
 
@@ -137,10 +137,10 @@ public class ProcessInstanceFilter  {
 		this.queueTypes = queueTypes;
 	}
 
-	public void addQueueType(QueueType queueType) 
+	public void addQueueType(QueueType queueType)
 	{
 		this.queueTypes.add(queueType);
-		
+
 	}
 
 

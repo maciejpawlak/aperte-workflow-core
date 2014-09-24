@@ -7,7 +7,7 @@ import java.io.InputStream;
  * @author mpawlak@bluesoft.net.pl
  *
  */
-public interface IWidgetContentProvider 
+public interface IContentProvider
 {
 	/** Get HTML content */
 	InputStream getHtmlContent();

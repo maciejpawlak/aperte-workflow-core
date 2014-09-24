@@ -60,20 +60,19 @@
 		{
 			this.showView(this.allViews['loading-screen'], true);
 		}
-
-		this.showSavingScreen = function() {
-            $('#saving-screen').show();
-        }
-
-        this.hideSavingScreen = function() {
-            $('#saving-screen').hide();
-        }
 		
 		this.showQueueList = function()
 		{
 			this.showView(this.allViews['outer-queues'], true);
 		}
-		
+
+        this.showSavingScreen = function() {
+            $('#saving-screen').show();
+        }
+
+		this.hideSavingScreen = function() {
+            $('#saving-screen').hide();
+        }
 		
 		this.showConfiguration = function()
 		{
@@ -90,19 +89,21 @@
 			this.showView(this.allViews['new-process-view'], true);
 		};
 		
-		this.showProcessList = function()
+		this.showProcessList = function(data)
 		{
 			this.changeUrl('');
-			this.showView(this.allViews['process-panel-view'], true);
+			this.showView(this.allViews['process-queue-view'], true);
+			$("#process-queue-view").append(data);
 		}
 		
-		this.showProcessData = function()
+		this.showProcessData = function(data)
 		{
 			this.showView(this.allViews['process-data-view'], true);
 			$('#actions-list').fadeIn(600);
+			$("#process-data-view").append(data);
 		}
 
-		this.showProcessDataImmediate = function()
+        this.showProcessDataImmediate = function()
         {
             this.showView(this.allViews['process-data-view'], true);
             $('#actions-list').show();
@@ -129,7 +130,16 @@
 			$('#error-screen').empty();
 		}		
 		
-
+		this.isQueueShown = function()
+		{
+			return this.currentView == 'process-queue-view';
+		}
+		
+		this.isProcessShown = function()
+		{
+			return this.currentView == 'process-data-view';
+		}
+			
 		
 		this.showView = function(windowView, addToHistory)
 		{
@@ -140,6 +150,7 @@
 				$("#mobile-collapse").collapse('hide');
 			}
 			windowManager.clearProcessView();
+			windowManager.clearQueueView();
 			
 			$.each(this.allViews, function(index, view ) 
 			{ 
@@ -158,11 +169,17 @@
 			$(document.getElementById(windowView.viewId)).fadeIn(500);
 		}
 		
+		this.clearQueueView = function()
+		{
+			$('#process-queue-view').empty();
+		}
+		
 		
 		this.clearProcessView = function()
 		{
 			//this.changeUrl('');
 			$('#actions-list').empty();
+			$('#process-data-view').empty();
 			
 			widgets = [];
 			

@@ -73,6 +73,7 @@
                     <instructions>
                         <Export-Package>
                             pl.net.bluesoft.rnd.processtool.ui.basewidgets,
+                            pl.net.bluesoft.rnd.processtool.ui.basewidgets.view,
                             pl.net.bluesoft.rnd.processtool.ui.basewidgets.datahandler,
                             pl.net.bluesoft.rnd.processtool.ui.buttons, 
                             pl.net.bluesoft.rnd.processtool.ui.buttons.dialog,
@@ -171,6 +172,9 @@
 							org.aperteworkflow.admin.controller.ProcessDefinitionsController,
 							org.aperteworkflow.admin.controller.ProcessInstanceController
                         </ProcessTool-Controller>
+                        <ProcessTool-TaskList-View>
+                            pl.net.bluesoft.rnd.processtool.ui.basewidgets.view.BpmQueueView
+                        </ProcessTool-TaskList-View>
                       <!--  <ProcessTool-Widget-Script>
                         requests-scripts.js;provider:=file
                         </ProcessTool-Widget-Script>-->

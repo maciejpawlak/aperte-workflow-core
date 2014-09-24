@@ -6,7 +6,7 @@ import pl.net.bluesoft.rnd.processtool.ui.widgets.annotations.AutoWiredProperty;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.annotations.AutoWiredPropertyConfigurator;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.impl.BaseProcessToolWidget;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.impl.MockWidgetValidator;
-import pl.net.bluesoft.rnd.processtool.web.domain.IWidgetContentProvider;
+import pl.net.bluesoft.rnd.processtool.web.domain.IContentProvider;
 import pl.net.bluesoft.rnd.util.AnnotationUtil;
 
 import java.util.Collection;
@@ -25,7 +25,7 @@ public class ProcessHtmlWidget extends BaseProcessToolWidget
 	private Collection<IWidgetDataHandler> dataHandlers = new LinkedList<IWidgetDataHandler>();
     private Collection<IWidgetDataProvider> dataProviders = new LinkedList<IWidgetDataProvider>();
 	private IWidgetValidator validator = new MockWidgetValidator();
-	private IWidgetContentProvider contentProvider;
+	private IContentProvider contentProvider;
 
     /**
      * Widget caption text
@@ -108,10 +108,10 @@ public class ProcessHtmlWidget extends BaseProcessToolWidget
 	public void setValidator(IWidgetValidator validator) {
 		this.validator = validator;
 	}
-	public IWidgetContentProvider getContentProvider() {
+	public IContentProvider getContentProvider() {
 		return contentProvider;
 	}
-	public void setContentProvider(IWidgetContentProvider contentProvider) {
+	public void setContentProvider(IContentProvider contentProvider) {
 		this.contentProvider = contentProvider;
 	}
 	

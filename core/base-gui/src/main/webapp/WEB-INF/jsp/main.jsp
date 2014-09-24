@@ -11,6 +11,7 @@
 
 <!--<h2>Aperte Workflow Maginificient Activities</h2>-->
 <%@include file="utils/windowManager.jsp" %>
+<%@include file="utils/queuemanager.jsp" %>
 <%@include file="utils/globals.jsp" %>
 
 <c:if test="${aperteUser.login!=null}">
@@ -22,7 +23,6 @@
 	<%@include file="widgetList.jsp" %>
 	<%@include file="actionsList.jsp" %>
 	<%@include file="processStartList.jsp" %>
-	<%@include file="searchView.jsp" %>
 	<%@include file="configuration.jsp" %>
 	<div id="error-screen" class="errors-view" hidden="true"></div>
 	<div id="loading-screen" class="loader-2"></div>

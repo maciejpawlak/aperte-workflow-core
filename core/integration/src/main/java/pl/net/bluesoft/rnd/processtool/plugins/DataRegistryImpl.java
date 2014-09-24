@@ -47,7 +47,7 @@ public class DataRegistryImpl implements DataRegistry {
     private final Map<String, Class<? extends IAttributesMapper>> attributesMappersClasses = new HashMap<String, Class<? extends IAttributesMapper>>();
     private final Map<String, Class<? extends IMapper>> mappersClasses = new HashMap<String, Class<? extends IMapper>>();
 
-	private final List<AuditLogHandler> auditLogHandlers = new ArrayList<AuditLogHandler>();
+    private final List<AuditLogHandler> auditLogHandlers = new ArrayList<AuditLogHandler>();
 	private final ExpressionEvaluators expressionEvaluators = new ExpressionEvaluators();
 
     private SessionFactory sessionFactory;
@@ -443,20 +443,20 @@ public class DataRegistryImpl implements DataRegistry {
         return mappers;
     }
 
-	@Override
-	public void addAuditLogHandler(AuditLogHandler handler) {
-		auditLogHandlers.add(handler);
-	}
+    @Override
+    public void addAuditLogHandler(AuditLogHandler handler) {
+        auditLogHandlers.add(handler);
+    }
 
-	@Override
-	public void removeAuditLogHandler(AuditLogHandler handler) {
-		auditLogHandlers.remove(handler);
-	}
+    @Override
+    public void removeAuditLogHandler(AuditLogHandler handler) {
+        auditLogHandlers.remove(handler);
+    }
 
-	@Override
-	public List<AuditLogHandler> getAuditLogHandlers() {
-		return Collections.unmodifiableList(auditLogHandlers);
-	}
+    @Override
+    public List<AuditLogHandler> getAuditLogHandlers() {
+        return Collections.unmodifiableList(auditLogHandlers);
+    }
 
 	@Override
 	public ExpressionEvaluators getExpressionEvaluators() {
