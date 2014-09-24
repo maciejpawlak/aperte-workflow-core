@@ -8,13 +8,16 @@ import org.aperteworkflow.files.exceptions.DeleteFileException;
 import org.aperteworkflow.files.exceptions.DownloadFileException;
 import org.aperteworkflow.files.exceptions.UpdateDescriptionException;
 import org.aperteworkflow.files.exceptions.UploadFileException;
-import org.aperteworkflow.files.model.*;
+import org.aperteworkflow.files.model.FileItemContent;
+import org.aperteworkflow.files.model.IFilesRepositoryItem;
 import org.hibernate.Session;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
 import pl.net.bluesoft.rnd.processtool.model.IAttributesConsumer;
 import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.logging.Logger;
 
@@ -108,7 +111,12 @@ public class FilesRepositoryFacade implements IFilesRepositoryFacade {
         return getFilesRepositoryItemDAO().getItemsFor(filesAttributeProvider);
     }
 
-    @Override
+	@Override
+	public IFilesRepositoryItem getFileItem(Long id) {
+		return getFilesRepositoryItemDAO().getItemById(id);
+	}
+
+	@Override
     public void updateDescription(Long filesRepositoryItemId, String fileDescription) throws UpdateDescriptionException {
         IFilesRepositoryItem filesRepositoryItem = getFilesRepositoryItemDAO().getItemById(filesRepositoryItemId);
         if (filesRepositoryItem == null) {

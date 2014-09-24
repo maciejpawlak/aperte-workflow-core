@@ -24,6 +24,7 @@ public interface IFilesRepositoryFacade {
     FileItemContent downloadFile(Long fileItemId) throws DownloadFileException;
 
     Collection<? extends IFilesRepositoryItem> getFilesList(IAttributesProvider filesAttributeProvider);
+	IFilesRepositoryItem getFileItem(Long id);
 
     void updateDescription(Long filesRepositoryItemId, String fileDescription) throws UpdateDescriptionException;
 
