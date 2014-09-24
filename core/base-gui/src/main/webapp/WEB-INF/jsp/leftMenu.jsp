@@ -244,6 +244,7 @@
 		reloadQueuesLoopTimer.stop();
 		reloadQueuesLoopTimer.play(true);
 		reloadQueues();
+		window.scrollTo(0,0);
 	}
 	
 
