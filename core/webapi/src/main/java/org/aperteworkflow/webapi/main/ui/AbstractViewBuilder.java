@@ -101,7 +101,7 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
             WidgetHierarchyBean childBean = new WidgetHierarchyBean()
                     .setParent(widgetsNode)
                     .setWidget(widget)
-                    .setAttributesProvider(getViewedObject().getProcessInstance())
+                    .setAttributesProvider(getViewedObject()/*.getProcessInstance()*/)
                     .setForcePrivileges(false)
                     .setPrivileges(new ArrayList<String>());
 
