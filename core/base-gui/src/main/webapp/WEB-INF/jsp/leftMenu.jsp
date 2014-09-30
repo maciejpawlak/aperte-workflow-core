@@ -138,7 +138,7 @@
 						queueName = currentUserLogin;
 					}
 					
-					queueName += " ["+userQueuesCount+"]";
+					//queueName += " ["+userQueuesCount+"]";
 					
 					var accordionID = 'accordion-list-'+currentUserLogin;
 					

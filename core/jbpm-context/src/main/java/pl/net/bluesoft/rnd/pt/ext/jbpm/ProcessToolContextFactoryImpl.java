@@ -192,6 +192,20 @@ public class ProcessToolContextFactoryImpl implements ProcessToolContextFactory
                         ProcessToolContext.Util.removeThreadProcessToolContext();
                         executeWithProcessToolContextNonJta(callback,false);
                     }
+                    else if (reload && isExceptionOfClassExistis(ex, TransactionException.class))
+                    {
+                        /* Hardcore fix //TODO change */
+                        logger.severe("UserTransaction problem, retry: "+reload);
+
+                        /* Clean up before retry */
+                        if (session.isOpen())
+                            session.close();
+
+                        ctx.close();
+
+                        ProcessToolContext.Util.removeThreadProcessToolContext();
+                        executeWithProcessToolContextNonJta(callback,false);
+                    }
                     else
                     {
                         throw ex;

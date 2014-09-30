@@ -40,7 +40,6 @@ public class UserProcessQueuesSizeProvider
     @Autowired
 	private ProcessToolRegistry processToolRegistry;
 
-
 	private I18NSource messageSource;
 
 	
