@@ -7,7 +7,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
 import pl.net.bluesoft.rnd.processtool.dao.ProcessDictionaryDAO;
-import pl.net.bluesoft.rnd.processtool.dict.DictionaryItem;
 import pl.net.bluesoft.rnd.processtool.model.UserData;
 import pl.net.bluesoft.rnd.processtool.model.dict.db.ProcessDBDictionary;
 import pl.net.bluesoft.rnd.processtool.model.dict.db.ProcessDBDictionaryItem;
@@ -27,11 +26,13 @@ import pl.net.bluesoft.rnd.util.i18n.I18NSource;
 import java.net.URLDecoder;
 import java.util.*;
 
+import static pl.net.bluesoft.util.lang.Formats.nvl;
+
 /**
  * Created by pkuciapski on 2014-05-30.
  */
 @OsgiController(name = "dictionaryeditorcontroller")
-public class DictionaryEditorController implements IOsgiWebController {
+public class DictionaryEditorController implements IOsgiWebController {//
     @Autowired
     ProcessToolRegistry registry;
 
@@ -201,6 +202,35 @@ public class DictionaryEditorController implements IOsgiWebController {
         return null;
     }
 
+	@ControllerMethod(action = "getNewItemValuePrototype")
+	public GenericResultBean getNewItemValuePrototype(final OsgiWebRequest invocation) throws Exception {
+		GenericResultBean result = new GenericResultBean();
+		String dictId = invocation.getRequest().getParameter("dictId");
+		ProcessDictionaryDAO dao = registry.getDataRegistry().getProcessDictionaryDAO(invocation.getProcessToolContext().getHibernateSession());
+
+		try {
+			ProcessDBDictionary dictionary = getDictionary(dictId, invocation.getProcessToolContext());
+			ProcessDBDictionaryItemValue value = new ProcessDBDictionaryItemValue();
+			value.addLocalizedValue("default", "");
+			dictionary.initValueExtensions(value);
+
+			DictionaryItemValueDTO valueDTO = DictionaryItemValueDTO.createFrom(value,
+					invocation.getProcessToolRequestContext().getMessageSource());
+
+			valueDTO.setDateFrom("");
+			valueDTO.setDateTo("");
+			valueDTO.setValue(nvl(valueDTO.getValue()));
+
+			result.setData(valueDTO);
+		}
+		catch (Exception e) {
+			result.addError("getNewItemValuePrototype", e.getMessage());
+			if (dao.getSession().isDirty()) {
+				dao.getSession().clear();
+			}
+		}
+		return result;
+	}
 
     @ControllerMethod(action = "saveDictionaryItem")
     public GenericResultBean saveDictionaryItem(final OsgiWebRequest invocation) throws Exception {

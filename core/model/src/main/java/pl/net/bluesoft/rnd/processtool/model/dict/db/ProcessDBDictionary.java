@@ -1,20 +1,19 @@
 package pl.net.bluesoft.rnd.processtool.model.dict.db;
 
-import java.util.*;
-
-import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.MapKey;
-import javax.persistence.Table;
-
 import org.hibernate.annotations.*;
-
 import org.hibernate.annotations.CascadeType;
 import pl.net.bluesoft.rnd.processtool.model.AbstractPersistentEntity;
 import pl.net.bluesoft.rnd.processtool.model.dict.ProcessDictionary;
 import pl.net.bluesoft.rnd.processtool.model.dict.ProcessDictionaryItem;
 import pl.net.bluesoft.util.lang.cquery.CQuery;
 import pl.net.bluesoft.util.lang.cquery.func.F;
+
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.MapKey;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import java.util.*;
 
 @Entity
 @Table(name = "pt_dictionary")
@@ -60,7 +59,15 @@ public class ProcessDBDictionary extends AbstractPersistentEntity implements Pro
     @Cascade(value = CascadeType.ALL)
 	@JoinColumn(name = "dictionary_id", nullable = true)
 	@MapKey(name = "key")
+	@OrderBy
     private Map<String, ProcessDBDictionaryItem> items = new HashMap<String, ProcessDBDictionaryItem>();
+
+	@OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
+	@Cascade(value = CascadeType.ALL)
+	@JoinColumn(name = "dictionary_id", nullable = true)
+	@MapKey(name = "name")
+	@OrderBy
+	private Map<String, ProcessDBDictionaryDefaultItemExtension> defaultExtensions = new LinkedHashMap<String, ProcessDBDictionaryDefaultItemExtension>();
 
 	@Override
 	public Long getId() {
@@ -202,6 +209,24 @@ public class ProcessDBDictionary extends AbstractPersistentEntity implements Pro
     public void addPermission(ProcessDBDictionaryPermission permission) {
         permissions.add(permission);
     }
+
+	public Map<String, ProcessDBDictionaryDefaultItemExtension> getDefaultExtensions() {
+		return defaultExtensions;
+	}
+
+	public void setDefaultExtensions(Map<String, ProcessDBDictionaryDefaultItemExtension> defaultExtensions) {
+		this.defaultExtensions = defaultExtensions;
+	}
+
+	public void addDefaultExtension(ProcessDBDictionaryDefaultItemExtension extension) {
+		defaultExtensions.put(extension.getName(), extension);
+	}
+
+	public void initValueExtensions(ProcessDBDictionaryItemValue value) {
+		for (ProcessDBDictionaryDefaultItemExtension defaultExt : defaultExtensions.values()) {
+			value.addExtension(defaultExt);
+		}
+	}
     
     @Override
     public String toString() {

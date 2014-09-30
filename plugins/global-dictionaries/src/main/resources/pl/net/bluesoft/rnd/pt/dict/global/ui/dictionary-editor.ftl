@@ -552,9 +552,29 @@
 	}
 
 	function addNewValue() {
-		var row = {"value": "", "dateFrom": "", "dateTo":"", "extensions":[], "toDelete":false, "localizedValues":{"default":{"languageCode":"default","text":""}} };
-		currentItem.values.push( row );
-        valuesTable.fnAddData(row);
+		 $.post(dispatcherPortlet, {
+                "controller": "dictionaryeditorcontroller",
+                "action": "getNewItemValuePrototype",
+                "itemId": currentItem.id,
+                "dictId": currentDict
+        })
+        .done(function(data) {
+            <!-- Errors handling -->
+            clearAlerts();
+            var errors = [];
+            $.each(data.errors, function() {
+                errors.push(this);
+                addAlert(this.message);
+            });
+            if(errors.length > 0) { return; }
+
+			//var row = {"value": "", "dateFrom": "", "dateTo":"", "extensions":[], "toDelete":false, "localizedValues":{"default":{"languageCode":"default","text":""}} };
+			var row = data.data;
+			console.log(row);
+			console.log(data.data);
+			currentItem.values.push( row );
+			valuesTable.fnAddData(row);
+        });
 	}
 
 	function edit(item) {

@@ -12,6 +12,7 @@ public class DictionaryItemExtDTO {
     private String key;
     private String value;
     private Boolean toDelete = Boolean.FALSE;
+	private boolean default_;
 
     public Long getId() {
         return id;
@@ -37,11 +38,20 @@ public class DictionaryItemExtDTO {
         this.value = value;
     }
 
-    public static DictionaryItemExtDTO createFrom(ProcessDBDictionaryItemExtension ext, I18NSource messageSource) {
+	public boolean isDefault_() {
+		return default_;
+	}
+
+	public void setDefault_(boolean default_) {
+		this.default_ = default_;
+	}
+
+	public static DictionaryItemExtDTO createFrom(ProcessDBDictionaryItemExtension ext, I18NSource messageSource) {
         final DictionaryItemExtDTO dto = new DictionaryItemExtDTO();
         dto.setId(ext.getId());
         dto.setKey(StringEscapeUtils.escapeHtml4(ext.getName()));
         dto.setValue(StringEscapeUtils.escapeHtml4(ext.getValue()));
+		dto.setDefault_(ext.getDefault_());
         return dto;
     }
 
