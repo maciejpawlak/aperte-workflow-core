@@ -352,7 +352,8 @@
                 if (!this.toDelete) {
                     var innerRow = $('<div class="row"></div>');
                     var lineKey = $('<div class="form-group col-md-5"><label for="description" class="control-label"><@spring.message "dictionary.editor.valueExtensions.table.key"/></label>' +
-                                    '<div><input type="text" maxlength="255" class="form-control" value="'+this.key+'" placeholder="<@spring.message "dictionary.editor.valueExtensions.table.key"/>"></input></div></div>');
+                                    '<div><input type="text" maxlength="255" class="form-control" value="'+this.key+'" placeholder="<@spring.message "dictionary.editor.valueExtensions.table.key"/>"'+
+                                    (this.default_ ? ' readonly="true"' : '') + '></input></div></div>');
 
                     $(lineKey).find('input').on('change',function(){
                         currentItem.values[iRow].extensions[index].key = $( this ).val() ;
@@ -373,13 +374,20 @@
                         removeExtension(iRow, index);
                     });
 
-                    $(lineButtonDiv).append(removeButton);
+					if (!this.default_) {
+                    	$(lineButtonDiv).append(removeButton);
+                    }
 
                     $(innerRow).append(lineKey);
                     $(innerRow).append(lineValue);
                     $(innerRow).append(lineButtonDiv);
 
                     $(row).append(innerRow);
+
+                    if (this.description) {
+                    	var descrRow = '<div class="row"><div class="form-group col-md-10">' + this.description + '<br/><br/></div></div>';
+                    	$(row).append(descrRow);
+                    }
                 }
             });
             $(nTd).append(row);

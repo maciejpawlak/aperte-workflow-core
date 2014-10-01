@@ -4,6 +4,8 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import pl.net.bluesoft.rnd.processtool.model.dict.db.ProcessDBDictionaryItemExtension;
 import pl.net.bluesoft.rnd.util.i18n.I18NSource;
 
+import static pl.net.bluesoft.util.lang.Strings.hasText;
+
 /**
  * Created by pkuciapski on 2014-06-02.
  */
@@ -11,6 +13,7 @@ public class DictionaryItemExtDTO {
     private Long id;
     private String key;
     private String value;
+	private String description;
     private Boolean toDelete = Boolean.FALSE;
 	private boolean default_;
 
@@ -38,6 +41,14 @@ public class DictionaryItemExtDTO {
         this.value = value;
     }
 
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public boolean isDefault_() {
 		return default_;
 	}
@@ -51,6 +62,9 @@ public class DictionaryItemExtDTO {
         dto.setId(ext.getId());
         dto.setKey(StringEscapeUtils.escapeHtml4(ext.getName()));
         dto.setValue(StringEscapeUtils.escapeHtml4(ext.getValue()));
+		if (hasText(ext.getDescription())) {
+			dto.setDescription(StringEscapeUtils.escapeHtml4(ext.getDescription()));
+		}
 		dto.setDefault_(ext.getDefault_());
         return dto;
     }

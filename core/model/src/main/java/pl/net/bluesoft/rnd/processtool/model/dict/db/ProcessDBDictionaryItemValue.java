@@ -171,8 +171,12 @@ public class ProcessDBDictionaryItemValue extends AbstractPersistentEntity imple
 		}
 		ext.setName(name);
 		ext.setValue(value);
-		ext.setDescription(description);
-		ext.setValueType(valueType);
+		if (description != null) {
+			ext.setDescription(description);
+		}
+		if (valueType != null) {
+			ext.setValueType(valueType);
+		}
 		if (toAdd) {
 			addExtension(ext);
 		}
