@@ -1,5 +1,14 @@
 package pl.net.bluesoft.rnd.pt.ext.bpmnotifications.templates;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
+import pl.net.bluesoft.rnd.processtool.template.ProcessToolTemplateErrorException;
+import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.model.BpmNotificationTemplate;
+import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.service.TemplateData;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -9,15 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-
-import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
-import pl.net.bluesoft.rnd.processtool.template.ProcessToolTemplateErrorException;
-import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.model.BpmNotificationTemplate;
-import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.service.TemplateData;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
+import static pl.net.bluesoft.util.lang.Strings.hasText;
 
 /**
  * Provider class for the mail templates using for mail services
@@ -54,7 +55,7 @@ public class MailTemplateProvider implements IMailTemplateLoader
         for (BpmNotificationTemplate t : templates) 
         {
             templateMap.put(t.getTemplateName(), t);
-            templateCache.put(t.getTemplateName(), t.getTemplateBody() != null ? t.getTemplateBody().replaceAll("\\\\u", "\\u") : "");
+            templateCache.put(t.getTemplateName(), getTemplateBody(t, templates));
             templateCache.put(t.getTemplateName() + SUBJECT_TEMPLATE_SUFFIX, t.getSubjectTemplate() != null
                     ? t.getSubjectTemplate().replaceAll("\\\\u", "\\u") : "");
             templateCache.put(t.getTemplateName() + SENDER_TEMPLATE_SUFFIX, t.getSender());
@@ -63,8 +64,34 @@ public class MailTemplateProvider implements IMailTemplateLoader
         freemarkerConfiguration = new Configuration();
         freemarkerConfiguration.setTemplateLoader(this);
     }
-    
-    public String findTemplate(String templateName) {
+
+	private String getTemplateBody(BpmNotificationTemplate t, List<BpmNotificationTemplate> templates) {
+		String body = t.getTemplateBody() != null ? t.getTemplateBody().replaceAll("\\\\u", "\\u") : "";
+		if (hasText(t.getFooterTemplate()) && templates != null) {
+			BpmNotificationTemplate footerTemplate = getTemplate(templates, t.getFooterTemplate());
+			if (footerTemplate != null) {
+				String footer = getTemplateBody(footerTemplate, templates);
+				String separator = "<br/>";
+				StringBuilder sb = new StringBuilder(body.length() + footer.length() + separator.length());
+				body = sb.append(body).append(separator).append(footer).toString();
+			}
+			else {
+				logger.severe("No footer template " + t.getFooterTemplate());
+			}
+		}
+		return body;
+	}
+
+	private BpmNotificationTemplate getTemplate(List<BpmNotificationTemplate> templates, String templateName) {
+		for (BpmNotificationTemplate template : templates) {
+			if (templateName.equals(template.getTemplateName())) {
+				return template;
+			}
+		}
+		return null;
+	}
+
+	public String findTemplate(String templateName) {
         try {
             return (String) findTemplateSource(templateName);
         }

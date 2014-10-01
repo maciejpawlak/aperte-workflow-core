@@ -19,6 +19,7 @@ public class BpmNotificationTemplate extends PersistentEntity {
 	@Lob
     @Type(type = "org.hibernate.type.StringClobType")
 	private String templateBody;
+	private String footerTemplate;
 
 	public String getSender() {
 		return sender;
@@ -50,5 +51,13 @@ public class BpmNotificationTemplate extends PersistentEntity {
 
 	public void setTemplateBody(String templateBody) {
 		this.templateBody = templateBody;
+	}
+
+	public String getFooterTemplate() {
+		return footerTemplate;
+	}
+
+	public void setFooterTemplate(String footerTemplate) {
+		this.footerTemplate = footerTemplate;
 	}
 }
