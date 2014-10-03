@@ -89,6 +89,7 @@ public class ProcessToolContextFactoryImpl implements ProcessToolContextFactory
     @Override
     public <T> T withProcessToolContext(ReturningProcessToolContextCallback<T> callback, ExecutionType type) {
         logger.info(">>>>>>>>> withProcessToolContext, executionType: " + type.toString() + ", threadId: " +  Thread.currentThread().getId());
+		long start = System.currentTimeMillis();
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(ProcessToolRegistry.Util.getAwfClassLoader());
 
@@ -133,7 +134,7 @@ public class ProcessToolContextFactoryImpl implements ProcessToolContextFactory
 
         }
         finally {
-            logger.info("<<<<<<<<< withProcessToolContext: " +  Thread.currentThread().getId());
+            logger.info("<<<<<<<<< withProcessToolContext: " +  Thread.currentThread().getId() + " time: " + (System.currentTimeMillis() - start));
             Thread.currentThread().setContextClassLoader(contextClassLoader);
         }
     }
