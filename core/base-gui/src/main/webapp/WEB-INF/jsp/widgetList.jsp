@@ -13,6 +13,10 @@
 </div>
 <div id="process-queue-view" class="process-data-view" hidden="true"></div>
 
+<div id="search-process-table">
+    <input type="text" id="processInputTextField" class="input-medium" placeholder="<spring:message code='processes.search.label' />">
+</div>
+
 <script type="text/javascript">
 //<![CDATA[
 
@@ -183,6 +187,21 @@
 			}
 		});
 	}
+
+    $('#processInputTextField').keyup(function()
+    {
+        var delay = (function(){
+    				var timer = 0;
+    				return function(callback, ms){
+    					clearTimeout (timer);
+    					timer = setTimeout(callback, ms);
+    				};
+    			})();
+
+        delay(function(){
+          $('#process-queue-view table').dataTable().fnFilter( $('#processInputTextField').val() );
+        }, 500 );
+    });
 
 //]]>
 </script>
