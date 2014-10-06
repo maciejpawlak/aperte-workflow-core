@@ -188,15 +188,16 @@
 		});
 	}
 
+    var delay = (function(){
+                var timer = 0;
+                return function(callback, ms){
+                    clearTimeout (timer);
+                    timer = setTimeout(callback, ms);
+                };
+            })();
+
     $('#processInputTextField').keyup(function()
     {
-        var delay = (function(){
-    				var timer = 0;
-    				return function(callback, ms){
-    					clearTimeout (timer);
-    					timer = setTimeout(callback, ms);
-    				};
-    			})();
 
         delay(function(){
           $('#process-queue-view table').dataTable().fnFilter( $('#processInputTextField').val() );
