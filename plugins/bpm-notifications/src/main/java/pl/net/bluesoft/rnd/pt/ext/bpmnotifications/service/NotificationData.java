@@ -19,6 +19,7 @@ public class NotificationData
 	private List<BpmAttachment> attachments;
 	private String source;
 	private String defaultSender;
+	private String subjectOverride;
 
 	public TemplateData getTemplateData() {
 		return templateData;
@@ -69,7 +70,15 @@ public class NotificationData
 		return defaultSender;
 	}
 
-	public void setDefaultSender(String defailtSender) {
-		this.defaultSender = defailtSender;
+	public void setDefaultSender(String defaultSender) {
+		this.defaultSender = defaultSender;
+	}
+
+	public String getSubjectOverride() {
+		return subjectOverride;
+	}
+
+	public void setSubjectOverride(String subjectOverride) {
+		this.subjectOverride = subjectOverride;
 	}
 }

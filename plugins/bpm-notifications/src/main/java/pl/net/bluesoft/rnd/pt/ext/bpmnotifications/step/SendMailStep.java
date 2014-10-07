@@ -13,7 +13,8 @@ import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.service.NotificationData;
 import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.service.TemplateData;
 import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.utils.EmailUtils;
 
-import java.util.*;
+import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,6 +42,9 @@ public class SendMailStep implements ProcessToolProcessStep {
 
 	@AutoWiredProperty(substitute = true)
 	private String source;
+
+	@AutoWiredProperty(substitute = true)
+	private String subjectOverride;
 
 	@Autowired
 	private IFilesRepositoryFacade filesRepository;
@@ -87,6 +91,7 @@ public class SendMailStep implements ProcessToolProcessStep {
 		}
 
 		notificationData.setDefaultSender(EmailUtils.getDefaultSender(profileName));
+		notificationData.setSubjectOverride(subjectOverride);
 
         try {
         	EmailSender.sendEmail(service, notificationData);
