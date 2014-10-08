@@ -297,10 +297,14 @@ public class BpmNotificationEngine implements IBpmNotificationService
 				if (cfg.isNotifyOnProcessEnd() && task.getProcessInstance().getParent() != null) 
 					continue;
 				
-                if (hasText(cfg.getProcessTypeRegex()) && !pi.getDefinitionName().toLowerCase().matches(cfg.getProcessTypeRegex().toLowerCase())) 
+                if (hasText(cfg.getProcessTypeRegex()) && !pi.getDefinitionName().toLowerCase().matches(cfg.getProcessTypeRegex().toLowerCase()))
                     continue;
-               
-                if (!(!hasText(cfg.getStateRegex()) || task != null && task.getTaskName().toLowerCase().matches(cfg.getStateRegex().toLowerCase()))) {
+
+
+                String state = task != null && task.getSimpleAttributeValue("state") != null ? task.getSimpleAttributeValue("state").toLowerCase() : null;
+                String taskName = task != null ? task.getTaskName().toLowerCase() : null;
+                String cfgState = cfg.getStateRegex().toLowerCase();
+                if (!(!hasText(cfg.getStateRegex()) || taskName!=null && taskName.matches(cfgState) || state != null && state.matches(cfgState))) {
                     continue;
                 }
                 if (hasText(cfg.getLastActionRegex())) {
@@ -357,7 +361,7 @@ public class BpmNotificationEngine implements IBpmNotificationService
 	                
 	                NotificationData notificationData = new NotificationData();
 	                notificationData
-	                	.setProfileName(DEFAULT_PROFILE_NAME)
+	                	.setProfileName(cfg.getProfileName().equals("") ? DEFAULT_PROFILE_NAME : cfg.getProfileName())
 	                	.setTemplateData(templateData)
 	                	.setRecipient(recipient);
 	                                
