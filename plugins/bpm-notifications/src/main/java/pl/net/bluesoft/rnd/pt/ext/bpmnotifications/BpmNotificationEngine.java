@@ -13,10 +13,7 @@ import pl.net.bluesoft.rnd.processtool.dao.impl.UserSubstitutionDAOImpl;
 import pl.net.bluesoft.rnd.processtool.di.ObjectFactory;
 import pl.net.bluesoft.rnd.processtool.di.annotations.AutoInject;
 import pl.net.bluesoft.rnd.processtool.hibernate.lock.OperationWithLock;
-import pl.net.bluesoft.rnd.processtool.model.BpmTask;
-import pl.net.bluesoft.rnd.processtool.model.OperationLockMode;
-import pl.net.bluesoft.rnd.processtool.model.ProcessInstance;
-import pl.net.bluesoft.rnd.processtool.model.UserData;
+import pl.net.bluesoft.rnd.processtool.model.*;
 import pl.net.bluesoft.rnd.processtool.plugins.ProcessToolRegistry;
 import pl.net.bluesoft.rnd.processtool.template.ProcessToolTemplateErrorException;
 import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.facade.NotificationsFacade;
@@ -28,6 +25,7 @@ import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.service.*;
 import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.sessions.IMailSessionProvider;
 import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.settings.NotificationsSettingsProvider;
 import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.templates.IMailTemplateLoader;
+import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.utils.EmailUtils;
 import pl.net.bluesoft.rnd.util.i18n.I18NSource;
 import pl.net.bluesoft.rnd.util.i18n.I18NSourceFactory;
 
@@ -839,6 +837,10 @@ public class BpmNotificationEngine implements IBpmNotificationService
     	String topic = processTemplate(notificationData.getTemplateData().getTemplateName() + SUBJECT_TEMPLATE_SUFFIX, notificationData.getTemplateData());
     	String sender = findTemplate(notificationData.getTemplateData().getTemplateName() + SENDER_TEMPLATE_SUFFIX);
 
+		if (hasText(notificationData.getSubjectOverride())) {
+			topic = notificationData.getSubjectOverride();
+		}
+
 		if (sender == null) {
 			sender = notificationData.getDefaultSender();
 		}
@@ -867,6 +869,28 @@ public class BpmNotificationEngine implements IBpmNotificationService
 
 	public void removeNotificationSentListener(NotificationSentListener listener) {
 		notificationSentListeners.remove(listener);
+	}
+
+	@Override
+	public String processSubjectTemplate(String template, IAttributesProvider attributesProvider, String recipient,
+										 String templateArgumentProvider, String profileName) {
+		TemplateData templateData =	createTemplateData(template, Locale.getDefault());
+
+		UserData user = EmailUtils.getRecipient(recipient);
+
+		getTemplateDataProvider()
+				.addProcessData(templateData, attributesProvider)
+				.addUserToNotifyData(templateData, user)
+				.addArgumentProvidersData(templateData, templateArgumentProvider, attributesProvider);
+
+		NotificationData notificationData = new NotificationData()
+				.setProfileName(profileName)
+				.setRecipient(user)
+				.setTemplateData(templateData);
+
+		String topic = processTemplate(notificationData.getTemplateData().getTemplateName() + SUBJECT_TEMPLATE_SUFFIX, notificationData.getTemplateData());
+
+		return topic;
 	}
 
 	private void fireNotificationSent(BpmNotification notification, Message message) {

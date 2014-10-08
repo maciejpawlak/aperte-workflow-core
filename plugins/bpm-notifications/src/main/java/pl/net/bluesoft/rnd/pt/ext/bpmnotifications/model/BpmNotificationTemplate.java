@@ -13,6 +13,12 @@ import javax.persistence.Table;
 @Entity
 @Table(name="pt_ext_bpm_notify_template")
 public class BpmNotificationTemplate extends PersistentEntity {
+	public static final String _SENDER = "sender";
+	public static final String _TEMPLATE_NAME = "templateName";
+	public static final String _SUBJECT_TEMPLATE = "subjectTemplate";
+	public static final String _TEMPLATE_BODY = "templateBody";
+	public static final String _FOOTER_TEMPLATE = "footerTemplate";
+
 	private String sender;
     private String templateName;
     private String subjectTemplate;
