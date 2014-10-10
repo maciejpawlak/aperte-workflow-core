@@ -9,6 +9,7 @@ import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.HandleEmailsJob;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
@@ -63,6 +64,9 @@ public class BpmNotification extends PersistentEntity
     @Type(type = "org.hibernate.type.StringClobType")
 	private String body;
 
+	@Transient
+	private String originalBody;
+
 	private String source;
 	private String tag;
 	
@@ -95,6 +99,14 @@ public class BpmNotification extends PersistentEntity
 
 	public void setBody(String body) {
 		this.body = body;
+	}
+
+	public String getOriginalBody() {
+		return originalBody != null ? originalBody : body;
+	}
+
+	public void setOriginalBody(String originalBody) {
+		this.originalBody = originalBody;
 	}
 
 	public String getSender() {

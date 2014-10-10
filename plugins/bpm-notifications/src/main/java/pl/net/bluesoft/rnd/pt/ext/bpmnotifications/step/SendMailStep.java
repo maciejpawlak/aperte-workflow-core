@@ -103,6 +103,5 @@ public class SendMailStep implements ProcessToolProcessStep {
 
         return STATUS_OK;
     }
-
 }
 

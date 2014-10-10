@@ -732,6 +732,7 @@ public class BpmNotificationEngine implements IBpmNotificationService
 
 		matcher.appendTail(sb);
 
+		notification.setOriginalBody(notification.getBody());
 		notification.setBody(sb.toString());
 
 		return result;
