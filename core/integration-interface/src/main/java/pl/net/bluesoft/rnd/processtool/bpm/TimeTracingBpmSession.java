@@ -60,6 +60,17 @@ public class TimeTracingBpmSession implements ProcessToolBpmSession {
 		}
 	}
 
+    @Override
+    public StartProcessResult startProcess(String bpmDefinitionId, String externalKey, String source, Map<String, Object> simpleAttributes, Map<String, String> largeAttributes, Map<String, Object> complexAttributes) {
+        long start = System.currentTimeMillis();
+        try {
+            return session.startProcess(bpmDefinitionId, externalKey, source, simpleAttributes, largeAttributes, complexAttributes);
+        }
+        finally {
+            LOGGER.info("[startProcess] t = " + (System.currentTimeMillis() - start));
+        }
+    }
+
 	@Override
 	public List<BpmTask> performAction(String actionName, String taskId) {
 		long start = System.currentTimeMillis();

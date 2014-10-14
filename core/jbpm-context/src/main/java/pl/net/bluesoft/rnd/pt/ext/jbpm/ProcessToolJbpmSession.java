@@ -105,6 +105,10 @@ public class ProcessToolJbpmSession extends AbstractProcessToolSession implement
 
     @Override
     public StartProcessResult startProcess(String processDefinitionId, String externalKey, String source, Map<String, Object> simpleAttributes) {
+        return startProcess(processDefinitionId, externalKey, source, simpleAttributes, null, null);
+    }
+        @Override
+    public StartProcessResult startProcess(String processDefinitionId, String externalKey, String source, Map<String, Object> simpleAttributes, Map<String, String> largeAttributes, Map<String, Object> complexAttributes) {
         ProcessDefinitionConfig config = getContext().getProcessDefinitionDAO().getActiveConfigurationByKey(processDefinitionId);
 
         if (!config.isEnabled()) {
@@ -112,11 +116,10 @@ public class ProcessToolJbpmSession extends AbstractProcessToolSession implement
         }
 
         Map<String, Object> initialParams = getInitialParams();
-        if(simpleAttributes != null){
+        if(simpleAttributes != null)
             initialParams.putAll(simpleAttributes);
-        }
 
-        startProcessParams = new StartProcessParams(config, externalKey, source, userLogin, initialParams);
+            startProcessParams = new StartProcessParams(config, externalKey, source, userLogin, simpleAttributes, largeAttributes, complexAttributes);
 
         try {
             getJbpmService().startProcess(config.getBpmProcessId(), initialParams);
@@ -1219,17 +1222,27 @@ public class ProcessToolJbpmSession extends AbstractProcessToolSession implement
 		public final String externalKey;
 		public final String source;
 		public final String creator;
-        private Map<String, Object> initialParams;
-		public ProcessInstance newProcessInstance;
+        private Map<String, Object> simpleAttributes;
+        private Map<String, String> largeAttributes;
+        private Map<String, Object> complexAttributes;
+
+        public ProcessInstance newProcessInstance;
 
 		public StartProcessParams(ProcessDefinitionConfig config, String externalKey, String source, String creator,
-                                  Map<String, Object> initialParams) {
-			this.config = config;
-			this.externalKey = externalKey;
-			this.source = source;
-			this.creator = creator;
-            this.initialParams = initialParams;
+                                  Map<String, Object> simpleAttributes) {
+            this(config, externalKey, source, creator, simpleAttributes, null, null);
 		}
+
+        public StartProcessParams(ProcessDefinitionConfig config, String externalKey, String source, String creator,
+                                  Map<String, Object> simpleAttributes, Map<String, String> largeAttributes, Map<String, Object> complexAttributes) {
+            this.config = config;
+            this.externalKey = externalKey;
+            this.source = source;
+            this.creator = creator;
+            this.simpleAttributes = simpleAttributes;
+            this.largeAttributes = largeAttributes;
+            this.complexAttributes = complexAttributes;
+        }
 
 		public ProcessInstance createFromParams(org.drools.runtime.process.ProcessInstance jbpmProcessInstance, ProcessInstance parentProcessInstance) {
 			ProcessInstance newProcessInstance = new ProcessInstance();
@@ -1247,10 +1260,22 @@ public class ProcessToolJbpmSession extends AbstractProcessToolSession implement
 			newProcessInstance.setSimpleAttribute("creatorName", userSource.getUserByLogin(creator).getRealName());
 			newProcessInstance.setSimpleAttribute("source", source);
 
-            if (initialParams != null) {
-                for (Map.Entry<String, Object> entry : initialParams.entrySet()) {
+            if (simpleAttributes != null) {
+                for (Map.Entry<String, Object> entry : simpleAttributes.entrySet()) {
                     String value = entry.getValue() != null ? String.valueOf(entry.getValue()) : null;
                     newProcessInstance.setSimpleAttribute(entry.getKey(), value);
+                }
+            }
+
+            if (largeAttributes != null) {
+                for (Map.Entry<String, String> entry : largeAttributes.entrySet()) {
+                    newProcessInstance.setSimpleLargeAttribute(entry.getKey(), entry.getValue());
+                }
+            }
+
+            if (complexAttributes != null) {
+                for (Map.Entry<String, Object> entry : complexAttributes.entrySet()) {
+                    newProcessInstance.setAttribute(entry.getKey(), entry.getValue());
                 }
             }
 
