@@ -1,14 +1,17 @@
 package org.aperteworkflow.files.dao;
 
-import org.aperteworkflow.files.model.*;
-import org.hibernate.Criteria;
+import org.aperteworkflow.files.model.FilesRepositoryAttributes;
+import org.aperteworkflow.files.model.FilesRepositoryItem;
+import org.aperteworkflow.files.model.IFilesRepositoryAttribute;
+import org.aperteworkflow.files.model.IFilesRepositoryItem;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import pl.net.bluesoft.rnd.processtool.hibernate.SimpleHibernateBean;
 import pl.net.bluesoft.rnd.processtool.model.IAttributesConsumer;
 import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
 
 /**
  * @author pwysocki@bluesoft.net.pl
@@ -33,6 +36,9 @@ public class FilesRepositoryItemDAOImpl extends SimpleHibernateBean<IFilesReposi
         item.setContentType(contentType);
         item.setCreateDate(new Date());
         item.setCreatorLogin(creatorLogin);
+		if (sendAsEmail != null) {
+			item.setSendWithMail(sendAsEmail);
+		}
         IFilesRepositoryAttribute attribute = (IFilesRepositoryAttribute) consumer.getAttribute(FilesRepositoryAttributes.FILES.value());
         if (attribute == null) {
             attribute = factory.create();

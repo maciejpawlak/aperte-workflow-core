@@ -10,6 +10,8 @@ import pl.net.bluesoft.rnd.processtool.ui.widgets.IWidgetDataProvider;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.aperteworkflow.files.IFilesRepositoryFacade.FileListFilter;
+
 /**
  * @author pwysocki@bluesoft.net.pl
  */
@@ -30,12 +32,22 @@ public class FilesRepositoryDataProvider implements IWidgetDataProvider {
         Map<String, Object> data = new HashMap<String, Object>();
 
         ProcessInstance processInstance = provider.getProcessInstance();
-        if (processInstance != null)
-            data.put(PROCESS_INSTANCE_FILES_PARAMETER, filesRepoFacade.getFilesList(processInstance));
-        else
-            data.put(FILES_PARAMETER, filesRepoFacade.getFilesList(provider));
 
+		FileListFilter filter = getFilter(baseViewData);
+
+        if (processInstance != null) {
+			data.put(PROCESS_INSTANCE_FILES_PARAMETER, filesRepoFacade.getFilesList(processInstance, filter));
+		}
+        else {
+			data.put(FILES_PARAMETER, filesRepoFacade.getFilesList(provider, filter));
+		}
         return data;
     }
 
+	private FileListFilter getFilter(Map<String, Object> baseViewData) {
+		String hideMailAttachmentsStr = (String)baseViewData.get("hideMailAttachments");
+		boolean hideMailAttachments = "true".equals(hideMailAttachmentsStr);
+
+		return hideMailAttachments ? FileListFilter.WITHOUT_EMAIL_ATTACHMENTS : FileListFilter.ALL;
+	}
 }

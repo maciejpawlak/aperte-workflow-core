@@ -77,10 +77,6 @@ public class EmailUtils {
     }
 
     public static List<BpmAttachment> getAttachments(IAttributesProvider provider, List<Long> attachmentIds, IFilesRepositoryFacade filesRepository, EmailScope scope) {
-        if (attachmentIds == null || attachmentIds.isEmpty()) {
-            return Collections.emptyList();
-        }
-
         List<BpmAttachment> result = new ArrayList<BpmAttachment>();
 
         if (EmailScope.ALL.equals(scope)) {
@@ -96,6 +92,9 @@ public class EmailUtils {
             }
         }
         else {
+			if (attachmentIds == null || attachmentIds.isEmpty()) {
+				return Collections.emptyList();
+			}
             for (Long attachmentId : attachmentIds) {
                 result.add(getBpmAttachment(attachmentId, filesRepository));
             }

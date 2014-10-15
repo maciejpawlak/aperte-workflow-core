@@ -30,10 +30,12 @@ public class FileRepositoryWidget extends ProcessHtmlWidget
     @AutoWiredProperty
     private String mode;
 
+	@AutoWiredProperty
+	private String hideMailAttachments;
+
     public FileRepositoryWidget(IBundleResourceProvider bundleResourceProvider) {
         setContentProvider(new FileWidgetContentProvider("files-repository-widget.html", bundleResourceProvider));
-        addDataProvider(
-                new FilesRepositoryDataProvider());
+        addDataProvider(new FilesRepositoryDataProvider());
         addDataHandler(new SimpleWidgetDataHandler());
     }
 }

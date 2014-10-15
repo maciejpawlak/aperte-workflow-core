@@ -17,13 +17,25 @@ import java.util.Collection;
  * @author pwysocki@bluesoft.net.pl
  */
 public interface IFilesRepositoryFacade {
-    IFilesRepositoryItem uploadFile(InputStream inputStream, String contentType, IAttributesConsumer filesAttributeConsumer, String fileName, String fileDescription, String creatorLogin, FilesRepositoryAttributeFactory factory) throws UploadFileException;
+    IFilesRepositoryItem uploadFile(InputStream inputStream, String contentType, IAttributesConsumer filesAttributeConsumer,
+									String fileName, String fileDescription, String creatorLogin, FilesRepositoryAttributeFactory factory) throws UploadFileException;
+	IFilesRepositoryItem uploadFile(InputStream inputStream, String contentType, IAttributesConsumer filesAttributeConsumer,
+									String fileName, String fileDescription, String creatorLogin, FilesRepositoryAttributeFactory factory,
+									Boolean sendWithMail) throws UploadFileException;
 
     void deleteFile(IAttributesProvider filesAttributeProvider, Long filesRepositoryItemId) throws DeleteFileException;
 
     FileItemContent downloadFile(Long fileItemId) throws DownloadFileException;
 
     Collection<? extends IFilesRepositoryItem> getFilesList(IAttributesProvider filesAttributeProvider);
+
+	enum FileListFilter {
+		ALL,
+		WITHOUT_EMAIL_ATTACHMENTS,
+		ONLY_EMAIL_ATTACHMENTS,
+	}
+    Collection<? extends IFilesRepositoryItem> getFilesList(IAttributesProvider filesAttributeProvider, FileListFilter filter);
+
 	IFilesRepositoryItem getFileItem(Long id);
 
     void updateDescription(Long filesRepositoryItemId, String fileDescription) throws UpdateDescriptionException;

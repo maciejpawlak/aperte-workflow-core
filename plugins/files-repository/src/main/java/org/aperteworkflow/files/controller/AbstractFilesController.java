@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static pl.net.bluesoft.util.lang.Strings.hasText;
+
 /**
  * Created by pkuciapski on 2014-05-13.
  */
@@ -76,8 +78,14 @@ public abstract class AbstractFilesController implements IOsgiWebController {
                         String fileName = item.getName();
                         String fileDescription = null;
                         String creatorLogin = getCreatorLogin(request);
+						String sendWithMailString = request.getParameter(FILE_SENDWITHMAIL_PARAM_NAME);
+						Boolean sendWithMail = hasText(sendWithMailString) ? Boolean.valueOf(sendWithMailString) : null;
+
                         if (processInstanceId != null && fileName != null && fileName.length() > 0 && fileInputStream != null && creatorLogin != null && creatorLogin.length() > 0) {
-                            IFilesRepositoryItem frItem = filesRepoFacade.uploadFile(fileInputStream, contentType, getAttributesConsumer(processInstanceId), fileName, fileDescription, creatorLogin, getAttributesFactory());
+                            IFilesRepositoryItem frItem = filesRepoFacade.uploadFile(
+									fileInputStream, contentType, getAttributesConsumer(processInstanceId),
+									fileName, fileDescription, creatorLogin, getAttributesFactory(),
+									sendWithMail);
                             result.setData(new FilesRepositoryItemDTO(frItem));
                         } else {
                             logger.log(Level.WARNING, "[FILES_REPOSITORY] Not all parameters provided when calling filescontroller.uploadFile. All of [processInstanceId, fileName, fileInputStream, creatorLogin] are required.");
