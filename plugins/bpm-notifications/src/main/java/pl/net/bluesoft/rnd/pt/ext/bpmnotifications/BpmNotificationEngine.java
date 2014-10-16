@@ -151,23 +151,24 @@ public class BpmNotificationEngine implements IBpmNotificationService
     {
         try {
             if (lock.tryLock()) {
-                registry.withOperationLock(new OperationWithLock<Object>() {
-                    @Override
-                    public Object action()
-                    {
-                        handleNotificationsWithContext();
-                        return null;
-                    }
-                }, NOTIFICATION_LOCK_NAME, OperationLockMode.IGNORE, 1);
+				try {
+					registry.withOperationLock(new OperationWithLock<Object>() {
+						@Override
+						public Object action() {
+							handleNotificationsWithContext();
+							return null;
+						}
+					}, NOTIFICATION_LOCK_NAME, OperationLockMode.IGNORE, 1);
+				}
+				finally {
+					lock.unlock();
+				}
             } else {
                 logger.info("Previous execution did not finish. Skipping.");
             }
         } catch (Exception ex) {
-            logger.log(Level.SEVERE,"Error while performing job: " + ex.getMessage(),ex);
-        } finally {
-            lock.unlock();
-        }
-
+			logger.log(Level.SEVERE, "Error while performing job: " + ex.getMessage(), ex);
+		}
     }
     
     /** The method check if there are any new notifications in database to be sent */
