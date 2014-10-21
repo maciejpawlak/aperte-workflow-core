@@ -52,6 +52,7 @@
 
     $(function () {
         $(window).scroll(sticky_relocate);
+        $(window).resize(sticky_relocate);
         sticky_relocate();
     });
 
