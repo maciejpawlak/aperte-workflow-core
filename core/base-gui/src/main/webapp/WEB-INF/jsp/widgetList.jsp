@@ -46,12 +46,14 @@
                             el.width(anchor.width());
                         } else {
                             el.removeClass('sticky');
+                            el.width(anchor.width());
                         }
         })
     }
 
     $(function () {
         $(window).scroll(sticky_relocate);
+        $(window).resize(sticky_relocate);
         sticky_relocate();
     });
 
