@@ -1,6 +1,5 @@
 package pl.net.bluesoft.rnd.pt.ext.jbpm.service.query;
 
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.type.StandardBasicTypes;
@@ -203,14 +202,16 @@ public class BpmTaskQuery {
         List<Object[]> queryResults = query.list();
 
         List<BpmTask> result = new ArrayList<BpmTask>();
+		Map<Integer, BpmTask> tasksById = new HashMap<Integer, BpmTask>();
+		List<Integer> taskIdsWithoutAssignee = new ArrayList<Integer>();
 
         ProcessDefinitionDAO processDefinitionDAO = getThreadProcessToolContext().getProcessDefinitionDAO();
 
-        queryLoop: for (Object[] resultRow : queryResults) {
+        for (Object[] resultRow : queryResults) {
             ProcessInstance processInstance = (ProcessInstance)resultRow[0];
             int taskId = (Integer)resultRow[1];
             String assignee = (String)resultRow[2];
-            String groupId = (String)resultRow[3];
+            //String groupId = (String)resultRow[3];
             String taskName = (String)resultRow[4];
             Date createDate = (Date)resultRow[5];
             Date finishDate = (Date)resultRow[6];
@@ -219,37 +220,36 @@ public class BpmTaskQuery {
             Date taskDeadline = (Date)resultRow[9];
             String stepInfo = (String)resultRow[10];
 
-            for(BpmTask task: result)
-                if(task.getInternalTaskId().equals(String.valueOf(taskId)))
-                {
-                    /* Duplicated task, add to existing as new potential owner */
-                    if(!task.getPotentialOwners().contains(groupId))
-                        task.getPotentialOwners().add(groupId);
+			if (tasksById.get(taskId) == null) {
+				BpmTaskBean bpmTask = new BpmTaskBean();
 
-                    continue queryLoop;
-                }
+				bpmTask.setProcessInstance(processInstance);
+				bpmTask.setExecutionId(processInstance.getInternalId());
+				bpmTask.setInternalTaskId(String.valueOf(taskId));
+				bpmTask.setAssignee(assignee);
+				bpmTask.setTaskName(taskName);
+				bpmTask.setCreateDate(createDate);
+				bpmTask.setFinishDate(finishDate);
+				bpmTask.setFinished(Status.valueOf(status) == Status.Completed);
+				bpmTask.setProcessDefinition(processDefinitionDAO.getCachedDefinitionById(definitionId));
+				bpmTask.setDeadlineDate(taskDeadline);
+				bpmTask.setStepInfo(stepInfo);
 
-            BpmTaskBean bpmTask = new BpmTaskBean();
+				result.add(bpmTask);
+				tasksById.put(taskId, bpmTask);
 
-            bpmTask.setProcessInstance(processInstance);
-            bpmTask.setExecutionId(processInstance.getInternalId());
-            bpmTask.setInternalTaskId(String.valueOf(taskId));
-            bpmTask.setAssignee(assignee);
-            bpmTask.setGroupId(groupId);
-            bpmTask.setTaskName(taskName);
-            bpmTask.setCreateDate(createDate);
-            bpmTask.setFinishDate(finishDate);
-            bpmTask.setFinished(Status.valueOf(status) == Status.Completed);
-            bpmTask.setProcessDefinition(processDefinitionDAO.getCachedDefinitionById(definitionId));
-            bpmTask.setDeadlineDate(taskDeadline);
-            bpmTask.setStepInfo(stepInfo);
-
-            result.add(bpmTask);
+				if (assignee == null) {
+					taskIdsWithoutAssignee.add(taskId);
+				}
+			}
         }
+
+		fillPotentialOwners(taskIdsWithoutAssignee, tasksById);
+
         return result;
     }
 
-    private SQLQuery getQuery(QueryType queryType) {
+	private SQLQuery getQuery(QueryType queryType) {
         List<QueryParameter> queryParameters = new ArrayList<QueryParameter>();
         String queryString = getQueryString(queryType, queryParameters);
         SQLQuery query = getThreadProcessToolContext().getHibernateSession().createSQLQuery(queryString);
@@ -296,7 +296,7 @@ public class BpmTaskQuery {
         }
         else {
             sb.append("process.*, task_.id as taskId, task_.actualowner_id as assignee, ");
-            sb.append("CASE WHEN task_.actualowner_id IS NULL THEN  array(SELECT potowners.entity_id FROM PeopleAssignments_PotOwners potowners WHERE potowners.task_id = task_.id) END as groupId, ");
+            sb.append("NULL as groupId, ");
             sb.append("i18ntext_.shortText as taskName, task_.createdOn as createdOn, task_.completedOn as completedOn, ");
             sb.append("task_.status as taskStatus, process.definition_id as definitionId, ");
             sb.append(DEADLINE_SUBQUERY);
@@ -328,6 +328,7 @@ public class BpmTaskQuery {
         if(queues != null)
         {
             sb.append(" AND EXISTS (SELECT 1 FROM PeopleAssignments_PotOwners potowners WHERE potowners.task_id = task_.id AND potowners.entity_id IN (:queues))");
+			sb.append(" AND task_.status NOT IN ('Completed')");
             queryParameters.add(new QueryParameter("queues", queues));
         }
 
@@ -376,9 +377,6 @@ public class BpmTaskQuery {
 //
             sb.append(queryConditions.getSearchCondition());
             queryParameters.add(new QueryParameter("expression", searchExpression.trim()));
-
-            Object a = getThreadProcessToolContext()
-                    .getProcessDefinitionDAO().getProcessDefinitionDescriptions();
 
             List<Long> definitionDescrKeys = getSearchKeywordMatchingIds(getThreadProcessToolContext()
                     .getProcessDefinitionDAO().getProcessDefinitionDescriptions());
@@ -505,6 +503,42 @@ public class BpmTaskQuery {
         }
         return result;
     }
+
+	private static final String GET_POTENTIAL_OWNERS =
+			"SELECT po.task_id AS taskId, oe.dtype AS entityType, po.entity_id AS entityName \n" +
+			"FROM PeopleAssignments_PotOwners po JOIN OrganizationalEntity oe ON oe.id = po.entity_id \n" +
+			"WHERE po.task_id IN (:taskIds)";
+
+	private void fillPotentialOwners(List<Integer> taskIdsWithoutAssignee, Map<Integer, BpmTask> tasksById) {
+		if (taskIdsWithoutAssignee.isEmpty()) {
+			return;
+		}
+
+		SQLQuery query = getThreadProcessToolContext().getHibernateSession().createSQLQuery(GET_POTENTIAL_OWNERS);
+
+		query.addScalar("taskId", StandardBasicTypes.INTEGER)
+				.addScalar("entityType", StandardBasicTypes.STRING)
+				.addScalar("entityName", StandardBasicTypes.STRING)
+				.setParameterList("taskIds", taskIdsWithoutAssignee);
+
+		List<Object[]> list = query.list();
+
+		for (Object[] row : list) {
+			Integer taskId = (Integer)row[0];
+			String entityType = (String)row[1];
+			String entityName = (String)row[2];
+
+			BpmTask task = tasksById.get(taskId);
+
+			if ("User".equals(entityType)) {
+				task.getPotentialOwners().add(entityName);
+			}
+			else if ("Group".equals(entityType)) {
+				task.getQueues().add(entityName);
+				((BpmTaskBean)task).setGroupId(entityName);
+			}
+		}
+	}
 
     @Override
     public String toString() {
