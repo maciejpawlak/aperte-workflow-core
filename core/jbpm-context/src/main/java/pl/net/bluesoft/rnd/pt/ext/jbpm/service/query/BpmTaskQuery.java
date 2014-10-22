@@ -325,9 +325,10 @@ public class BpmTaskQuery {
 
         sb.append(" WHERE 1=1");
 
-        if(queues != null)
+        if (queues != null)
         {
             sb.append(" AND EXISTS (SELECT 1 FROM PeopleAssignments_PotOwners potowners WHERE potowners.task_id = task_.id AND potowners.entity_id IN (:queues))");
+			sb.append(" AND task_.actualowner_id IS NULL");
 			sb.append(" AND task_.status NOT IN ('Completed')");
             queryParameters.add(new QueryParameter("queues", queues));
         }
