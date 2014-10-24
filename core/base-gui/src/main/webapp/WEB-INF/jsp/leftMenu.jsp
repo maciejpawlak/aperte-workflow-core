@@ -20,9 +20,11 @@
 			  </a>
 			<div id="mobile-collapse-inner" class="collapse navbar-collapse left-menu btn-group-vertical">
 
-				<button  type="button" class="btn btn-success" id="process-start-button" onclick="startProcess('complaint_registration') ">
-					<i class="icon-briefcase icon-white" ></i><spring:message code="complaint.new.button" />
-				</button >
+				<c:if test="${aperteUser.hasRole('REGISTER_COMPLAINT') || aperteUser.hasRole('REGISTER_COMPLAINT_MIN')}">
+					<button  type="button" class="btn btn-success" id="process-start-button" onclick="startProcess('complaint_registration') ">
+						<i class="icon-briefcase icon-white" ></i><spring:message code="complaint.new.button" />
+					</button >
+				</c:if>
 				<button  type="button" class="btn btn-default" id="process-start-button" onclick="startProcess('user_substitution') ">
                     <i class="icon-briefcase icon-white" ></i><spring:message code="admin.substitution.action.add" />
                 </button >
