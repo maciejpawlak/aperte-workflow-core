@@ -35,64 +35,84 @@
 <#assign updateDescriptionSuccess = messageSource.getMessage("widget.file.repository.results.table.updateDescription.success")/>
 
 <!-- Important: macros fileTableTr fileTableTrJs should not be formated due to javascript processor lack of new lines handling -->
-<#macro fileTableTr fileId fileName fileDescription fileCreateDate fileCreatorLogin fileSendWithMail><tr class="file-tr-l-${fileCreatorLogin}-l"><td class="fileId" style="display:none">${fileId}</td> <td class="fileName"><a href="#" class="fileNameDownloadHref">${fileName?html}</a></td> <td class="fileDescription"><span class="editableText">${(fileDescription!"")?html}</span></td> <td class="fileCreateDate">${fileCreateDate}</td><td>${fileCreatorLogin}</td><#if isMailMode><td><div class="checkbox"><label><input type="checkbox" class="fileSendWithMail" <#if fileSendWithMail == "true">checked</#if>></label></div></#if></td><td><button class="btn btn-xs downloadFileBtn" style="margin-right: 10px;"alt="${messageSource.getMessage('widget.file.repository.results.table.downloadBtn')}"><span class="glyphicon glyphicon-floppy-save"/></button> <button class="btn btn-xs deleteFileBtn" style="margin-right: 10px;"alt="${messageSource.getMessage('widget.file.repository.results.table.deleteBtn')}"><span class="glyphicon glyphicon-remove"/></button> </td> </tr></#macro>
-<#macro fileTableTrJs><@fileTableTr fileId="%%fileId%%" fileName="%%fileName%%" fileDescription="%%fileDescription%%" fileCreateDate="%%fileCreateDate%%" fileCreatorLogin="%%fileCreatorLogin%%" fileSendWithMail="%%fileSendWithMail%%"/></#macro>
+<#macro fileTableTr fileId fileName fileDescription fileCreateDate fileCreatorLogin fileSendWithMail b="" e="">
+${b}	<tr class="file-tr-l-${fileCreatorLogin}-l">${e}
+${b}		<td class="fileId" style="display:none">${fileId}</td>${e}
+${b}		<td class="fileName"><a href="#" class="fileNameDownloadHref">${fileName?html}</a></td>${e}
+${b}		<td class="fileDescription"><textarea class="form-control" style="width:100%; height:100%" placeholder="Opis dokumentu">${(fileDescription!"")?html}</textarea></td>${e}
+${b}		<#if isMailMode>${e}
+${b}			<td>${e}
+${b}				<div class="checkbox">${e}
+${b}					<label><input type="checkbox" class="fileSendWithMail" <#if fileSendWithMail == "true">checked</#if>></label>${e}
+${b}				</div>${e}
+${b}			</td>${e}
+${b}		</#if>${e}
+${b}		<td>${e}
+${b}			<button class="btn btn-xs downloadFileBtn" style="margin-right: 10px;" alt="Pobierz plik">${e}
+${b}				<span class="glyphicon glyphicon-floppy-save"/>${e}
+${b}			</button>${e}
+${b}			<button class="btn btn-xs deleteFileBtn" style="margin-right: 10px;" alt="Usuń plik">${e}
+${b}				<span class="glyphicon glyphicon-remove"/>${e}
+${b}			</button>${e}
+${b}		</td>${e}
+${b}	</tr>${b}
+</#macro>
+<#macro fileTableTrJs><@fileTableTr fileId="%%fileId%%" fileName="%%fileName%%" fileDescription="%%fileDescription%%" fileCreateDate="%%fileCreateDate%%" fileCreatorLogin="%%fileCreatorLogin%%" fileSendWithMail="%%fileSendWithMail%%" b="'" e="\\n'+"/></#macro>
 
 <div class="panel panel-default">
-<div class="panel-body">
-<!-- The fileinput-button span is used to style the file input field as button -->
-<span class="btn btn-success fileinput-button" style="display:none;">
-  <i class="glyphicon glyphicon-plus"></i>
-  <span>${messageSource.getMessage("widget.file.repository.form.addFileBtn")}</span>
-  <!-- The file input field used as target for the file upload widget -->
-  <input id="fileupload" type="file" name="files[]">
-</span>
-<span id="file-error" class="label label-danger" style="display:none;font-size: 14px;"></span>
-<!-- The container for the uploaded files -->
-<div id="files" class="files"></div>
-<!-- The global progress bar -->
-<div id="progress" class="progress" style="display:none;">
-    <div class="progress-bar progress-bar-success"></div>
-</div>
+	<div class="panel-body">
+		<style type="text/css">
+			#files-table {table-layout: fixed;}
+			#files-table td {
+				word-wrap:break-word;
+				background-color: transparent;
+			}
+		</style>
 
-<style type="text/css">
-    #files-table {table-layout: fixed;}
-    #files-table td{ word-wrap:break-word; }
-</style>
+		<div class="form-group col-md-6" >
+			<table cellpadding="0" cellspacing="0" border="0" id="files-table" class="table table-hover table-bordered narrow-rows" style="border-collapse:collapse;">
+				<colgroup>
+					<col>
+					<col>
+					<col width="100px;">
+				</colgroup>
+				<thead style="display: none;">
+					<tr>
+						<th class="name" style="width: 40px">
+							Nazwa
+						</th>
+						<th class="description" style="width: 40px">
+							Opis
+						</th>
+						<th style="width: 30px">
+							Akcja
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<#list files?sort_by("createDate", "name") as file>
+						<@fileTableTr fileId=file.id?c fileName=file.name fileDescription=file.description!
+						fileCreateDate=file.createDate?string("dd-MM-yy HH:mm") fileCreatorLogin=file.creatorLogin fileSendWithMail=(file.sendWithMail!false)?string("true", "false")/>
+					</#list>
+				</tbody>
+			</table>
 
-<table cellpadding="0" cellspacing="0" border="0" id="files-table" class="table table-hover table-bordered">
-    <thead>
-    <tr>
-        <th class="id" style="display:none">${messageSource.getMessage("widget.file.repository.results.table.id")}
-        </th>
-        <th class="name">${messageSource.getMessage("widget.file.repository.results.table.name")}
-        </th>
-        <th class="description" style="max-width: 120px">
-            ${messageSource.getMessage("widget.file.repository.results.table.description")}
-        </th>
-        <th class="createDate" style="max-width: 80px">
-            ${messageSource.getMessage("widget.file.repository.results.table.createdDate")}
-        </th>
-        <th class="creatorLogin">
-            ${messageSource.getMessage("widget.file.repository.results.table.creatorLogin")}
-        </th>
-        <#if isMailMode>
-            <th class="sendWithMail" style="width: 80px">
-                ${messageSource.getMessage("widget.file.repository.results.table.sendAsEmail")}
-            </th>
-        </#if>
-        <th>${messageSource.getMessage("widget.file.repository.results.table.fileAction")}</th>
-    </tr>
-    </thead>
-    <tbody>
-    <#list files?sort_by("createDate", "name") as file>
-        <@fileTableTr fileId=file.id?c fileName=file.name fileDescription=file.description!
-        fileCreateDate=file.createDate?string("dd-MM-yy HH:mm") fileCreatorLogin=file.creatorLogin fileSendWithMail=(file.sendWithMail!false)?string("true", "false")/>
-    </#list>
-    </tbody>
-</table>
-
-</div>
+			<!-- The fileinput-button span is used to style the file input field as button -->
+			<span class="btn btn-link fileinput-button">
+				  <i class="glyphicon glyphicon-plus"></i>
+				  <span>Dodaj załącznik do sprawy</span>
+				  <!-- The file input field used as target for the file upload widget -->
+				  <input id="fileupload" type="file" name="files[]">
+			</span>
+			<span id="file-error" class="label label-danger" style="display:none;font-size: 14px;"></span>
+			<!-- The container for the uploaded files -->
+			<div id="files" class="files"></div>
+			<!-- The global progress bar -->
+			<div id="progress" class="progress" style="display:none;">
+				<div class="progress-bar progress-bar-success"></div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <script>
@@ -194,8 +214,6 @@
             disabledBtn.prop('disabled', true);
             disabledBtn.hide();
         }
-
-
     }
 
     function saveDescriptionBtnClick(e) {
@@ -314,7 +332,7 @@
             }
 
             var file = data.data;
-            var newRowTrHtml = '<@fileTableTrJs/>'
+            var newRowTrHtml = (<@fileTableTrJs/>)
                     .replace(new RegExp('%%fileId%%', 'g'), file.id)
                     .replace(new RegExp('%%fileName%%', 'g'), file.name)
                     .replace(new RegExp('%%fileDescription%%', 'g'), file.description != null ? file.description : "")
