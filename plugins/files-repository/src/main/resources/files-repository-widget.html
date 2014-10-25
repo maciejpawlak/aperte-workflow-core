@@ -254,8 +254,7 @@ ${b}	</tr>${b}
 			var row = $(this).closest('tr');
         	var itemId = row.find('td.fileId').text();
         	var description = $(this).val();
-        	var fileName = row.find('td.fileName').text();
-        	console.log(itemId, description, fileName);
+
 			$.getJSON(urlUpdateDescription + '&filesRepositoryItemId=' + itemId + '&fileDescription=' + encodeURIComponent(description))
 			.done(function (data) {
 				if (data.errors.length > 0) {
