@@ -39,7 +39,7 @@
 ${b}	<tr class="file-tr-l-${fileCreatorLogin}-l">${e}
 ${b}		<td class="fileId" style="display:none">${fileId}</td>${e}
 ${b}		<td class="fileName"><a href="#" class="fileNameDownloadHref">${fileName?html}</a></td>${e}
-${b}		<td class="fileDescription"><textarea class="form-control" style="width:100%; height:100%" placeholder="Opis dokumentu">${(fileDescription!"")?html}</textarea></td>${e}
+${b}		<td class="fileDescription"><textarea class="form-control file-description-input" style="width:100%; height:100%" placeholder="Opis dokumentu">${(fileDescription!"")?html}</textarea></td>${e}
 ${b}		<#if isMailMode>${e}
 ${b}			<td>${e}
 ${b}				<div class="checkbox">${e}
@@ -198,7 +198,7 @@ ${b}	</tr>${b}
 
         if("${viewMode}" == "edit") {
             $('.fileinput-button').show();
-            $('#files-table tr').each(function() {
+            $('#files-table tr ').each(function() {
                 makeEditableOnClick($(this));
             });
         } else if ("${viewMode}" == "mixed") {
@@ -248,8 +248,25 @@ ${b}	</tr>${b}
         var url = urlDownloadFile + '&filesRepositoryItemId=' + itemId;
         aHref.attr('href', encodeURI(url));
     }
+
     function makeEditableOnClick(tr) {
-        var editableTextSpan = tr.find('span.editableText');
+    	tr.find('.file-description-input').unbind().change(function() {
+			var row = $(this).closest('tr');
+        	var itemId = row.find('td.fileId').text();
+        	var description = $(this).val();
+        	var fileName = row.find('td.fileName').text();
+        	console.log(itemId, description, fileName);
+			$.getJSON(urlUpdateDescription + '&filesRepositoryItemId=' + itemId + '&fileDescription=' + encodeURIComponent(description))
+			.done(function (data) {
+				if (data.errors.length > 0) {
+					$(data.errors).each(function (index) {
+						alert('Error: ' + data.errors[index].source + '\n\nDetails:\n' + data.errors[index].message);
+					});
+					return;
+				}
+			});
+    	});
+        /*var editableTextSpan = tr.find('span.editableText');
         var editDescHtml = '<div class="input-group input-group-sm"> <input type="text" maxlength="255" class="description-text form-control"> <span class="input-group-btn"> <button class="btn btn-default description-change-btn" type="button">${messageSource.getMessage("widget.file.repository.results.table.saveBtn")}</button> </span> </div>'
         var editDesc = $(editDescHtml);
         var currText = '';
@@ -267,7 +284,7 @@ ${b}	</tr>${b}
             editableTextSpan.find('input.description-text').focus();
             editableTextSpan.find('.description-change-btn').unbind("click").on('click', saveDescriptionBtnClick);
             $(this).unbind('click');
-        });
+        });*/
     }
 
     $(document).ready(function () {
