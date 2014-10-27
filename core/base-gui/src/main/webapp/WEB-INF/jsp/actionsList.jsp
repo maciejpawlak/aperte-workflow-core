@@ -157,8 +157,9 @@
          $('#action-comment-button').attr("disabled", comment == '');
     }
 	
-	function saveAction(taskId)
+	function saveAction(taskId, onSucessFunction)
 	{
+	    var state = 'OK';
 		clearAlerts();
 		windowManager.showSavingScreen();
 		
@@ -185,7 +186,8 @@
 		{
 			enableButtons();
 			windowManager.hideSavingScreen();
-			return;
+			state = "ERROR";
+			return state;
 		}
 		
 		var widgetData = [];
@@ -197,8 +199,7 @@
 	    });
 		
 		var JsonWidgetData = JSON.stringify(widgetData, null, 2);
-		
-		var state = 'OK';
+
 		var newBpmTask = $.post('<portlet:resourceURL id="saveAction"/>',
 		{
 			"taskId": taskId,
@@ -209,6 +210,7 @@
 			if(data.errors != null)
 			{
 				addAlerts(data.errors);
+				state = "ERROR";
 			}
 			if (data.data) {
 			    clearAlerts();
@@ -216,6 +218,11 @@
                 $('#process-data-view').empty();
                 $("#process-data-view").append(data.data);
                 checkIfViewIsLoaded();
+				
+				if(onSucessFunction && (typeof onSucessFunction == "function"))
+				{
+					onSucessFunction();
+				}
 			}
 			windowManager.hideSavingScreen();
 		})
@@ -228,6 +235,7 @@
 		{
 		    windowManager.hideSavingScreen();
 			addAlerts(data.errors);
+			state = "ERROR";
 		});
 		
 		return state;
@@ -521,6 +529,8 @@
 		reloadQueues();
 		disableButtons(); 
 		windowManager.previousView();
+		
+		$(window).scrollTop(0);
 	}
 	
 	function closeProcessView()
@@ -529,6 +539,8 @@
 		$('#actions-list').empty();
 		
 		windowManager.showProcessList();
+		
+		$(window).scrollTop(0);
 	}
 
     function removeAllButOne(selector)

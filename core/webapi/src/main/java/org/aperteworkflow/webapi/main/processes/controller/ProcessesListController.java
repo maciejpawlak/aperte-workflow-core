@@ -315,7 +315,10 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
                 getProcessToolRegistry().withProcessToolContext(new ProcessToolContextCallback() {
 
                 @Override
-                public void withContext(ProcessToolContext ctx) {
+                public void withContext(ProcessToolContext ctx)
+                {
+                    try
+                    {
                     long t0 = System.currentTimeMillis();
 
                     BpmTask task = context.getBpmSession().getTaskData(taskId);
@@ -361,6 +364,12 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
                             "[3]: " + (t3 - t2) + "ms, " +
                             "[4]: " + (t4 - t3) + "ms "
                     );
+                    }
+                    catch(Throwable e)
+                    {
+                        logger.log(Level.SEVERE, "Problem during data saving", e);
+                        resultBean.addError(SYSTEM_SOURCE, e.getLocalizedMessage());
+                    }
                 }
             }, ExecutionType.TRANSACTION_SYNCH);
 

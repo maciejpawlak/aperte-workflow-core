@@ -210,6 +210,7 @@
 						$(this).attr('data-queue-id'),
 						$(this).attr('data-user-login'));
 				reloadQueues();
+				 $(window).scrollTop(0);
 
 			});
 		});
@@ -246,7 +247,7 @@
 		reloadQueuesLoopTimer.stop();
 		reloadQueuesLoopTimer.play(true);
 		reloadQueues();
-		window.scrollTo(0,0);
+		$(window).scrollTop(0);
 	}
 	
 
