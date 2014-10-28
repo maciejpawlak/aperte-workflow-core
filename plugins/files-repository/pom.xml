@@ -5,7 +5,7 @@
  <parent>
     <artifactId>plugins</artifactId>
     <groupId>org.aperteworkflow</groupId>
-    <version>3.0-beta2-SNAPSHOT</version>
+    <version>3.1-LOT-SNAPSHOT</version>
 </parent>
 
 <artifactId>files-repository</artifactId>
@@ -21,7 +21,7 @@
     <dependency>
         <groupId>org.aperteworkflow</groupId>
         <artifactId>integration-interface</artifactId>
-        <version>3.0-beta2-SNAPSHOT</version>
+        <version>3.1-LOT-SNAPSHOT</version>
         <scope>provided</scope>
     </dependency>
     <dependency>
@@ -56,7 +56,7 @@
     <dependency>
         <groupId>org.aperteworkflow</groupId>
         <artifactId>integration</artifactId>
-        <version>3.0-beta2-SNAPSHOT</version>
+        <version>3.1-LOT-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
     <dependency>
