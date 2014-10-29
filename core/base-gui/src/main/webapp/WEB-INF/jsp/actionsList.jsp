@@ -481,6 +481,9 @@
 			{
 				enableButtons();
 			}
+			tempChangeOwner = null;
+            tempChangeOwnerAttrKey = null;
+            tempCommentNeeded = null;
 		});
 	}
 	

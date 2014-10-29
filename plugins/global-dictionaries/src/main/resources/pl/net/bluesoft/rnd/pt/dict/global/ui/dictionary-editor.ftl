@@ -79,6 +79,7 @@
             </div>
         </div>
         <div class="panel-body">
+            <div id="selectRowsCount"></div>
             <div id="itemsList">
                 <div class="row">
                     <div class="col-md-8">
@@ -248,6 +249,8 @@
                 return nRow;
             }
         });
+
+
         valuesTable.fnSetColumnVis(5, false);
 
         function generateValueColumn(nTd, sData, oData, iRow, iCol){
@@ -290,13 +293,15 @@
             var iId = 'languageSelector-' + iRow;
             var languages = ${languages};
             var html = '<div id="' + iId + '">';
-            $.each(Object.keys(languages), function(index) {
+            var index = 0;
+            $.each(languages, function(key, value) {
                 html += '<input class="input-hidden" type="radio" id="' + iId + '-' + index+ '" name="' + iId + '" value="' + this +'" ';
                 if ((!oValue.selectedLanguage && index==0) || oValue.selectedLanguage == this)
                     html += 'checked';
                 html += '/>';
-                html += '<label for="' + iId+'-'+index + '"><img src="/html/themes/control_panel/images/language/' + languages[this] + '.png"/>';
+                html += '<label for="' + iId+'-'+index + '"><img src="/html/themes/control_panel/images/language/' + languages[key] + '.png"/>';
                 html += '</label>';
+                index++;
             });
             html += '</div>';
             var selector = $(html);
@@ -578,6 +583,8 @@
 			    $("#itemsList").fadeIn(300);
             });
 		});
+
+		$('#itemsTableCostAccount_length').detach().appendTo('#selectRowsCount');
 
     });
 
