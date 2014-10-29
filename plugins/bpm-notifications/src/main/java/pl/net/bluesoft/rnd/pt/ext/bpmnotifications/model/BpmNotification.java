@@ -6,10 +6,7 @@ import org.hibernate.annotations.Type;
 import pl.net.bluesoft.rnd.processtool.model.PersistentEntity;
 import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.HandleEmailsJob;
 
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
@@ -69,12 +66,10 @@ public class BpmNotification extends PersistentEntity
 
 	private String source;
 	private String tag;
-	
+	@Column(name = "template_name")
+	private String templateName;
+
 	public BpmNotification(){
-		/*Calendar cal = Calendar.getInstance();
-		cal.setTime( new Date());
-		int time = cal.get(Calendar.HOUR_OF_DAY) * 3600 + cal.get(Calendar.MINUTE) * 60 + cal.get(Calendar.SECOND);
-		*/
         notificationCreated = new Date();
 	}
 	
@@ -207,6 +202,14 @@ public class BpmNotification extends PersistentEntity
 
 	public void setTag(String tag) {
 		this.tag = tag;
+	}
+
+	public String getTemplateName() {
+		return templateName;
+	}
+
+	public void setTemplateName(String templateName) {
+		this.templateName = templateName;
 	}
 
 	public boolean hasAttachments() {

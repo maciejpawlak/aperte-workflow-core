@@ -33,10 +33,17 @@ public class EmailUtils {
         STANDARD
     }
 
-    public static void sendMail(String recipient, String template, String templateArgumentProvider, String profileName,
+	public static void sendMail(String recipient, String template, String templateArgumentProvider, String profileName,
 								String source, EmailScope scope, IAttributesProvider attributesProvider,
 								IFilesRepositoryFacade filesRepository, List<Long> attachmentIds,
 								Map<String, Object> attributes) throws Exception {
+		sendMail(recipient, template, templateArgumentProvider, profileName, source, scope, attributesProvider, filesRepository, attachmentIds, attributes, null);
+	}
+
+    public static void sendMail(String recipient, String template, String templateArgumentProvider, String profileName,
+								String source, EmailScope scope, IAttributesProvider attributesProvider,
+								IFilesRepositoryFacade filesRepository, List<Long> attachmentIds,
+								Map<String, Object> attributes, String tag) throws Exception {
         IBpmNotificationService service = getRegistry().getRegisteredService(IBpmNotificationService.class);
         TemplateData templateData =	service.createTemplateData(template, Locale.getDefault());
         UserData user = getRecipient(recipient);
@@ -62,6 +69,7 @@ public class EmailUtils {
         }
 
         notificationData.setDefaultSender(getDefaultSender(profileName));
+		notificationData.setTag(tag);
 
         EmailSender.sendEmail(service, notificationData);
 

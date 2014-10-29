@@ -20,6 +20,7 @@ public class NotificationData
 	private String source;
 	private String defaultSender;
 	private String subjectOverride;
+	private String tag;
 
 	public TemplateData getTemplateData() {
 		return templateData;
@@ -80,5 +81,13 @@ public class NotificationData
 
 	public void setSubjectOverride(String subjectOverride) {
 		this.subjectOverride = subjectOverride;
+	}
+
+	public String getTag() {
+		return tag;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
 	}
 }

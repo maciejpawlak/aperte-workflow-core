@@ -537,15 +537,21 @@ public class BpmNotificationEngine implements IBpmNotificationService
 
         notification.encodeAttachments(processedNotificationData.getAttachments());
 		notification.setSource(processedNotificationData.getSource());
+		if (processedNotificationData.getTag() != null) {
+			notification.setTag(processedNotificationData.getTag());
+		}
+		notification.setTemplateName(processedNotificationData.getTemplateData().getTemplateName());
         
         NotificationsFacade.addNotificationToBeSent(notification);
 
 		history.notificationEnqueued(notification);
 		
-    	logger.info("EmailSender email sent: sender=" + processedNotificationData.getSender() 
-    			+ "\n recipientEmail=" + processedNotificationData.getRecipient().getEmail()  
-    			+ "\n subject=" + processedNotificationData.getSubject() 
-    			+ "\n body=" + processedNotificationData.getBody());
+    	logger.info(new StringBuilder(2 * 1024)
+				.append("EmailSender email sent: sender=").append(processedNotificationData.getSender())
+				.append("\n recipientEmail=").append(processedNotificationData.getRecipient().getEmail())
+				.append("\n subject=").append(processedNotificationData.getSubject())
+				.append("\n body=").append(processedNotificationData.getBody().substring(0, Math.min(512, processedNotificationData.getBody().length())))
+				.toString());
     }
     
     private void sendNotification(Connection connection, BpmNotification notification) throws Exception

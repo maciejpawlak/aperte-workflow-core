@@ -29,7 +29,6 @@ public class DispatcherController extends AbstractProcessToolServletController
 {
     private static Logger logger = Logger.getLogger(DispatcherController.class.getName());
 
-    
     @RequestMapping(value = "/dispatcher/{controllerName}/{actionName}")
     @ResponseBody
     public Object invoke(final @PathVariable String controllerName, @PathVariable String actionName, final HttpServletRequest request, final HttpServletResponse response)
@@ -39,62 +38,62 @@ public class DispatcherController extends AbstractProcessToolServletController
 
     public Object invokeExternalController(final String controllerName, final String actionName, final HttpServletRequest request, final HttpServletResponse response)
     {
-        final GenericResultBean resultBean = new GenericResultBean();
-        final IProcessToolRequestContext context = this.initilizeContext(request, getProcessToolRegistry().getProcessToolSessionFactory());
+		long start = System.currentTimeMillis();
 
-        if(!context.isUserAuthorized())
-        {
-            resultBean.addError(SYSTEM_SOURCE, context.getMessageSource().getMessage("request.handle.error.nouser"));
-            return resultBean;
-        }
+		try {
+			final GenericResultBean resultBean = new GenericResultBean();
+			final IProcessToolRequestContext context = this.initilizeContext(request, getProcessToolRegistry().getProcessToolSessionFactory());
+
+			if (!context.isUserAuthorized()) {
+				resultBean.addError(SYSTEM_SOURCE, context.getMessageSource().getMessage("request.handle.error.nouser"));
+				return resultBean;
+			}
 
         /* Find controller in registry */
-        final IOsgiWebController servletController = getProcessToolRegistry().getGuiRegistry().getWebController(controllerName);
+			final IOsgiWebController servletController = getProcessToolRegistry().getGuiRegistry().getWebController(controllerName);
 
-        if(servletController == null)
-        {
-            resultBean.addError(SYSTEM_SOURCE, context.getMessageSource().getMessage("request.handle.error.controller.invalidname"));
-            return resultBean;
-        }
+			if (servletController == null) {
+				resultBean.addError(SYSTEM_SOURCE, context.getMessageSource().getMessage("request.handle.error.controller.invalidname"));
+				return resultBean;
+			}
 
         /* Find controller method by ControllerMethod annotation */
-        final Method controllerMethod = findAnnotatedMethod(servletController, actionName);
+			final Method controllerMethod = findAnnotatedMethod(servletController, actionName);
 
-        if(controllerMethod == null)
-        {
-            resultBean.addError(SYSTEM_SOURCE, context.getMessageSource().getMessage("request.handle.error.controller.nomethodforaction"));
-            return resultBean;
-        }
+			if (controllerMethod == null) {
+				resultBean.addError(SYSTEM_SOURCE, context.getMessageSource().getMessage("request.handle.error.controller.nomethodforaction"));
+				return resultBean;
+			}
 
-        return getProcessToolRegistry().withProcessToolContext(new ReturningProcessToolContextCallback<Object>() {
-            @Override
-            public Object processWithContext(ProcessToolContext ctx)
-            {
-                OsgiWebRequest controllerInvocation = new OsgiWebRequest();
-                controllerInvocation.setProcessToolRequestContext(context);
-                controllerInvocation.setRequest(request);
-                controllerInvocation.setResponse(response);
-                controllerInvocation.setProcessToolContext(ctx);
-                try {
-                    Object result = controllerMethod.invoke(servletController, controllerInvocation);
-                    return result;
-
-                }
-                catch (IllegalAccessException e)
-                {
-                    resultBean.addError(SYSTEM_SOURCE, e.getMessage());
-                    logger.log(Level.SEVERE, "Problem during plugin request processing in dispatcher ["+controllerName+"]", e);
-                    return resultBean;
-                }
-                catch (InvocationTargetException e)
-                {
-                    resultBean.addError(SYSTEM_SOURCE, e.getMessage());
-                    logger.log(Level.SEVERE, "Problem during plugin request processing in dispatcher ["+controllerName+"]", e);
-                    return resultBean;
-                }
-            }
-        });
-    }
+			return getProcessToolRegistry().withProcessToolContext(new ReturningProcessToolContextCallback<Object>() {
+				@Override
+				public Object processWithContext(ProcessToolContext ctx) {
+					OsgiWebRequest controllerInvocation = new OsgiWebRequest();
+					controllerInvocation.setProcessToolRequestContext(context);
+					controllerInvocation.setRequest(request);
+					controllerInvocation.setResponse(response);
+					controllerInvocation.setProcessToolContext(ctx);
+					try {
+						Object result = controllerMethod.invoke(servletController, controllerInvocation);
+						return result;
+					}
+					catch (IllegalAccessException e) {
+						resultBean.addError(SYSTEM_SOURCE, e.getMessage());
+						logger.log(Level.SEVERE, "Problem during plugin request processing in dispatcher [" + controllerName + "]", e);
+						return resultBean;
+					}
+					catch (InvocationTargetException e) {
+						resultBean.addError(SYSTEM_SOURCE, e.getMessage());
+						logger.log(Level.SEVERE, "Problem during plugin request processing in dispatcher [" + controllerName + "]", e);
+						return resultBean;
+					}
+				}
+			});
+		}
+		finally {
+			logger.info("Controller invocation: " + controllerName + '.' + actionName + ", time: " + (System.currentTimeMillis() - start));
+		}
+	}
 
     /** Find controller method by ControllerMethod annotation */
     private Method findAnnotatedMethod(IOsgiWebController servletController, String actionName)
@@ -114,6 +113,4 @@ public class DispatcherController extends AbstractProcessToolServletController
 
         return null;
     }
-
-
 }

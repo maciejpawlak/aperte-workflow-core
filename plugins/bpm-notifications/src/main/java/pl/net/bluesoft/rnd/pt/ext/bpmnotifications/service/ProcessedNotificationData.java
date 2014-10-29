@@ -21,12 +21,12 @@ public class ProcessedNotificationData extends NotificationData
 	public ProcessedNotificationData(NotificationData notificationData) 
 	{
 		this();
-		
 		setTemplateData(notificationData.getTemplateData());
 		setRecipient(notificationData.getRecipient());
 		setProfileName(notificationData.getProfileName());
 		setAttachments(notificationData.getAttachments());
 		setSource(notificationData.getSource());
+		setTag(notificationData.getTag());
 		setDefaultSender(notificationData.getDefaultSender());
 	}
 
@@ -35,17 +35,17 @@ public class ProcessedNotificationData extends NotificationData
 	}
 	public ProcessedNotificationData setBody(String body) {
 		this.body = body;
-		
 		return this;
 	}
 	public String getSubject() {
 		return subject;
 	}
+
 	public ProcessedNotificationData setSubject(String subject) {
 		this.subject = subject;
-		
 		return this;
 	}
+
 	public String getSender() 
 	{
 		return sender;
@@ -54,7 +54,6 @@ public class ProcessedNotificationData extends NotificationData
 	public ProcessedNotificationData setSender(String sender) 
 	{
 		this.sender = sender;
-		
 		return this;
 	}
 	
@@ -66,9 +65,9 @@ public class ProcessedNotificationData extends NotificationData
 	public boolean isSendAsHtml() {
 		return sendAsHtml;
 	}
+
 	public ProcessedNotificationData setSendAsHtml(boolean sendAsHtml) {
 		this.sendAsHtml = sendAsHtml;
-		
 		return this;
 	}
 }

@@ -51,6 +51,7 @@ public class NotificationsJdbcFacade
                 String subject = resultSet.getString("SUBJECT");
 				String source = resultSet.getString("SOURCE");
 				String tag = resultSet.getString("TAG");
+				String templateName = resultSet.getString("TEMPLATE_NAME");
 
                 notification.setId(id);
                 notification.setAttachments(attachments);
@@ -65,6 +66,7 @@ public class NotificationsJdbcFacade
                 notification.setSubject(subject);
 				notification.setSource(source);
 				notification.setTag(tag);
+				notification.setTemplateName(templateName);
 
                 notifications.add(notification);
             }
