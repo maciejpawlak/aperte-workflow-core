@@ -417,7 +417,7 @@ public class BpmTaskQuery {
             sb.append(getOrderCondition());
         }
         String txt = sb.toString();
-        log.info(txt);
+//        log.info(txt);
         return txt;
     }
 
