@@ -62,6 +62,7 @@ public class StepUtil {
 				}
 				if (placeholderName.startsWith(evaluatedExpressionPrefix)) {
 					String expression = placeholderName.substring(evaluatedExpressionPrefix.length());
+					SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 					return registry.getDataRegistry().getExpressionEvaluators().evaluate(expression, pi);
 				}
 				return pi.getSimpleAttributeValue(placeholderName);

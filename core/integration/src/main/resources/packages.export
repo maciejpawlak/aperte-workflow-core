@@ -765,4 +765,7 @@ org.apache.cxf.wsdl,
 org.apache.cxf.wsdl.http,
 org.apache.cxf.wsdl1,
 org.apache.ws.security;version="1.6.3",
-org.apache.ws.security.handler;version="1.6.3"
+org.apache.ws.security.handler;version="1.6.3",
+org.jsoup;version="1.7.2",
+org.jsoup.nodes;version="1.7.2",
+org.jsoup.safety;version="1.7.2"
