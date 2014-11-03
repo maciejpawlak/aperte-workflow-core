@@ -75,6 +75,7 @@
                             pl.net.bluesoft.rnd.processtool.ui.basewidgets,
                             pl.net.bluesoft.rnd.processtool.ui.basewidgets.view,
                             pl.net.bluesoft.rnd.processtool.ui.basewidgets.datahandler,
+                            pl.net.bluesoft.rnd.processtool.ui.basewidgets.dataprovider,
                             pl.net.bluesoft.rnd.processtool.ui.buttons, 
                             pl.net.bluesoft.rnd.processtool.ui.buttons.dialog,
                             !com.ctc.wstx.stax,

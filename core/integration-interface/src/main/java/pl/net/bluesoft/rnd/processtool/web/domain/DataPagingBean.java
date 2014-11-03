@@ -17,6 +17,8 @@ public class DataPagingBean<T> extends GenericResultBean {
 
     int	iTotalDisplayRecords;
 
+    int iDisplayStart = 0;
+
     String	sEcho;
 
     public DataPagingBean(Collection<T> dataList, int pageLimit, String echo)
@@ -58,5 +60,13 @@ public class DataPagingBean<T> extends GenericResultBean {
 
     public void setsEcho(String sEcho) {
         this.sEcho = sEcho;
+    }
+
+    public int getiDisplayStart() {
+        return iDisplayStart;
+    }
+
+    public void setiDisplayStart(int iDisplayStart) {
+        this.iDisplayStart = iDisplayStart;
     }
 }

@@ -1,4 +1,4 @@
-<#assign processComments = process.getCommentsOrderedByDate(true)/>
+<#assign processComments = process.getCommentsOrderedByDate(false)/>
 <#assign commentAdded = process.getSimpleAttributeValue("commentAdded")!""/>
 
 <#if (processComments?size > 0) && (commentAdded != "")>

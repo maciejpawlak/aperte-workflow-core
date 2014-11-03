@@ -18,22 +18,23 @@
 </div>
 
 <script type="text/javascript">
-//<![CDATA[
 
     function sticky_relocate() {
         var window_top = $(window).scrollTop();
 
-        var anchors =  $('[class*=fixed-element-anchor-]')
+        var anchors =  $('[class*=fixed-element-anchor-]');
+        if(!anchors) { return; }
         anchors.each(function(i, e)
         {
-            var clses = e.classList;
+            var clses = e.className.split(/\s+/);
+            if(!clses) { return; }
             var id = null
             for(var i = 0;i<clses.length;i++)
             {
                 if(clses[i].match(/^fixed-element-anchor-.*$/))
                     {
-                        id = clses[i].substr("fixed-element-anchor-".length)
-                        break
+                        id = clses[i].substr("fixed-element-anchor-".length);
+                        break;
                     }
             }
 
@@ -206,5 +207,4 @@
         }, 500 );
     });
 
-//]]>
 </script>

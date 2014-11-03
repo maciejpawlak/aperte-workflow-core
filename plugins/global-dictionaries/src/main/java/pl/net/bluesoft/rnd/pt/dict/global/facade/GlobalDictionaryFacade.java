@@ -69,17 +69,17 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
             ProcessDictionaryItemValue value = pdi.getValueForDate(new Date());
             if (value != null)
                 dictionaryItem.setValue(value.getValue(locale));
-            else
-                dictionaryItem.setValue("No value defined for key=" + pdi.getKey() + " and language=" + locale);
+            else {
+                dictionaryItem.setValue(pdi.getKey());
+            }
             dictionaryItem.setDescription(desc);
 
 
-        ProcessDictionaryItemValue valueForDate = pdi.getValueForDate(date);
+            ProcessDictionaryItemValue valueForDate = pdi.getValueForDate(date);
             if(valueForDate == null || valueForDate instanceof ProcessDBDictionaryItem.EMPTY_VALUE)
-            {
                 dictionaryItem.setValid(false);
-            }
-                else dictionaryItem.setValid(true);
+            else
+                dictionaryItem.setValid(true);
 
 
 
