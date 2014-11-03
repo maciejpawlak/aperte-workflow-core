@@ -1,8 +1,5 @@
 package org.aperteworkflow.files.model;
 
-import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
-import pl.net.bluesoft.rnd.processtool.model.ProcessInstance;
-
 import java.util.Date;
 
 /**
@@ -34,4 +31,11 @@ public interface IFilesRepositoryItem {
     void setSendWithMail(Boolean sendWithMail);
 
     Boolean getSendWithMail();
+
+	String getAttachedEntityType();
+	void setAttachedEntityType(String attachedEntityType);
+	Long getAttachedEntityId();
+	void setAttachedEntityId(Long attachedEntityId);
+
+	void attachToEntity(String entityType, Long entityId);
 }

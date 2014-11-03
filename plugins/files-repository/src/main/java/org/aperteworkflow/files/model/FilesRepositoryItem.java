@@ -3,7 +3,9 @@ package org.aperteworkflow.files.model;
 import org.hibernate.annotations.Index;
 import pl.net.bluesoft.rnd.processtool.model.PersistentEntity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Date;
 
 /**
@@ -19,7 +21,6 @@ import java.util.Date;
                 )
         })
 public class FilesRepositoryItem extends PersistentEntity implements IFilesRepositoryItem {
-
     public static final String COLUMN_PROCESS_INSTANCE_ID = "process_instance_id";
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_RELATIVE_PATH = "relative_path";
@@ -52,59 +53,99 @@ public class FilesRepositoryItem extends PersistentEntity implements IFilesRepos
     @Index(name = "idx_pt_files_creator_login")
     private String creatorLogin;
 
-    public String getName() {
-        return name;
-    }
+	@Column(name = "att_entity_type", length = 10)
+	private String attachedEntityType;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	@Column(name = "att_entity_id")
+	private Long attachedEntityId;
 
-    public String getRelativePath() {
-        return relativePath;
-    }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    public void setRelativePath(String relativePath) {
-        this.relativePath = relativePath;
-    }
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	@Override
+	public String getRelativePath() {
+		return relativePath;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	@Override
+	public void setRelativePath(String relativePath) {
+		this.relativePath = relativePath;
+	}
 
-    public Date getCreateDate() {
-        return createDate;
-    }
+	@Override
+	public String getDescription() {
+		return description;
+	}
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
+	@Override
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public String getCreatorLogin() {
-        return creatorLogin;
-    }
+	@Override
+	public String getContentType() {
+		return contentType;
+	}
 
-    public void setCreatorLogin(String creatorLogin) {
-        this.creatorLogin = creatorLogin;
-    }
+	@Override
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
 
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
+	@Override
+	public Boolean getSendWithMail() {
+		return sendWithMail != null ? sendWithMail : false;
+	}
 
-    public String getContentType() {
-        return contentType;
-    }
+	@Override
+	public void setSendWithMail(Boolean sendWithMail) {
+		this.sendWithMail = sendWithMail;
+	}
 
-    public Boolean getSendWithMail() {
-        return sendWithMail == null ? false : sendWithMail;
-    }
+	@Override
+	public Date getCreateDate() {
+		return createDate;
+	}
 
-    public void setSendWithMail(Boolean sendWithMail) {
-        this.sendWithMail = sendWithMail;
-    }
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	@Override
+	public String getCreatorLogin() {
+		return creatorLogin;
+	}
+
+	public void setCreatorLogin(String creatorLogin) {
+		this.creatorLogin = creatorLogin;
+	}
+
+	public String getAttachedEntityType() {
+		return attachedEntityType;
+	}
+
+	public void setAttachedEntityType(String attachedEntityType) {
+		this.attachedEntityType = attachedEntityType;
+	}
+
+	public Long getAttachedEntityId() {
+		return attachedEntityId;
+	}
+
+	public void setAttachedEntityId(Long attachedEntityId) {
+		this.attachedEntityId = attachedEntityId;
+	}
+
+	@Override
+	public void attachToEntity(String entityType, Long entityId) {
+		this.attachedEntityType = entityType;
+		this.attachedEntityId = entityId;
+	}
 }
