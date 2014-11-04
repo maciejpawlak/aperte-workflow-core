@@ -12,6 +12,7 @@ import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
 
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author pwysocki@bluesoft.net.pl
@@ -28,6 +29,8 @@ public interface IFilesRepositoryFacade {
     FileItemContent downloadFile(Long fileItemId) throws DownloadFileException;
 
     Collection<? extends IFilesRepositoryItem> getFilesList(IAttributesProvider filesAttributeProvider);
+
+	Collection<? extends IFilesRepositoryItem> copy(List<IFilesRepositoryItem> files, IAttributesConsumer filesConsumer, FilesRepositoryAttributeFactory factory);
 
 	enum FileListFilter {
 		ALL,

@@ -23,4 +23,6 @@ public interface FilesRepositoryItemDAO {
     FilesRepositoryItem getItemById(Long id);
 
     void updateSendWithMail(IFilesRepositoryItem item, Boolean sendWithMail);
+
+	boolean hasAnyFileWithName(String relativePath);
 }

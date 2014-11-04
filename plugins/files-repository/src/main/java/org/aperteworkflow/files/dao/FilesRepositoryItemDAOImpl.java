@@ -12,6 +12,7 @@ import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * @author pwysocki@bluesoft.net.pl
@@ -83,4 +84,16 @@ public class FilesRepositoryItemDAOImpl extends SimpleHibernateBean<IFilesReposi
         getSession().saveOrUpdate(item);
     }
 
+	@Override
+	public boolean hasAnyFileWithName(String relativePath) {
+		List list = getSession().createSQLQuery(new StringBuilder()
+				.append("SELECT 1\n")
+				.append("FROM pt_files_repository_item\n")
+				.append("WHERE relative_path = :relativePath")
+				.toString())
+				.setParameter("relativePath", relativePath)
+				.setMaxResults(1)
+				.list();
+		return !list.isEmpty();
+	}
 }
