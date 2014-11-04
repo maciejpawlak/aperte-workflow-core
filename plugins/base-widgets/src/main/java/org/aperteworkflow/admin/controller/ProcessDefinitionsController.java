@@ -61,7 +61,7 @@ public class ProcessDefinitionsController implements IOsgiWebController {
 		}
 
 		DataPagingBean<ProcessDefinition> dataPagingBean = new DataPagingBean<ProcessDefinition>(
-				definitions, definitions.size(), dataTable.getEcho());
+				definitions, definitions.size(), dataTable.getDraw());
 
 		return dataPagingBean;
 	}

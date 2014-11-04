@@ -511,7 +511,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
         final IProcessToolRequestContext context = this.initilizeContext(request,getProcessToolRegistry().getProcessToolSessionFactory());
 
         if(!context.isUserAuthorized())
-            return new DataPagingBean<TasksListViewBean>(adminAlertBeanList, 0, dataTable.getEcho());
+            return new DataPagingBean<TasksListViewBean>(adminAlertBeanList, 0, dataTable.getDraw());
 
         final String sortCol = request.getParameter("iSortCol_0");
         final String sortDir = request.getParameter("sSortDir_0");
@@ -525,7 +525,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
         final Integer displayLength = Integer.parseInt(displayLengthString);
 
         final DataPagingBean<TasksListViewBean> pagingCollection = new DataPagingBean<TasksListViewBean>(
-                adminAlertBeanList, 100, dataTable.getEcho());
+                adminAlertBeanList, 100, dataTable.getDraw());
 
 		long t1 = System.currentTimeMillis();
 
@@ -580,7 +580,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
                 int totalRecords = context.getBpmSession().getFilteredTasksCount(filter);
                 pagingCollection.setRecordsTotal(totalRecords);
                 pagingCollection.setRecordsFiltered(totalRecords);
-                pagingCollection.setAaData(adminAlertBeanList);
+                pagingCollection.setData(adminAlertBeanList);
 
                 long t3 = System.currentTimeMillis();
 
@@ -694,7 +694,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 	{
 		logger.info("loadProcessesList ...");
 		long t0 = System.currentTimeMillis();
-		
+
         final JQueryDataTable dataTable = JQueryDataTableUtil.analyzeRequest(request.getParameterMap());
 
 		final String queueName = request.getParameter("queueName");
@@ -703,24 +703,24 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
         final String viewName = request.getParameter(TASKS_LIST_VIEW_NAME_PARAM);
 
 		final List<TasksListViewBean> adminAlertBeanList = new ArrayList<TasksListViewBean>();
-		
+
 		if(isNull(queueType) || isNull(ownerLogin))
 		{
-			return new DataPagingBean<TasksListViewBean>(adminAlertBeanList, 0, dataTable.getEcho());
+			return new DataPagingBean<TasksListViewBean>(adminAlertBeanList, 0, dataTable.getDraw());
 		}
 
         Locale locale = request.getLocale();
 
 		final IProcessToolRequestContext context = this.initilizeContext(request,getProcessToolRegistry().getProcessToolSessionFactory());
-		
+
 		if(!context.isUserAuthorized())
-			return new DataPagingBean<TasksListViewBean>(adminAlertBeanList, 0, dataTable.getEcho());
+			return new DataPagingBean<TasksListViewBean>(adminAlertBeanList, 0, dataTable.getDraw());
 
 		final String searchString = request.getParameter("sSearch");
 
-		
+
 		final DataPagingBean<TasksListViewBean> pagingCollection = new DataPagingBean<TasksListViewBean>(
-				adminAlertBeanList, 100, dataTable.getEcho());
+				adminAlertBeanList, 100, dataTable.getDraw());
 
 		long t1 = System.currentTimeMillis();
 
@@ -780,7 +780,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
                 int totalRecords = context.getBpmSession().getFilteredTasksCount(filter);
                 pagingCollection.setRecordsTotal(totalRecords);
                 pagingCollection.setRecordsFiltered(totalRecords);
-                pagingCollection.setAaData(adminAlertBeanList);
+                pagingCollection.setListData(adminAlertBeanList);
 
                 long t4 = System.currentTimeMillis();
 
@@ -798,7 +798,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 
 		logger.log(Level.INFO, "loadProcessesList total: " + (t2-t0) + "ms, " +
 				"[1]: " + (t1-t0) + "ms, " +
-				"[2]: " + (t2-t1) + "ms " 
+				"[2]: " + (t2-t1) + "ms "
 				);
 
         return pagingCollection;

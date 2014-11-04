@@ -6,7 +6,6 @@
 		this.sortingOrder = sortingOrder;
 		this.dataTable;
 		this.requestParameters = [];
-		this.firstRow;
 
 		this.initialized = false;
 
@@ -66,8 +65,8 @@
 		{
 		    var sDom = (tableElementsPlacement !== undefined) ? tableElementsPlacement : 'R<"top"t><"bottom"plr>';
 
-		    var dataTableOtions =
-		    {
+
+			this.dataTable = $('#'+this.tableId).DataTable({
                             serverSide: true,
                             ordering: true,
                             lengthChange: true,
@@ -78,30 +77,14 @@
             				ajax: {
                                     dataType: 'json',
                                     type: "POST",
-                                    url: this.requestUrl
+                                    url: this.requestUrl,
+									"dataSrc": "listData"
                                 },
             				columns: this.columnDefs,
             				language: dataTableLanguage
-                        };
+                        });
+						
 
-            if(this.firstRow)
-            {
-                dataTableOtions["displayStart"] = this.firstRow;
-            }
-
-			this.dataTable = $('#'+this.tableId).DataTable(dataTableOtions);
-			if(typeof windowManager != 'undefined')
-			{
-				if(windowManager.mobileMode == true)
-				{
-					this.enableMobileMode();
-				}
-
-				if(windowManager.tabletMode == true)
-				{
-					this.enableTabletMode();
-				}
-			}
 		}
 
 		this.toggleColumnButton = function(columnName, active)

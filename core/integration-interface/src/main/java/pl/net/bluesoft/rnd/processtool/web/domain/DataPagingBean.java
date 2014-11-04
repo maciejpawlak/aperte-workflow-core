@@ -11,39 +11,29 @@ import java.util.List;
  */
 public class DataPagingBean<T> extends GenericResultBean {
 
-	Collection<T> aaData;
+	Collection<T> listData;
 
     int	recordsTotal;
 
     int	recordsFiltered;
 
-    int iDisplayStart = 0;
+    int	draw;
 
-    int	draw = 1;
-
-    public DataPagingBean(Collection<T> dataList, int pageLimit, String echo)
+    public DataPagingBean(Collection<T> dataList, int pageLimit, int draw)
     {
-        this.aaData = dataList;
+        this.listData = dataList;
         this.recordsFiltered = pageLimit;
         this.recordsTotal = dataList.size();
-        this.draw = 1;
+        this.draw = draw;
 
     }
 
-    public Collection<T> getAaData() {
-        return aaData;
+    public Collection<T> getListData() {
+        return listData;
     }
 
-    public void setAaData(Collection<T> aaData) {
-        this.aaData = aaData;
-    }
-
-    public int getiDisplayStart() {
-        return iDisplayStart;
-    }
-
-    public void setiDisplayStart(int iDisplayStart) {
-        this.iDisplayStart = iDisplayStart;
+    public void setListData(Collection<T> listData) {
+        this.listData = listData;
     }
 
     public int getRecordsTotal() {

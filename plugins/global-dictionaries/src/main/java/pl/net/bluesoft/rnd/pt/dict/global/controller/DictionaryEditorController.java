@@ -55,7 +55,7 @@ public class DictionaryEditorController implements IOsgiWebController {//
             count = dao.getDictionaryItemsCount(dictId);
         }
         DataPagingBean<DictionaryItemDTO> dataPagingBean =
-                new DataPagingBean<DictionaryItemDTO>(dtos, count.intValue(), dataTable.getEcho());
+                new DataPagingBean<DictionaryItemDTO>(dtos, count.intValue(), dataTable.getDraw());
         return dataPagingBean;
 
     }
@@ -172,7 +172,7 @@ public class DictionaryEditorController implements IOsgiWebController {//
         }
         result.setData(dtos);
         //DataPagingBean<DictionaryItemValueDTO> dataPagingBean =
-        //        new DataPagingBean<DictionaryItemValueDTO>(dtos, dtos.size(), dataTable.getEcho());
+        //        new DataPagingBean<DictionaryItemValueDTO>(dtos, dtos.size(), dataTable.getDraw());
 
         return result;
     }

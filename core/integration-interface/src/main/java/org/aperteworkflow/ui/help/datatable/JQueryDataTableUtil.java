@@ -71,11 +71,12 @@ public class JQueryDataTableUtil
     {
         JQueryDataTable jQueryDataTable = new JQueryDataTable();
 
-        //String echo = paramters.get("sEcho")[0];
-        jQueryDataTable.setEcho(null);
+        Integer draw = getIntegerValue(paramters, "draw");
 
-        String displayStartString = paramters.get("start")[0];
-        String displayLengthString = paramters.get("length")[0];
+        jQueryDataTable.setDraw(draw);
+
+        String displayStartString = getStringValue(paramters, "start");
+        String displayLengthString = getStringValue(paramters, "length");
 
         Integer displayStart = Integer.parseInt(displayStartString);
         Integer displayLength = Integer.parseInt(displayLengthString);

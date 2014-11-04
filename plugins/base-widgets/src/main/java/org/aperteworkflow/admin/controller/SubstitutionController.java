@@ -75,7 +75,7 @@ public class SubstitutionController implements IOsgiWebController {
 					.list();
 
 		DataPagingBean<UserSubstitution> dataPagingBean = new DataPagingBean<UserSubstitution>(substitutionList, substitutionList.size(),
-				dataTable.getEcho());
+				dataTable.getDraw());
 
 		return dataPagingBean;
 	}
