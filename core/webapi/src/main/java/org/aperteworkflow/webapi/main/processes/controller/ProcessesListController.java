@@ -578,8 +578,8 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
                 long t2 = System.currentTimeMillis();
 
                 int totalRecords = context.getBpmSession().getFilteredTasksCount(filter);
-                pagingCollection.setiTotalRecords(totalRecords);
-                pagingCollection.setiTotalDisplayRecords(totalRecords);
+                pagingCollection.setRecordsTotal(totalRecords);
+                pagingCollection.setRecordsFiltered(totalRecords);
                 pagingCollection.setAaData(adminAlertBeanList);
 
                 long t3 = System.currentTimeMillis();
@@ -778,8 +778,8 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 
                 long t3 = System.currentTimeMillis();
                 int totalRecords = context.getBpmSession().getFilteredTasksCount(filter);
-                pagingCollection.setiTotalRecords(totalRecords);
-                pagingCollection.setiTotalDisplayRecords(totalRecords);
+                pagingCollection.setRecordsTotal(totalRecords);
+                pagingCollection.setRecordsFiltered(totalRecords);
                 pagingCollection.setAaData(adminAlertBeanList);
 
                 long t4 = System.currentTimeMillis();

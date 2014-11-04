@@ -6,6 +6,7 @@
 		this.sortingOrder = sortingOrder;
 		this.dataTable;
 		this.requestParameters = [];
+		this.firstRow;
 
 		this.initialized = false;
 
@@ -18,6 +19,13 @@
 		{
 			this.requestParameters.push({ "name": name, "value": value });
 		}
+
+		this.clearState = function()
+		{
+		    this.dataTable.state.clear();
+		    this.dataTable.page('first');
+		}
+
 
 		this.reloadTable = function(requestUrl)
 		{
@@ -34,7 +42,7 @@
 			}
 			else
 			{
-				this.dataTable.fnReloadAjax(this.requestUrl);
+				this.dataTable.ajax.url(requestUrl).load(null, false);
 			}
 		}
 
@@ -58,33 +66,30 @@
 		{
 		    var sDom = (tableElementsPlacement !== undefined) ? tableElementsPlacement : 'R<"top"t><"bottom"plr>';
 
-			this.dataTable = $('#'+this.tableId).dataTable({
-                "bLengthChange": true,
-                "bFilter": true,
-                "bProcessing": true,
-                "bServerSide": true,
-                "bInfo": true,
-                "aaSorting": sortingOrder,
-                "bSort": true,
-                "iDisplayLength": 10,
-                "sDom": sDom,
-                "sAjaxSource": this.requestUrl,
-                "fnServerData": function ( sSource, aoData, fnCallback ) {
+		    var dataTableOtions =
+		    {
+                            serverSide: true,
+                            ordering: true,
+                            lengthChange: true,
+                            stateSave: true,
+                            dom: sDom,
+                            processing: true,
+                            order: sortingOrder,
+            				ajax: {
+                                    dataType: 'json',
+                                    type: "POST",
+                                    url: this.requestUrl
+                                },
+            				columns: this.columnDefs,
+            				language: dataTableLanguage
+                        };
 
-                    $.ajax( {
-                        "dataType": 'json',
-                        "type": "POST",
-                        "url": sSource,
-                        "data": aoData,
-                        "success": fnCallback
-                    } );
-                },
-                "fnServerParams": function ( aoData ) {
-                      aoData.push( this.requestParameters );
-                },
-                "aoColumns": this.columnDefs,
-                "oLanguage": dataTableLanguage
-            });
+            if(this.firstRow)
+            {
+                dataTableOtions["displayStart"] = this.firstRow;
+            }
+
+			this.dataTable = $('#'+this.tableId).DataTable(dataTableOtions);
 			if(typeof windowManager != 'undefined')
 			{
 				if(windowManager.mobileMode == true)

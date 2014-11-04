@@ -13,20 +13,20 @@ public class DataPagingBean<T> extends GenericResultBean {
 
 	Collection<T> aaData;
 
-    int	iTotalRecords;
+    int	recordsTotal;
 
-    int	iTotalDisplayRecords;
+    int	recordsFiltered;
 
     int iDisplayStart = 0;
 
-    String	sEcho;
+    int	draw = 1;
 
     public DataPagingBean(Collection<T> dataList, int pageLimit, String echo)
     {
         this.aaData = dataList;
-        this.iTotalDisplayRecords = pageLimit;
-        this.iTotalRecords = dataList.size();
-        this.sEcho = echo;
+        this.recordsFiltered = pageLimit;
+        this.recordsTotal = dataList.size();
+        this.draw = 1;
 
     }
 
@@ -38,35 +38,35 @@ public class DataPagingBean<T> extends GenericResultBean {
         this.aaData = aaData;
     }
 
-    public int getiTotalRecords() {
-        return iTotalRecords;
-    }
-
-    public void setiTotalRecords(int iTotalRecords) {
-        this.iTotalRecords = iTotalRecords;
-    }
-
-    public int getiTotalDisplayRecords() {
-        return iTotalDisplayRecords;
-    }
-
-    public void setiTotalDisplayRecords(int iTotalDisplayRecords) {
-        this.iTotalDisplayRecords = iTotalDisplayRecords;
-    }
-
-    public String getsEcho() {
-        return sEcho;
-    }
-
-    public void setsEcho(String sEcho) {
-        this.sEcho = sEcho;
-    }
-
     public int getiDisplayStart() {
         return iDisplayStart;
     }
 
     public void setiDisplayStart(int iDisplayStart) {
         this.iDisplayStart = iDisplayStart;
+    }
+
+    public int getRecordsTotal() {
+        return recordsTotal;
+    }
+
+    public void setRecordsTotal(int recordsTotal) {
+        this.recordsTotal = recordsTotal;
+    }
+
+    public int getRecordsFiltered() {
+        return recordsFiltered;
+    }
+
+    public void setRecordsFiltered(int recordsFiltered) {
+        this.recordsFiltered = recordsFiltered;
+    }
+
+    public int getDraw() {
+        return draw;
+    }
+
+    public void setDraw(int draw) {
+        this.draw = draw;
     }
 }

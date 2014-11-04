@@ -91,6 +91,7 @@
 		
 		this.showProcessList = function(data)
 		{
+		    widgets = [];
 			this.changeUrl('');
 			this.showView(this.allViews['process-queue-view'], true);
 			$("#process-queue-view").append(data);
@@ -98,6 +99,7 @@
 		
 		this.showProcessData = function(data)
 		{
+		    widgets = [];
 			this.showView(this.allViews['process-data-view'], true);
 			$('#actions-list').fadeIn(600);
 			$("#process-data-view").append(data);
