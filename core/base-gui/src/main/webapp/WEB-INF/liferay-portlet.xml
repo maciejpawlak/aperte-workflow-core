@@ -132,6 +132,7 @@
         <header-portlet-javascript>/sa/js/respond.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.mask.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.validate.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/iban.js</header-portlet-javascript>
     </portlet>
 
     <portlet id="aperte-case-management">
@@ -176,6 +177,7 @@
         <header-portlet-javascript>/sa/js/respond.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.mask.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.validate.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/iban.js</header-portlet-javascript>
     </portlet>
 
 	<portlet id="aperte-interactive-reports">
@@ -252,6 +254,7 @@
         <header-portlet-javascript>/sa/js/aperte/aperte.widget.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.mask.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.validate.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/iban.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/bootstrap-wysiwyg.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/external/jquery.hotkeys.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/external/google-code-prettify/prettify.js</header-portlet-javascript>
