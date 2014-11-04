@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -94,8 +95,11 @@ public class FilesRepositoryFacade implements IFilesRepositoryFacade {
             throw new DeleteFileException("File item with id=[" + filesRepositoryItemId + "] not found.");
         }
         getFilesRepositoryItemDAO().deleteById(filesAttributeProvider, filesRepositoryItemId);
+		if (getFilesRepositoryItemDAO().hasAnyFileWithName(filesRepositoryItem.getRelativePath())) {
+			return;
+		}
         try {
-            getFilesRepositoryStorageDAO().deleteFileFromStorage(new File(filesRepositoryItem.getRelativePath()));
+            getFilesRepositoryStorageDAO().deleteFileFromStorage(new File(filesRepositoryItem.getRelativePath())); // sprawdzic czy nie ma innych odwolan na to!!!
         } catch (IOException e) {
             throw new DeleteFileException("File from path=[" + filesRepositoryItem.getRelativePath() + "].", e);
         }
@@ -121,6 +125,21 @@ public class FilesRepositoryFacade implements IFilesRepositoryFacade {
     public Collection<? extends IFilesRepositoryItem> getFilesList(IAttributesProvider filesAttributeProvider) {
         return getFilesRepositoryItemDAO().getItemsFor(filesAttributeProvider);
     }
+
+	@Override
+	public Collection<? extends IFilesRepositoryItem> copy(List<IFilesRepositoryItem> files, IAttributesConsumer filesConsumer, FilesRepositoryAttributeFactory factory) {
+		if (files == null || files.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		List<? extends IFilesRepositoryItem> result = new ArrayList<IFilesRepositoryItem>();
+
+		for (IFilesRepositoryItem file : files) {
+			getFilesRepositoryItemDAO().addItem(filesConsumer, file.getName(), file.getDescription(), file.getRelativePath(),
+					file.getContentType(), file.getCreatorLogin(), file.getSendWithMail(), factory);
+		}
+		return result;
+	}
 
 	@Override
 	public Collection<? extends IFilesRepositoryItem> getFilesList(IAttributesProvider filesAttributeProvider, FileListFilter filter) {
