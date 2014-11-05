@@ -160,7 +160,7 @@ public class TaskViewBuilder extends AbstractViewBuilder<TaskViewBuilder> {
                 .append(task.getInternalTaskId())
                 .append("'); });")
                 .append("$('#").append(actionButtonId)
-                .append("').tooltip({title: '").append(i18Source.getMessage("button.claim.descrition")).append("'});");
+                .append("').tooltip({placement: 'bottom', title: '").append(i18Source.getMessage("button.claim.descrition")).append("'});");
     }
 
     public TaskViewBuilder setActions(List<ProcessStateAction> actions) {
