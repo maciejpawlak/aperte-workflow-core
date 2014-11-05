@@ -6,6 +6,7 @@
 		this.sortingOrder = sortingOrder;
 		this.dataTable;
 		this.requestParameters = [];
+		this.clearOnStart = false;
 
 		this.initialized = false;
 
@@ -18,6 +19,7 @@
 		{
 			this.requestParameters.push({ "name": name, "value": value });
 		}
+		
 
 		this.clearState = function()
 		{
@@ -38,6 +40,11 @@
 			{
 				this.createDataTable();
 				this.initialized = true;
+				if(this.clearOnStart) 
+				{
+					this.clearState();
+					this.dataTable.draw();
+				}
 			}
 			else
 			{

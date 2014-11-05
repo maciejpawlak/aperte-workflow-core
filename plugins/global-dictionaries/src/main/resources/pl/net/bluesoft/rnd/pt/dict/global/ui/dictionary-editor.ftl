@@ -258,6 +258,7 @@
         });
 		$('#dictName').on('change', function(){
 			currentDict = $('#dictName').val();
+			clearState();
 			refreshTable();
 		});
 		$("#backButton").on('click',function() {
@@ -303,7 +304,10 @@
 
     });
 
-
+    function clearState()
+    {
+        if(itemsTable) { itemsTable.clearState(); }
+    }
 
 	function addNewExtension(iRow) {
 		var newExtension = {"key":"", "value":"", "toDelete":false};
@@ -311,8 +315,8 @@
 
 		currentItem.values[iRow].extensions[extensions.length] = newExtension;
 
-		valuesTable.fnClearTable();
-		valuesTable.fnAddData(currentItem.values);
+		valuesTable.clear();
+		valuesTable.rows.add(currentItem.values);
 	}
 
 	function removeExtension(iRow, index) {
@@ -321,8 +325,8 @@
 	    else
 		    currentItem.values[iRow].extensions.splice(index, 1);
 
-		valuesTable.fnClearTable();
-		valuesTable.fnAddData(currentItem.values);
+		valuesTable.clear();
+		valuesTable.rows.add(currentItem.values);
 	}
 
 	function removeValue(value, iRow) {
@@ -331,8 +335,8 @@
 		else
 		    currentItem.values[iRow].toDelete = true;
 
-		valuesTable.fnClearTable();
-        valuesTable.fnAddData(currentItem.values);
+		valuesTable.clear();
+        valuesTable.rows.add(currentItem.values);
 	}
 
 	function addNew() {
@@ -362,10 +366,8 @@
 
 			//var row = {"value": "", "dateFrom": "", "dateTo":"", "extensions":[], "toDelete":false, "localizedValues":{"default":{"languageCode":"default","text":""}} };
 			var row = data.data;
-			console.log(row);
-			console.log(data.data);
 			currentItem.values.push( row );
-			valuesTable.fnAddData(row);
+			valuesTable.rows.add(row);
         });
 	}
 
@@ -461,13 +463,13 @@
             );
             itemsTable.addParameter("controller", "dictionaryeditorcontroller");
             itemsTable.addParameter("action", "getDictionaryItems");
+            itemsTable.clearOnStart = true;
             itemsTable.reloadTable(dispatcherPortlet);
     }
 
 	function initValuesTable()
 	{
 	        valuesTable = $('#valuesTable').DataTable({
-                serverSide: true,
                 ordering: true,
                 lengthChange: true,
                 stateSave: true,
@@ -481,9 +483,9 @@
                       },
                       { "name":"extensions", "orderable": false ,"data": function(o) { return ""; }, "createdCell": function(nTd, sData, oData, iRow, iCol) { return generateValueExtensionsColumn(nTd, sData, oData, iRow, iCol) }
                       },
-                      { "name":"actions","orderable": false , "visible": false, "data": function(o) { return ""; }, "createdCell": function(nTd, sData, oData, iRow, iCol) { return generateValueActionsColumn(nTd, sData, oData, iRow, iCol) }
+                      { "name":"actions","orderable": false , "data": function(o) { return ""; }, "createdCell": function(nTd, sData, oData, iRow, iCol) { return generateValueActionsColumn(nTd, sData, oData, iRow, iCol) }
                       },
-                      { "name":"toDelete", "orderable": false , "data": "toDelete"
+                      { "name":"toDelete", "orderable": false ,"visible": false, "data": function(o) { return ""; }
                       }
                  ],
                 language: dataTableLanguage,
@@ -493,6 +495,7 @@
                       return nRow;
                   }
             });
+            valuesTable.state.clear();
 	}
 
 
@@ -605,7 +608,8 @@
         function generateValueExtensionsColumn(nTd, sData, oData, iRow, iCol) {
             $(nTd).empty();
             var row = $('<div class="col-md-12" ></div>');
-            $.each(oData.extensions, function(index) {
+            var extensions = oData[iRow].extensions;
+            $.each(extensions, function(index) {
                 if (!this.toDelete) {
                     var innerRow = $('<div class="row"></div>');
                     var lineKey = $('<div class="form-group col-md-5"><label for="description" class="control-label"><@spring.message "dictionary.editor.valueExtensions.table.key"/></label>' +
