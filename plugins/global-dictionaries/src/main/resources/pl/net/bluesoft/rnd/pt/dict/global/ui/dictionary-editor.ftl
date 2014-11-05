@@ -3,10 +3,20 @@
 
 <script type="text/javascript">
 	var dispatcherPortlet = '<@portlet.resourceURL id="dispatcher"/>';
-
+    var portletNamespace = '&<portlet:namespace/>';
+     var dataTableLanguage = {
+                          "emptyTable": "<@spring.message 'datatable.empty' />",
+                          "infoEmpty": "<@spring.message 'datatable.empty' />",
+                          "processing": "<@spring.message 'datatable.processing' />",
+                          "lengthMenu": "<@spring.message 'datatable.records' />",
+                          "infoFiltered": "",
+                          "paginate": {
+                              "first": "<@spring.message 'datatable.paginate.firstpage' />",
+                              "next": "<@spring.message 'datatable.paginate.next' />",
+                              "previous": "<@spring.message 'datatable.paginate.previous' />"
+                          }
+      };
 </script>
-
-<#include "apertedatatable.ftl"/>
 
 <style type="text/css">
     #fixedElement.stick {
@@ -187,101 +197,7 @@
     $(document).ready(function () {
         $('[name="tooltip"]').tooltip();
 
-        valuesTable = $('#valuesTable').dataTable({
-            "bPaginate": true,
-            "bLengthChange": false,
-            "bFilter": false,
-            "bSort": true,
-            "bInfo": false,
-            "bAutoWidth": false,
-            "iDisplayLength": 10,
-            "aLengthMenu": [[10, 25, 50, 100],[10, 25, 50, 100]],
-            "oLanguage": {
-                "sEmptyTable": "<@spring.message 'datatable.empty' />",
-                "sInfoEmpty": "<@spring.message 'datatable.empty' />",
-                "sProcessing": "<@spring.message 'datatable.processing' />",
-                "sLengthMenu": "<@spring.message 'datatable.records' />",
-                "sInfoFiltered": "",
-                "oPaginate": {
-                "sFirst": "<@spring.message 'datatable.paginate.firstpage' />",
-                "sNext": "<@spring.message 'datatable.paginate.next' />",
-                "sPrevious": "<@spring.message 'datatable.paginate.previous' />"
-                }
-            },
-            "aoColumns":[
-                 { "sName":"value", "bSortable": false ,"mData": function(o) { return ""; }, "fnCreatedCell": function(nTd, sData, oData, iRow, iCol) { return generateValueColumn(nTd, sData, oData, iRow, iCol) }
-                 },
-                 { "sName":"dateFrom", "bSortable": false ,"mData": function(o) { return ""; }, "fnCreatedCell": function(nTd, sData, oData, iRow, iCol) { return generateValueDateFromColumn(nTd, sData, oData, iRow, iCol) }
-                 },
-                 { "sName":"dateTo", "bSortable": false ,"mData": function(o) { return ""; }, "fnCreatedCell": function(nTd, sData, oData, iRow, iCol) { return generateValueDateToColumn(nTd, sData, oData, iRow, iCol) }
-                 },
-                 { "sName":"extensions", "bSortable": false ,"mData": function(o) { return ""; }, "fnCreatedCell": function(nTd, sData, oData, iRow, iCol) { return generateValueExtensionsColumn(nTd, sData, oData, iRow, iCol) }
-                 },
-                 { "sName":"actions", "bSortable": false , "mData": function(o) { return ""; }, "fnCreatedCell": function(nTd, sData, oData, iRow, iCol) { return generateValueActionsColumn(nTd, sData, oData, iRow, iCol) }
-                 },
-                 { "sName":"toDelete", "bSortable": false , "mData": "toDelete"
-                 }
-            ],
-            "fnRowCallback" : function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                if (aData.toDelete == true)
-                    $(nRow).attr("hidden", true);
-                return nRow;
-            }
-        });
-        valuesTable.fnSetColumnVis(5, false);
 
-        function generateValueColumn(nTd, sData, oData, iRow, iCol){
-            var valueControl = $(
-                '<input style="width:200px" type="text" class="form-control" id="value-' + iRow + '" placeholder="<@spring.message 'dictionary.editor.itemValues.table.value'/>">'
-            );
-            //valueControl.val(oData.value);
-            var selectedLanguage = currentItem.values[iRow].selectedLanguage;
-            var value = currentItem.values[iRow].localizedValues[selectedLanguage];
-            if (selectedLanguage && value)
-                valueControl.val(value.text);
-            else if (selectedLanguage && !value)
-                valueControl.val('');
-            else
-                valueControl.val(currentItem.values[iRow].value);
-            $(valueControl).on('change',function(){
-                currentItem.values[iRow].value = $( this ).val() ;
-                var lang = $('input:radio[name=languageSelector-'+iRow+']:checked').val();
-                if (!currentItem.values[iRow].localizedValues[lang])
-                    currentItem.values[iRow].localizedValues[lang] = {"languageCode":lang, "text":""};
-                currentItem.values[iRow].localizedValues[lang].text = $(this).val();
-            });
-            var selector = languageSelector(iRow, currentItem.values[iRow]);
-            $(selector).on('change',function(){
-                var iId = 'languageSelector-' + iRow;
-                var lang = $('input:radio[name='+iId+']:checked').val();
-                currentItem.values[iRow].selectedLanguage = lang;
-                var localizedValue = currentItem.values[iRow].localizedValues[lang];
-                if (!localizedValue) {
-                    $('#value-' + iRow).val('');
-                } else {
-                    $('#value-' + iRow).val(localizedValue.text);
-                }
-            });
-            $(nTd).prepend(selector);
-            $(nTd).prepend(valueControl);
-        }
-
-        function languageSelector(iRow, oValue) {
-            var iId = 'languageSelector-' + iRow;
-            var languages = ${languages};
-            var html = '<div id="' + iId + '">';
-            $.each(Object.keys(languages), function(index) {
-                html += '<input class="input-hidden" type="radio" id="' + iId + '-' + index+ '" name="' + iId + '" value="' + this +'" ';
-                if ((!oValue.selectedLanguage && index==0) || oValue.selectedLanguage == this)
-                    html += 'checked';
-                html += '/>';
-                html += '<label for="' + iId+'-'+index + '"><img src="/html/themes/control_panel/images/language/' + languages[this] + '.png"/>';
-                html += '</label>';
-            });
-            html += '</div>';
-            var selector = $(html);
-            return selector;
-        }
 
         // add language selector to the item description input
         var itemDescLangSelector = languageSelector('itemDesc', currentItem);
@@ -305,142 +221,8 @@
             currentItem.localizedDescriptions[lang].text = $(this).val();
         });
 
-        function generateValueDateFromColumn(nTd, sData, oData, iRow, iCol){
-            var dataControl = $('<div class="input-group date" style="width:150px"><input type="text" class="form-control datepicker" id="valueDateFrom" placeholder="<@spring.message 'dictionary.editor.itemValues.table.dateFrom'/>"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span></div>');
-            $(dataControl).datepicker({
-                "format": "yyyy-mm-dd",
-                language: "${.lang}",
-                autoclose: true
-            });
-            $(dataControl).datepicker('update', currentItem.values[iRow].dateFrom);
-            $(dataControl).on('changeDate',function(e){
-                var dateString = $.format.date(e.dates[0], "yyyy-MM-dd");
-                currentItem.values[iRow].dateFrom = dateString;
-            });
-            $(nTd).prepend(dataControl);
-        }
 
-        function generateValueDateToColumn(nTd, sData, oData, iRow, iCol){
-            var dataControl = $('<div class="input-group date" style="width:150px"><input type="text" class="form-control datepicker" id="valueDateTo" placeholder="<@spring.message 'dictionary.editor.itemValues.table.dateTo'/>"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span></div>');
-            $(dataControl).datepicker({
-                "format": "yyyy-mm-dd",
-                language: "${.lang}",
-                autoclose: true
-            });
-            $(dataControl).datepicker('update', currentItem.values[iRow].dateTo);
-            $(dataControl).on('changeDate',function(e){
-                var dateString = $.format.date(e.dates[0], "yyyy-MM-dd");
-                currentItem.values[iRow].dateTo = dateString;
-            });
-            $(nTd).prepend(dataControl);
-        }
 
-        function generateValueActionsColumn(nTd, sData, oData, iRow, iCol) {
-            var removeButton = $('<button type="button" class="btn btn-danger btn-xs"><@spring.message 'dictionary.editor.itemValues.button.delete'/></button>');
-            removeButton.button();
-            removeButton.on('click',function(){
-                removeValue(oData, iRow);
-            });
-            $(nTd).prepend("&nbsp;");
-            $(nTd).prepend(removeButton);
-        }
-
-        function generateValueExtensionsColumn(nTd, sData, oData, iRow, iCol) {
-            $(nTd).empty();
-            var row = $('<div class="col-md-12" ></div>');
-            $.each(oData.extensions, function(index) {
-                if (!this.toDelete) {
-                    var innerRow = $('<div class="row"></div>');
-                    var lineKey = $('<div class="form-group col-md-5"><label for="description" class="control-label"><@spring.message "dictionary.editor.valueExtensions.table.key"/></label>' +
-                                    '<div><input type="text" maxlength="255" class="form-control" value="'+this.key+'" placeholder="<@spring.message "dictionary.editor.valueExtensions.table.key"/>"'+
-                                    (this.default_ ? ' readonly="true"' : '') + '></input></div></div>');
-
-                    $(lineKey).find('input').on('change',function(){
-                        currentItem.values[iRow].extensions[index].key = $( this ).val() ;
-                    });
-
-                    var lineValue = $('<div class="form-group col-md-5"><label for="description" class="control-label"><@spring.message "dictionary.editor.valueExtensions.table.value"/></label>' +
-                                    '<div><input type="text" maxlength="255" class="form-control" value="'+this.value+'" placeholder="<@spring.message "dictionary.editor.valueExtensions.table.value"/>"></input></div></div>');
-
-                    $(lineValue).find('input').on('change',function(){
-                        currentItem.values[iRow].extensions[index].value = $( this ).val() ;
-                    });
-
-                    var lineButtonDiv = $('<div class="form-group col-md-2"></div>');
-
-                    var removeButton = $('<span name="tooltip" title="<@spring.message 'dictionary.editor.valueExtensions.button.delete'/>" class="glyphicon glyphicon-trash" style="font-size: 16px!important;cursor:pointer;margin-top:25px"></span>');
-
-                    removeButton.on('click',function(){
-                        removeExtension(iRow, index);
-                    });
-
-					if (!this.default_) {
-                    	$(lineButtonDiv).append(removeButton);
-                    }
-
-                    $(innerRow).append(lineKey);
-                    $(innerRow).append(lineValue);
-                    $(innerRow).append(lineButtonDiv);
-
-                    $(row).append(innerRow);
-
-                    if (this.description) {
-                    	var descrRow = '<div class="row"><div class="form-group col-md-10">' + this.description + '<br/><br/></div></div>';
-                    	$(row).append(descrRow);
-                    }
-                }
-            });
-            $(nTd).append(row);
-
-            var addExtensionButton = $('<button type="button" class="btn btn-info btn-xs" style="margin: 10px;"><@spring.message "dictionary.editor.itemValues.button.addExtension"/></button>');
-                addExtensionButton.button();
-                addExtensionButton.on('click',function(){
-                    addNewExtension(iRow);
-                });
-            $(nTd).append("&nbsp;");
-            $(nTd).append(addExtensionButton);
-        }
-
-        itemsTable = new AperteDataTable("itemsTable",
-            [
-                 { "sName":"key", "bSortable": true ,"mData": "key" },
-                 { "sName":"description", "bSortable": false ,"mData": function(o) { return generateDescriptionColumn(o); }
-                 },
-                 { "sName":"actions", "bSortable": false , "mData": function(o) { return ""; }, "fnCreatedCell": function(nTd, sData, oData, iRow, iCol) { return generateActionsColumn(nTd, sData, oData, iRow, iCol) }
-                 }
-            ],
-            [[ 0, "asc" ]]
-        );
-
-        function generateDescriptionColumn(o) {
-            if (o.description) {
-                var string = o.description.replace(/([^\s-]{100})(?=[^\s-])/g, "$1&#8203;");
-                return string;
-            }
-            return '';
-        }
-
-        function generateActionsColumn(nTd, sData, oData, iRow, iCol) {
-            var editButton = $('<button type="button" class="btn btn-primary btn-xs"><@spring.message "dictionary.editor.dictionaryItems.button.edit"/></button>');
-            editButton.button();
-            editButton.on('click',function(){
-                edit(oData);
-            });
-            $(nTd).empty();
-            $(nTd).prepend(editButton);
-
-            var removeButton = $('<button type="button" class="btn btn-danger btn-xs"><@spring.message "dictionary.editor.dictionaryItems.button.delete"/></button>');
-            removeButton.button();
-            removeButton.on('click',function(){
-                remove(oData);
-            });
-            $(nTd).prepend("&nbsp;");
-            $(nTd).prepend(removeButton);
-        }
-
-        itemsTable.addParameter("controller", "dictionaryeditorcontroller");
-        itemsTable.addParameter("action", "getDictionaryItems");
-        itemsTable.reloadTable(dispatcherPortlet);
 
         $('#dictName').select2({
             ajax: {
@@ -481,7 +263,7 @@
 		$("#backButton").on('click',function() {
 			$("#itemsList").fadeIn(300);
 			$("#itemsEdit").hide();
-            valuesTable.fnClearTable();
+            valuesTable.clear();
 			refreshTable();
 		});
 
@@ -520,6 +302,8 @@
 		});
 
     });
+
+
 
 	function addNewExtension(iRow) {
 		var newExtension = {"key":"", "value":"", "toDelete":false};
@@ -596,6 +380,7 @@
         $("#itemsEdit").fadeIn(300);
     }
 
+
 	function remove(item) {
 	    if (confirm('<@spring.message "dictionary.editor.dictionaryItems.confirm.delete"/>')) {
             var widgetJson = $.post(dispatcherPortlet, {
@@ -623,6 +408,11 @@
 		var url = dispatcherPortlet;
         url += "&dictId=" + encodeURI(currentDict.replace(/#/g, '%23'));
         // itemsTable.addParameter("dictId", currentDict);
+
+        if(!itemsTable)
+        {
+            initItemsTable();
+        }
 		itemsTable.reloadTable(url);
 	}
 
@@ -634,7 +424,8 @@
                 "itemId": currentItem.id,
                 "dictId": currentDict
         })
-        .done(function(data) {
+        .done(function(data)
+        {
             <!-- Errors handling -->
             clearAlerts();
             var errors = [];
@@ -644,11 +435,64 @@
             });
             if(errors.length > 0) { return; }
 
+            if(!valuesTable)
+            {
+                initValuesTable();
+            }
+
             var values = data.data;
             currentItem.values = values;
-            valuesTable.fnClearTable();
-            valuesTable.fnAddData(values);
+            valuesTable.clear();
+            valuesTable.row.add(values);
         });
+	}
+
+    function initItemsTable()
+    {
+            itemsTable = new AperteDataTable("itemsTable",
+                [
+                     { "name":"key", "orderable": true ,"data": "key" },
+                     { "name":"description", "orderable": false ,"data": function(o) { return generateDescriptionColumn(o); }
+                     },
+                     { "name":"actions", "orderable": false , "data": function(o) { return ""; }, "createdCell": function(nTd, sData, oData, iRow, iCol) { return generateActionsColumn(nTd, sData, oData, iRow, iCol) }
+                     }
+                ],
+                [[ 0, "asc" ]]
+            );
+            itemsTable.addParameter("controller", "dictionaryeditorcontroller");
+            itemsTable.addParameter("action", "getDictionaryItems");
+            itemsTable.reloadTable(dispatcherPortlet);
+    }
+
+	function initValuesTable()
+	{
+	        valuesTable = $('#valuesTable').DataTable({
+                serverSide: true,
+                ordering: true,
+                lengthChange: true,
+                stateSave: true,
+                processing: true,
+                columns: [
+                      { "name":"value", "orderable": false ,"data": function(o) { return ""; }, "createdCell": function(nTd, sData, oData, iRow, iCol) { return generateValueColumn(nTd, sData, oData, iRow, iCol) }
+                      },
+                      { "name":"dateFrom", "orderable": false ,"data": function(o) { return ""; }, "createdCell": function(nTd, sData, oData, iRow, iCol) { return generateValueDateFromColumn(nTd, sData, oData, iRow, iCol) }
+                      },
+                      { "name":"dateTo", "orderable": false ,"data": function(o) { return ""; }, "createdCell": function(nTd, sData, oData, iRow, iCol) { return generateValueDateToColumn(nTd, sData, oData, iRow, iCol) }
+                      },
+                      { "name":"extensions", "orderable": false ,"data": function(o) { return ""; }, "createdCell": function(nTd, sData, oData, iRow, iCol) { return generateValueExtensionsColumn(nTd, sData, oData, iRow, iCol) }
+                      },
+                      { "name":"actions","orderable": false , "visible": false, "data": function(o) { return ""; }, "createdCell": function(nTd, sData, oData, iRow, iCol) { return generateValueActionsColumn(nTd, sData, oData, iRow, iCol) }
+                      },
+                      { "name":"toDelete", "orderable": false , "data": "toDelete"
+                      }
+                 ],
+                language: dataTableLanguage,
+                  rowCallback : function(nRow, aData) {
+                      if (aData.toDelete == true)
+                          $(nRow).attr("hidden", true);
+                      return nRow;
+                  }
+            });
 	}
 
 
@@ -692,6 +536,181 @@
 	}
 
 
+    function generateDescriptionColumn(o) {
+        if (o.description) {
+            var string = o.description.replace(/([^\s-]{100})(?=[^\s-])/g, "$1&#8203;");
+            return string;
+        }
+        return '';
+    }
+
+    function generateActionsColumn(nTd, sData, oData, iRow, iCol) {
+        var editButton = $('<button type="button" class="btn btn-primary btn-xs"><@spring.message "dictionary.editor.dictionaryItems.button.edit"/></button>');
+        editButton.button();
+        editButton.on('click',function(){
+            edit(oData);
+        });
+        $(nTd).empty();
+        $(nTd).prepend(editButton);
+
+        var removeButton = $('<button type="button" class="btn btn-danger btn-xs"><@spring.message "dictionary.editor.dictionaryItems.button.delete"/></button>');
+        removeButton.button();
+        removeButton.on('click',function(){
+            remove(oData);
+        });
+        $(nTd).prepend("&nbsp;");
+        $(nTd).prepend(removeButton);
+    }
+
+   function generateValueDateFromColumn(nTd, sData, oData, iRow, iCol){
+            var dataControl = $('<div class="input-group date" style="width:150px"><input type="text" class="form-control datepicker" id="valueDateFrom" placeholder="<@spring.message 'dictionary.editor.itemValues.table.dateFrom'/>"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span></div>');
+            $(dataControl).datepicker({
+                "format": "yyyy-mm-dd",
+                language: "${.lang}",
+                autoclose: true
+            });
+            $(dataControl).datepicker('update', currentItem.values[iRow].dateFrom);
+            $(dataControl).on('changeDate',function(e){
+                var dateString = $.format.date(e.dates[0], "yyyy-MM-dd");
+                currentItem.values[iRow].dateFrom = dateString;
+            });
+            $(nTd).prepend(dataControl);
+        }
+
+        function generateValueDateToColumn(nTd, sData, oData, iRow, iCol){
+            var dataControl = $('<div class="input-group date" style="width:150px"><input type="text" class="form-control datepicker" id="valueDateTo" placeholder="<@spring.message 'dictionary.editor.itemValues.table.dateTo'/>"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span></div>');
+            $(dataControl).datepicker({
+                "format": "yyyy-mm-dd",
+                language: "${.lang}",
+                autoclose: true
+            });
+            $(dataControl).datepicker('update', currentItem.values[iRow].dateTo);
+            $(dataControl).on('changeDate',function(e){
+                var dateString = $.format.date(e.dates[0], "yyyy-MM-dd");
+                currentItem.values[iRow].dateTo = dateString;
+            });
+            $(nTd).prepend(dataControl);
+        }
+
+        function generateValueActionsColumn(nTd, sData, oData, iRow, iCol) {
+            var removeButton = $('<button type="button" class="btn btn-danger btn-xs"><@spring.message 'dictionary.editor.itemValues.button.delete'/></button>');
+            removeButton.button();
+            removeButton.on('click',function(){
+                removeValue(oData, iRow);
+            });
+            $(nTd).prepend("&nbsp;");
+            $(nTd).prepend(removeButton);
+        }
+
+        function generateValueExtensionsColumn(nTd, sData, oData, iRow, iCol) {
+            $(nTd).empty();
+            var row = $('<div class="col-md-12" ></div>');
+            $.each(oData.extensions, function(index) {
+                if (!this.toDelete) {
+                    var innerRow = $('<div class="row"></div>');
+                    var lineKey = $('<div class="form-group col-md-5"><label for="description" class="control-label"><@spring.message "dictionary.editor.valueExtensions.table.key"/></label>' +
+                                    '<div><input type="text" maxlength="255" class="form-control" value="'+this.key+'" placeholder="<@spring.message "dictionary.editor.valueExtensions.table.key"/>"'+
+                                    (this.default_ ? ' readonly="true"' : '') + '></input></div></div>');
+
+                    $(lineKey).find('input').on('change',function(){
+                        currentItem.values[iRow].extensions[index].key = $( this ).val() ;
+                    });
+
+                    var lineValue = $('<div class="form-group col-md-5"><label for="description" class="control-label"><@spring.message "dictionary.editor.valueExtensions.table.value"/></label>' +
+                                    '<div><input type="text" maxlength="255" class="form-control" value="'+this.value+'" placeholder="<@spring.message "dictionary.editor.valueExtensions.table.value"/>"></input></div></div>');
+
+                    $(lineValue).find('input').on('change',function(){
+                        currentItem.values[iRow].extensions[index].value = $( this ).val() ;
+                    });
+
+                    var lineButtonDiv = $('<div class="form-group col-md-2"></div>');
+
+                    var removeButton = $('<span name="tooltip" title="<@spring.message 'dictionary.editor.valueExtensions.button.delete'/>" class="glyphicon glyphicon-trash" style="font-size: 16px!important;cursor:pointer;margin-top:25px"></span>');
+
+                    removeButton.on('click',function(){
+                        removeExtension(iRow, index);
+                    });
+
+                    if (!this.default_) {
+                        $(lineButtonDiv).append(removeButton);
+                    }
+
+                    $(innerRow).append(lineKey);
+                    $(innerRow).append(lineValue);
+                    $(innerRow).append(lineButtonDiv);
+
+                    $(row).append(innerRow);
+
+                    if (this.description) {
+                        var descrRow = '<div class="row"><div class="form-group col-md-10">' + this.description + '<br/><br/></div></div>';
+                        $(row).append(descrRow);
+                    }
+                }
+            });
+            $(nTd).append(row);
+
+            var addExtensionButton = $('<button type="button" class="btn btn-info btn-xs" style="margin: 10px;"><@spring.message "dictionary.editor.itemValues.button.addExtension"/></button>');
+                addExtensionButton.button();
+                addExtensionButton.on('click',function(){
+                    addNewExtension(iRow);
+                });
+            $(nTd).append("&nbsp;");
+            $(nTd).append(addExtensionButton);
+        }
+
+
+        function generateValueColumn(nTd, sData, oData, iRow, iCol){
+            var valueControl = $(
+                '<input style="width:200px" type="text" class="form-control" id="value-' + iRow + '" placeholder="<@spring.message 'dictionary.editor.itemValues.table.value'/>">'
+            );
+            //valueControl.val(oData.value);
+            var selectedLanguage = currentItem.values[iRow].selectedLanguage;
+            var value = currentItem.values[iRow].localizedValues[selectedLanguage];
+            if (selectedLanguage && value)
+                valueControl.val(value.text);
+            else if (selectedLanguage && !value)
+                valueControl.val('');
+            else
+                valueControl.val(currentItem.values[iRow].value);
+            $(valueControl).on('change',function(){
+                currentItem.values[iRow].value = $( this ).val() ;
+                var lang = $('input:radio[name=languageSelector-'+iRow+']:checked').val();
+                if (!currentItem.values[iRow].localizedValues[lang])
+                    currentItem.values[iRow].localizedValues[lang] = {"languageCode":lang, "text":""};
+                currentItem.values[iRow].localizedValues[lang].text = $(this).val();
+            });
+            var selector = languageSelector(iRow, currentItem.values[iRow]);
+            $(selector).on('change',function(){
+                var iId = 'languageSelector-' + iRow;
+                var lang = $('input:radio[name='+iId+']:checked').val();
+                currentItem.values[iRow].selectedLanguage = lang;
+                var localizedValue = currentItem.values[iRow].localizedValues[lang];
+                if (!localizedValue) {
+                    $('#value-' + iRow).val('');
+                } else {
+                    $('#value-' + iRow).val(localizedValue.text);
+                }
+            });
+            $(nTd).prepend(selector);
+            $(nTd).prepend(valueControl);
+        }
+
+        function languageSelector(iRow, oValue) {
+            var iId = 'languageSelector-' + iRow;
+            var languages = ${languages};
+            var html = '<div id="' + iId + '">';
+            $.each(Object.keys(languages), function(index) {
+                html += '<input class="input-hidden" type="radio" id="' + iId + '-' + index+ '" name="' + iId + '" value="' + this +'" ';
+                if ((!oValue.selectedLanguage && index==0) || oValue.selectedLanguage == this)
+                    html += 'checked';
+                html += '/>';
+                html += '<label for="' + iId+'-'+index + '"><img src="/html/themes/control_panel/images/language/' + languages[this] + '.png"/>';
+                html += '</label>';
+            });
+            html += '</div>';
+            var selector = $(html);
+            return selector;
+        }
 //]]>
 
 </script>

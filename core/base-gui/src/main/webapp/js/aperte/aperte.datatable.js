@@ -65,7 +65,7 @@
 		{
 		    var sDom = (tableElementsPlacement !== undefined) ? tableElementsPlacement : 'R<"top"t><"bottom"plr>';
 
-
+			var aperteDataTable = this;
 			this.dataTable = $('#'+this.tableId).DataTable({
                             serverSide: true,
                             ordering: true,
@@ -77,10 +77,20 @@
             				ajax: {
                                     dataType: 'json',
                                     type: "POST",
-                                    url: this.requestUrl,
-									"dataSrc": "listData"
+                                    url: aperteDataTable.requestUrl,
+									"data": function ( d ) 
+									{
+										
+										$.each(aperteDataTable.requestParameters, function (index, parameter)
+										{
+											var key = parameter["name"];
+											var value = parameter["value"];
+											d[key] = value;
+										});
+									 },
+									dataSrc: "listData"
                                 },
-            				columns: this.columnDefs,
+            				columns: aperteDataTable.columnDefs,
             				language: dataTableLanguage
                         });
 						

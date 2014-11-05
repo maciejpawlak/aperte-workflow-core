@@ -75,11 +75,9 @@ public class JQueryDataTableUtil
 
         jQueryDataTable.setDraw(draw);
 
-        String displayStartString = getStringValue(paramters, "start");
-        String displayLengthString = getStringValue(paramters, "length");
+        Integer displayStart = getIntegerValue(paramters, "start");
+        Integer displayLength = getIntegerValue(paramters, "length");
 
-        Integer displayStart = Integer.parseInt(displayStartString);
-        Integer displayLength = Integer.parseInt(displayLengthString);
         jQueryDataTable.setPageOffset(displayStart);
         jQueryDataTable.setPageLength(displayLength);
 
