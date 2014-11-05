@@ -317,6 +317,7 @@
 
 		valuesTable.clear();
 		valuesTable.rows.add(currentItem.values);
+		valuesTable.draw();
 	}
 
 	function removeExtension(iRow, index) {
@@ -327,6 +328,7 @@
 
 		valuesTable.clear();
 		valuesTable.rows.add(currentItem.values);
+		valuesTable.draw();
 	}
 
 	function removeValue(value, iRow) {
@@ -337,6 +339,7 @@
 
 		valuesTable.clear();
         valuesTable.rows.add(currentItem.values);
+        valuesTable.draw();
 	}
 
 	function addNew() {
@@ -367,7 +370,8 @@
 			//var row = {"value": "", "dateFrom": "", "dateTo":"", "extensions":[], "toDelete":false, "localizedValues":{"default":{"languageCode":"default","text":""}} };
 			var row = data.data;
 			currentItem.values.push( row );
-			valuesTable.rows.add(row);
+			valuesTable.row.add(row);
+			valuesTable.draw();
         });
 	}
 
@@ -445,7 +449,8 @@
             var values = data.data;
             currentItem.values = values;
             valuesTable.clear();
-            valuesTable.row.add(values);
+            valuesTable.rows.add(values);
+            valuesTable.draw()
         });
 	}
 
@@ -474,6 +479,7 @@
                 lengthChange: true,
                 stateSave: true,
                 processing: true,
+                searching: false,
                 columns: [
                       { "name":"value", "orderable": false ,"data": function(o) { return ""; }, "createdCell": function(nTd, sData, oData, iRow, iCol) { return generateValueColumn(nTd, sData, oData, iRow, iCol) }
                       },
@@ -608,7 +614,16 @@
         function generateValueExtensionsColumn(nTd, sData, oData, iRow, iCol) {
             $(nTd).empty();
             var row = $('<div class="col-md-12" ></div>');
-            var extensions = oData[iRow].extensions;
+            var extensions = null;
+            if($.isArray(oData))
+            {
+                extensions = oData[iRow].extensions;
+            }
+            else
+            {
+                extensions = oData.extensions;
+            }
+
             $.each(extensions, function(index) {
                 if (!this.toDelete) {
                     var innerRow = $('<div class="row"></div>');
