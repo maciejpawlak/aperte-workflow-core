@@ -1532,5 +1532,5 @@ input[placeholder][readonly="readonly"]::-moz-placeholder, input[placeholder]:di
    opacity:    0;
 }
 input[placeholder][readonly="readonly"]:-ms-input-placeholder, input[placeholder]:disabled:-ms-input-placeholder { /* Internet Explorer 10+ */
-   opacity:    0;
+   color:    rgb(224, 224, 224);
 }
