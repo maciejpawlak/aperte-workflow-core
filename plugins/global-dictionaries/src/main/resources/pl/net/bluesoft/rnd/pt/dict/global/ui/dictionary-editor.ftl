@@ -576,6 +576,7 @@
             $(dataControl).datepicker({
                 "format": "yyyy-mm-dd",
                 language: "${.lang}",
+                clearBtn: true,
                 autoclose: true
             });
             $(dataControl).datepicker('update', currentItem.values[iRow].dateFrom);
@@ -591,6 +592,7 @@
             $(dataControl).datepicker({
                 "format": "yyyy-mm-dd",
                 language: "${.lang}",
+                clearBtn: true,
                 autoclose: true
             });
             $(dataControl).datepicker('update', currentItem.values[iRow].dateTo);

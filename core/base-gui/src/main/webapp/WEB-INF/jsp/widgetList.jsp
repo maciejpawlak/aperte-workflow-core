@@ -13,10 +13,6 @@
 </div>
 <div id="process-queue-view" class="process-data-view" hidden="true"></div>
 
-<div id="search-process-table">
-    <input type="text" id="processInputTextField" class="input-medium" placeholder="<spring:message code='processes.search.label' />">
-</div>
-
 <script type="text/javascript">
 
     function sticky_relocate() {

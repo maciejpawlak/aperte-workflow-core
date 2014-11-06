@@ -18,6 +18,9 @@
 	{
 		this.views = {};
 		
+		this.nonSelectedColor = '#5cb85c';
+		this.selectedColor = '#E0BC4A'
+		
 		this.defaultQueueId = '';
 		this.defaultOwnerLogin = '';
 		
@@ -31,7 +34,7 @@
 			this.currentQueue = queueId;
 			this.currentOwnerLogin = ownerLogin;
 			
-			
+			this.makeQueueSelected();
 			
 			windowManager.showLoadingScreen();
 			//windowManager.changeUrl('?queueId='+queueId);
@@ -51,6 +54,18 @@
 			.fail(function(data, textStatus, errorThrown) {
 				
 			});
+		}
+		
+		this.makeQueueSelected = function()
+		{
+			$.each($('.badge-queue-link'), function(index, item) { 
+				$(item).css({"background-color" : queueViewManager.nonSelectedColor});
+			});
+			
+			var selectedLinkId = "queue-counter-"+this.currentQueue+'-'+this.currentOwnerLogin;
+			
+			
+			$('#'+selectedLinkId).css({"background-color" : queueViewManager.selectedColor});
 		}
 		
 		this.reloadCurrentQueue = function()

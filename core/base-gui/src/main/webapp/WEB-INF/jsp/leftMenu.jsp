@@ -49,7 +49,7 @@
  <script type="text/javascript">
 
 	var userLogin = '${aperteUser.login}';
-	var queueInterval = '${queueInterval}';
+	var queueInterval = '${queueInterval}'; 
 	var reloadQueuesLoopTimer;
 
 	$(document).ready(function()
@@ -181,6 +181,8 @@
 						}
 					});
 					
+					queueViewManager.makeQueueSelected();
+					
 					
 				
 
@@ -215,8 +217,10 @@
 			});
 		});
 		
-		$( "<span>", { "class": "badge badge-queue-link", text: processRow.queueSize} )
+		$( "<span>", { "class": "badge badge-queue-link", id: "queue-counter-"+processRow.queueId+'-'+userLogin, text: processRow.queueSize} )
 		.appendTo( '#'+layoutId  );
+		
+		
 		$( "<div>", { id : 'link-'+processRow.queueId+'-'+accordionID, "name": "tooltip", "title": tip, "class": "queue-list-link", text: processRow.queueName } )
 		.appendTo( '#'+layoutId );
 		$('[name="tooltip"]').tooltip();

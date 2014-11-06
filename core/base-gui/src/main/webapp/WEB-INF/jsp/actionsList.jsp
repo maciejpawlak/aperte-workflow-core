@@ -528,7 +528,7 @@
 	{
 		reloadQueues();
 		disableButtons(); 
-		windowManager.previousView();
+		queueViewManager.reloadCurrentQueue();
 		
 		$(window).scrollTop(0);
 	}
