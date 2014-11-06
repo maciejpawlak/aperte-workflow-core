@@ -1521,3 +1521,16 @@ border-radius: 4px;
 }
 
 input[type="text"][type="text"][type="text"] {color:black }
+
+input[placeholder][readonly="readonly"]::-webkit-input-placeholder, input[placeholder]:disabled::-webkit-input-placeholder { /* WebKit browsers */
+   opacity:    0;
+}
+input[placeholder][readonly="readonly"]:-moz-placeholder, input[placeholder]:disabled:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   opacity:    0;
+}
+input[placeholder][readonly="readonly"]::-moz-placeholder, input[placeholder]:disabled::-moz-placeholder { /* Mozilla Firefox 19+ */
+   opacity:    0;
+}
+input[placeholder][readonly="readonly"]:-ms-input-placeholder, input[placeholder]:disabled:-ms-input-placeholder { /* Internet Explorer 10+ */
+   opacity:    0;
+}
