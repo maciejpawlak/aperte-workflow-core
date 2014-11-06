@@ -25,7 +25,7 @@
 	div.apw .navbar.left-menu, 
 	.navbar.left-menu
 	{
-		margin-right: 20px;
+		margin-right: 10px;
 		float:none;
 		width:100%;
 		font-size: 20px;
@@ -441,7 +441,7 @@
 	{
 		width:200px;
 		float:left;
-		margin-right: 20px;
+		margin-right: 10px;
 		border: none;
 		background: none;
 		
@@ -979,11 +979,12 @@ div.apw .navbar-inner.left-menu,
 {
 	float: none;
 	width: auto;
-	padding: 10px;
+	padding: 0px;
 	overflow: hidden;
 	color: black;
 	-webkit-border-radius: 4px;
 	border-radius: 4px;
+
 }
 
 
@@ -1015,9 +1016,10 @@ button, button:hover
 
 .actions-view
 {
-	padding: 8px;
-	margin-bottom: 5px;
-	
+	padding: 4px;
+	margin-bottom: 1px;
+	display: inline-block;
+	width: 100%;
 }
 
 
