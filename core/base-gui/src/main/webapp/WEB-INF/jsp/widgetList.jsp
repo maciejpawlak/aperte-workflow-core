@@ -43,7 +43,7 @@
                         } else {
                             el.removeClass('sticky');
                         }
-                        el.style.width=anchor.width() + "px";
+             el.css({width: anchor.width() + "px"});
         })
     }
 
