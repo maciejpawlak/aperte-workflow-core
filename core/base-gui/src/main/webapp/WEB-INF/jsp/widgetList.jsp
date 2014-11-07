@@ -40,11 +40,10 @@
             var div_top = anchor.offset().top;
                         if (window_top > div_top) {
                             el.addClass('sticky');
-                            el.width(anchor.width());
                         } else {
                             el.removeClass('sticky');
-                            el.width(anchor.width());
                         }
+                        el.style.width=anchor.width() + "px";
         })
     }
 
