@@ -123,15 +123,16 @@
 		reloadQueuesLoopTimer.pause();
 		try
 		{
-			var queuesJson = $.post('<portlet:resourceURL id="getUserQueues"/>', function(queues)
+			var queuesJson = $.post('<portlet:resourceURL id="getUserQueues"/>',  function(queues)
 			{ 
 				$('#queue-view-block').empty();
+			
 				
-				$.each( queues, function( ) 
+				$.each(queues, function(index, queue ) 
 				{
-					var currentUserLogin = this.userLogin;
+					var currentUserLogin = queue.userLogin;
 					var userQueueHeaderId = 'accordion-header-'+currentUserLogin;
-					var userQueuesCount = this.activeTasks;
+					var userQueuesCount = queue.activeTasks;
 				
 					
 					var queueName = '<spring:message code="queues.user.queueName" />';
@@ -164,7 +165,7 @@
 					.appendTo( '#'+accordionID+"-panel" );
 					
 					
-					$.each( this.queuesList, function( ) 
+					$.each( queue.queuesList, function( ) 
 					{	
 						
 						addProcessRow(this, accordionID, currentUserLogin);
@@ -187,7 +188,7 @@
 				
 
 				});
-			});
+			}, 'json');
 		}
 		catch(err)
 		{
