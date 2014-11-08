@@ -12,12 +12,12 @@
     .form-control.demand-placeofuse-textarea { width: 100%;}
     .form-control.demand-account-select { width: 100%;}
     .row.row-general-info {margin-right: 5px; }
-	.required:after {content: " *";  color: red;}
+    .required:after {content: " *";  color: red;}
 </style>
 
 <div>
     <div class="panel panel-default">
-        <div class="panel-heading">${messageSource.getMessage("usersubstitution.request.title")}</div>
+        <div class="panel-heading">${messageSource.getMessage("demand.choose.company.header.text")}</div>
         <div class="panel-body">
             <div class="form-horizontal">
                 <div class="form-group input-group-sm">
@@ -33,7 +33,7 @@
                 <div class="form-group input-group-sm">
                     <label name="tooltip" title="${messageSource.getMessage('substituting.date.from.tooltip')}" for="substituting-date-from-${widgetId}" class="col-sm-2 control-label required">${messageSource.getMessage("substituting.date.from.label")}</label>
                     <div  class="col-sm-4">
-                        <div class="input-group input-group-sm  input-append date">
+                        <div class="input-group input-group-sm  input-append date" id="substituting-date-from-datepicker-${widgetId}">
                             <input type="text" class="form-control" value="${substitutingDateFrom}" data-placeholder="${messageSource.getMessage('substituting.user.datefrom.placeholder')}"  id="substituting-date-from-${widgetId}" <#if canEdit == "no">disabled</#if>>
                             <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                         </div>
@@ -43,7 +43,7 @@
                 <div class="form-group input-group-sm">
                     <label name="tooltip" title="${messageSource.getMessage('substituting.date.to.tooltip')}" for="substituting-date-to-${widgetId}" class="col-sm-2 control-label required">${messageSource.getMessage("substituting.date.to.label")}</label>
                     <div  class="col-sm-4">
-                        <div class="input-group input-group-sm  input-append date">
+                        <div class="input-group input-group-sm  input-append date" id="substituting-date-to-datepicker-${widgetId}">
                             <input type="text" class="form-control" value="${substitutingDateTo}"  id="substituting-date-to-${widgetId}" <#if canEdit == "no">disabled</#if>>
                             <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                         </div>
@@ -55,7 +55,7 @@
 
     </div>
 
-	
+
 </div>
 
 <script type="text/javascript">
@@ -70,6 +70,7 @@
 
 		$("#substitute-user-${widgetId}").select2(
 		{
+		    minimumInputLength: 3,
             ajax: {
                 url: dispatcherPortlet,
                 dataType: 'json',
@@ -115,25 +116,29 @@
 
 
         <#if canEdit != "no">
-            $("#substituting-date-from-${widgetId}").datepicker({
-                format: "dd-mm-yy",
-                language: "${messageSource.getLocale().getLanguage()}",
-                minDate: 0
+            $("#substituting-date-from-datepicker-${widgetId}").datepicker({
+                format: "yyyy-mm-dd",
+                language: "pl",
+                minDate: 0,
+                autoclose:true,
+                todayHighlight : true
             });
         </#if>
 
 
         <#if canEdit != "no">
-            $("#substituting-date-to-${widgetId}").datepicker({
-                format: "dd-mm-yy",
-                language: "${messageSource.getLocale().getLanguage()}",
-                minDate: 0
+            $("#substituting-date-to-datepicker-${widgetId}").datepicker({
+                format: "yyyy-mm-dd",
+                language: "pl",
+                minDate: 0,
+                autoclose:true,
+                todayHighlight : true
             });
         </#if>
 
 
     });
-
+    
 	function validateSubstitutingRequestData(){
 		var errors = [];
 		if("${canEdit}" == "no") { return errors; }
@@ -163,17 +168,20 @@
 			$('#warning').show();
 			errors.push('${messageSource.getMessage("substituting.date.to.empty")}');
 		}
-		else if(new Date(substitutingDateTo).setHours(0,0,0,0) < (new Date()).setHours(0,0,0,0))
+		else
 		{
-            $('#warning').show();
-            errors.push('${messageSource.getMessage("substituting.date.to.past")}');
-        }
+		    if(new Date(substitutingDateTo).setHours(0,0,0,0) < (new Date()).setHours(0,0,0,0))
+		    {
+                $('#warning').show();
+                errors.push('${messageSource.getMessage("substituting.date.to.past")}');
+            }
 
-        if(substitutingDateTo && substitutingDateFrom && (new Date(substitutingDateTo).setHours(0,0,0,0) < (new Date(substitutingDateFrom)).setHours(0,0,0,0)))
-		{
-			$('#warning').show();
-			errors.push('${messageSource.getMessage("substituting.date.fromto.lesser")}');
-		}
+            if(substitutingDateTo && substitutingDateFrom && (new Date(substitutingDateTo).setHours(0,0,0,0) < (new Date(substitutingDateFrom)).setHours(0,0,0,0)))
+            {
+                $('#warning').show();
+                errors.push('${messageSource.getMessage("substituting.date.fromto.lesser")}');
+            }
+        }
 
 		return errors;
 	}
@@ -183,7 +191,11 @@
 	    if("${canEdit}" == "no") { return []; }
 
         var substitutingUserLogin = $('#substitute-user-${widgetId}').val();
-        var substitutingUserLoginFullName = $('#substitute-user-${widgetId}').select2('data').text;
+        var substitutingUserLoginFullName;
+        if($('#substitute-user-${widgetId}').select2('data'))
+        {
+            substitutingUserLoginFullName = $('#substitute-user-${widgetId}').select2('data').text;
+        }
         var substitutingDateFrom = $('#substituting-date-from-${widgetId}').val();
         var substitutingDateTo = $('#substituting-date-to-${widgetId}').val();
 
