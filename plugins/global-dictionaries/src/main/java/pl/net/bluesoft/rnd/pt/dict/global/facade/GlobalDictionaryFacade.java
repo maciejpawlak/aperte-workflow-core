@@ -100,6 +100,17 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
         return dictionaryItems;
     }
 
+    @Override
+    public DictionaryItem getDictionaryItem(String dictionaryName, String key, Locale locale)
+    {
+        Collection<DictionaryItem> items = getAllDictionaryItems(dictionaryName, locale);
+        for(DictionaryItem item: items)
+            if(item.getKey().equals(key))
+                return item;
+
+        return null;
+    }
+
 
     private boolean checkForFilters(DictionaryItem item, Collection<DictFilter> filters)
     {
