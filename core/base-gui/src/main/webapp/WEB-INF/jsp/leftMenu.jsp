@@ -265,18 +265,17 @@
 		
 		
 
-		var widgetJson = $.post('<portlet:resourceURL id="loadTask"/>',
+		var jqxhr = $.getJSON('<portlet:resourceURL id="loadTask"/>',
 		{
-			"taskId": taskId
-		})
-		.done(function(data) 
+			"taskId": taskId,
+			"nocache": new Date().getTime()
+		});
+
+		jqxhr.complete(function(data, textStatus, jqXHR)
 		{
 			clearAlerts();
-			windowManager.showProcessData(data);
+			windowManager.showProcessData(data.responseText);
 			checkIfViewIsLoaded();
-		})
-		.fail(function(data, textStatus, errorThrown) {
-			
 		});
 	}
  

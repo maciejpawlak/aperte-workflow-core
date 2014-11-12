@@ -116,6 +116,16 @@
 					</div>
 				</div>
 
+                <div class="control-group string optional profile_default_sender">
+                    <label for="DefaultSender"
+                           class="string optional control-label">
+                        ${messageSource.getMessage("Default Sender")} </label>
+                    <div class="controls">
+                        <input type="text" name="DefaultSender"
+                               id="DefaultSender" class="string optional span6">
+                    </div>
+                </div>
+
 				<div
 					class="control-group boolean optional profile_disable_plain_auth">
 					<label for="profile_disable_plain_auth"
@@ -770,6 +780,7 @@
 			$("#ProfileSmtpFactoryPort").val(obj.smtpSocketFactoryPort);
 			$("#ProfileSmtpFactoryClass").val(obj.smtpSocketFactoryClass);
 			$("#ProfileSslFactoryClass").val(obj.sslSocketFactoryClass);
+			$("#DefaultSender").val(obj.defaultSender);
 			$("#ProfileDisablePlainAuth")[0].checked = obj.disablePlainAuth;
 			$("#ProfileTransportProtocol").val(obj.transportProtocol);
 			$("#ProfileStartTls")[0].checked = obj.starttls;

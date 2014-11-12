@@ -268,8 +268,6 @@ public class BpmNotificationEngine implements IBpmNotificationService
                 logger.log(Level.SEVERE, "[NOTIFICATIONS JOB] Problem during notification sending", ex);
 
                 history.errorWhileSendingNotification(notification, ex);
-
-                throw new RuntimeException("Problem during notification sending...", ex);
             }
         }
     }
@@ -440,6 +438,7 @@ public class BpmNotificationEngine implements IBpmNotificationService
 	@Override
 	public synchronized void invalidateCache() {
 		cacheUpdateTime = 0;
+        refreshConfigIfNecessary();
 	}
 
     @SuppressWarnings("unchecked")
@@ -604,7 +603,9 @@ public class BpmNotificationEngine implements IBpmNotificationService
     {
         Message message = new MimeMessage(mailSession);
         message.setFrom(new InternetAddress(notification.getSender()));
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(notification.getRecipient()));
+        String recipients = notification.getRecipient().replace(':', ',').replace(';', ',').replaceAll("\\s","");
+
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipients));
 
 		String recipientSubstiteEmails = getRecipientSubstiteEmails(connection, notification);
 

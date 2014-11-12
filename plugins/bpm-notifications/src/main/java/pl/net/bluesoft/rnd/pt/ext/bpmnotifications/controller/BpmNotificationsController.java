@@ -60,6 +60,7 @@ public class BpmNotificationsController implements IOsgiWebController {
 		profile.setSmtpHost(request.getParameter("ProfileSMTPHost"));
 		profile.setSmtpPort(request.getParameter("ProfileSMTPPort"));
 		profile.setSmtpUser(request.getParameter("ProfileSMTPUser"));
+        profile.setDefaultSender(request.getParameter("DefaultSender"));
 		profile.setSmtpPassword(request.getParameter("ProfileSMTPPassword"));
 		profile.setSmtpAuth("1".equals(request.getParameter("ProfileSMTPAuth")));
 		profile.setSmtpSocketFactoryPort(request.getParameter("ProfileSmtpFactoryPort"));
@@ -72,6 +73,8 @@ public class BpmNotificationsController implements IOsgiWebController {
 
 		BpmNotificationMailPropertiesDAO bpmNotificationMailPropertiesDAO = new BpmNotificationMailPropertiesDAO();
 		bpmNotificationMailPropertiesDAO.saveOrUpdate(profile);
+
+        invalidateCache(invocation);
 
 		result.setData(profile);
 		return result;
@@ -103,6 +106,8 @@ public class BpmNotificationsController implements IOsgiWebController {
 
 		BpmNotificationTemplateDAO bpmNotificationTemplateDAO = new BpmNotificationTemplateDAO();
 		bpmNotificationTemplateDAO.saveOrUpdate(template);
+
+        invalidateCache(invocation);
 
 		result.setData(template);
 		return result;

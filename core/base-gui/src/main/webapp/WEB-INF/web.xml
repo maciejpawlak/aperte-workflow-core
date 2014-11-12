@@ -41,15 +41,15 @@
 		<realm-name>default</realm-name>
 	</login-config>
 
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>AuthServer</web-resource-name>
-            <url-pattern>/osgi_services/*</url-pattern>
-        </web-resource-collection>
-        <user-data-constraint>
-            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-        </user-data-constraint>
-    </security-constraint>
+    <!--<security-constraint>-->
+        <!--<web-resource-collection>-->
+            <!--<web-resource-name>AuthServer</web-resource-name>-->
+            <!--<url-pattern>/osgi_services/*</url-pattern>-->
+        <!--</web-resource-collection>-->
+        <!--<user-data-constraint>-->
+            <!--<transport-guarantee>CONFIDENTIAL</transport-guarantee>-->
+        <!--</user-data-constraint>-->
+    <!--</security-constraint>-->
 
 	<filter>
 		<filter-name>Cache Filter - Resource</filter-name>
