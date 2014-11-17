@@ -32,41 +32,31 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
     public Collection<DictionaryItem> getAllDictionaryItems(String dictionaryName, Locale locale,String filter, Date date)
     {
         Collection<DictionaryItem> dictionaryItems = new LinkedList<DictionaryItem>();
-        Date result = null;
 
         ProcessToolContext ctx = ProcessToolContext.Util.getThreadProcessToolContext();
-        if(ctx==null)
+        if (ctx==null)
             throw new RuntimeException("There is no active context");
 
         ProcessDictionaryRegistry processDictionaryRegistry = ctx.getProcessDictionaryRegistry();
-        if(processDictionaryRegistry==null)
+        if (processDictionaryRegistry==null)
             throw new RuntimeException("There is no dictionary registry");
 
         ProcessDictionary pd = processDictionaryRegistry.getDictionary(dictionaryName);
-        if(pd==null )
-            throw new RuntimeException("No dictionary found with name "+dictionaryName);
+        if (pd==null) {
+			throw new RuntimeException("No dictionary found with name " + dictionaryName);
+		}
 
         String langCode = locale.getLanguage();
         List<ProcessDictionaryItem> list = pd.sortedItems(langCode);
 
         Collection<DictFilter> filters = parseFilters(filter);
 
-       /* if(date != null){
-            DateFormat df = new SimpleDateFormat("YYYY-MM-DD");
-            try {
-                result = df.parse(date);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-        }*/
-
-        for(ProcessDictionaryItem pdi : list)
+        for (ProcessDictionaryItem pdi : list)
         {
             String desc = pdi.getDescription(locale);
             DictionaryItem dictionaryItem = new DictionaryItem();
             dictionaryItem.setKey(pdi.getKey());
-            ProcessDictionaryItemValue value = pdi.getValueForDate(new Date());
+            ProcessDictionaryItemValue value = pdi.getValueForDate(date != null ? date : new Date());
             if (value != null)
                 dictionaryItem.setValue(value.getValue(locale));
             else {
@@ -76,25 +66,26 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
 
 
             ProcessDictionaryItemValue valueForDate = pdi.getValueForDate(date);
-            if(valueForDate == null || valueForDate instanceof ProcessDBDictionaryItem.EMPTY_VALUE)
-                dictionaryItem.setValid(false);
-            else
-                dictionaryItem.setValid(true);
+            if (valueForDate == null || valueForDate instanceof ProcessDBDictionaryItem.EMPTY_VALUE) {
+				dictionaryItem.setValid(false);
+			}
+            else {
+				dictionaryItem.setValid(true);
+			}
 
+            if (pdi.getValueForCurrentDate() != null) {
+				for (ProcessDictionaryItemExtension extension : pdi.getValueForCurrentDate().getItemExtensions()) {
+					DictionaryItemExt dictionaryItemExt = new DictionaryItemExt();
+					dictionaryItemExt.setKey(extension.getName());
+					dictionaryItemExt.setValue(extension.getValue());
 
+					dictionaryItem.getExtensions().add(dictionaryItemExt);
+				}
+			}
 
-            if (pdi.getValueForCurrentDate() != null)
-                for(ProcessDictionaryItemExtension extension: pdi.getValueForCurrentDate().getItemExtensions())
-                {
-                    DictionaryItemExt dictionaryItemExt = new DictionaryItemExt();
-                    dictionaryItemExt.setKey(extension.getName());
-                    dictionaryItemExt.setValue(extension.getValue());
-
-                    dictionaryItem.getExtensions().add(dictionaryItemExt);
-                }
-
-            if(checkForFilters(dictionaryItem, filters) && dictionaryItem.getisValid())
-                dictionaryItems.add(dictionaryItem);
+            if(checkForFilters(dictionaryItem, filters) && dictionaryItem.getisValid()) {
+				dictionaryItems.add(dictionaryItem);
+			}
         }
 
         return dictionaryItems;
