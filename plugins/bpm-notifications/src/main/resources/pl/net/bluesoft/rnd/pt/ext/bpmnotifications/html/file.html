@@ -3,6 +3,7 @@
 	<li><a href="#TemplatesPanel">${messageSource.getMessage("bpmnot.tab.templates")}</a></li>
 	<li><a href="#NotificationsPanel">${messageSource.getMessage("bpmnot.tab.notifications")}</a></li>
 	<li><a href="#SentNotificationsPanel">${messageSource.getMessage("bpmnot.tab.sent.notifications")}</a></li>
+	<li><a href="#SettingsPanel">${messageSource.getMessage("bpmnot.tab.ptsettings")}</a></li>
 	<li><a href="#OthersPanel">${messageSource.getMessage("bpmnot.tab.others")}</a></li>
 </ul>
 <div class="tab-content">
@@ -462,15 +463,42 @@
 	<div class="tab-pane" id="SentNotificationsPanel">
 		<table id="NotificationHistory" class="table">
 			<thead>
-				<tr>
-					<th>${messageSource.getMessage("bpmnot.receiver")}</th>
-					<th>${messageSource.getMessage("bpmnot.subject")}</th>
-					<th>${messageSource.getMessage("bpmnot.acquired")}</th>
-				</tr>
+			<tr>
+				<th>${messageSource.getMessage("bpmnot.receiver")}</th>
+				<th>${messageSource.getMessage("bpmnot.subject")}</th>
+				<th>${messageSource.getMessage("bpmnot.acquired")}</th>
+			</tr>
 			</thead>
 			<tbody>
 			</tbody>
 		</table>
+	</div>
+
+	<div class="tab-pane" id="SettingsPanel">
+
+		<form id="SettingsForm" class="simple_form form-horizontal"
+			  novalidate="novalidate" method="post" accept-charset="UTF-8">
+			<fieldset>
+
+				<div class="form-group">
+					<div class="col-md-12 text-right">
+						<button class="btn btn-primary btn-lg" type="submit">
+							${messageSource.getMessage("bpmnot.settings.save")}</button>
+					</div>
+				</div><br clear="all" />
+
+				<div class="form-group" id="SettingsOptions"></div>
+
+				<div class="form-group">
+					<div class="col-md-12 text-right">
+						<button class="btn btn-primary btn-lg" type="submit">
+							${messageSource.getMessage("bpmnot.settings.save")}</button>
+					</div>
+				</div>
+
+			</fieldset>
+		</form>
+
 	</div>
 
 	<div class="tab-pane" id="OthersPanel">
@@ -530,6 +558,10 @@
 </div>
 
 <script>
+	$(document).ready(function(){
+		loadSettings();
+	});
+
 	$('#TabsContainer a').click(function(e) {
 		e.preventDefault()
 		$(this).tab('show')
@@ -765,8 +797,6 @@
 		});
 	});
 
-
-
 	function loadObject(obj, target) {
 		if(target == "Profile")
 		{
@@ -852,4 +882,53 @@
 					"<tr><td>"+entry.recipient+"</td><td>"+entry.subject+"</td><td>"+entry.enqueueDate+"</td></tr>");
 		});
 	}
+
+	function loadSettings(){
+		$('#SettingsOptions').html('');
+		var postData = {};
+		postData.controller = 'settingscontroller';
+		postData.action = 'getSettings';
+		var formUrl = dispatcherPortlet;
+		$.ajax({
+			url : dispatcherPortlet,
+			type : "POST",
+			data : postData,
+			success: function(data, textStatus, jqXHR){
+				for (var lp in data['data']){
+					var obj = data['data'][lp];
+					$('#SettingsOptions').append('\
+						<div class="control-group string required profile_name">\
+							<label for="'+obj["key"]+'_id" class="string required control-label">\
+								'+obj["key"]+'\
+								<br />\
+								'+(obj["description"] ? obj["description"] : '')+'\
+							</label>\
+							<div class="controls">\
+								<input type="text" name="'+obj["key"]+'" id="'+obj["key"]+'_id"\
+									   value="'+obj["value"].replace(/"/g, '&quot;')+'" class="string required span6">\
+							</div>\
+						</div>\
+					');
+
+				}
+	        }
+		});
+	}
+
+	$("#SettingsForm").submit(function(e) {
+		e.preventDefault();
+		var postData = $(this).serializeObject();
+		postData.controller = 'settingscontroller';
+		postData.action = 'setSettings';
+		var formUrl = dispatcherPortlet;
+		$.ajax({
+			url : dispatcherPortlet,
+			type : "POST",
+			data : postData,
+			success:function(data, textStatus, jqXHR){
+				loadSettings();
+	        }
+		});
+	});
+
 </script>

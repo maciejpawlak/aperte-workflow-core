@@ -121,7 +121,8 @@ public class BpmNotificationEngine implements IBpmNotificationService
     		
     	else
     	{
-	        registry.withProcessToolContext(new ProcessToolContextCallback() 
+	        registry.withProcessToolContext(
+                    new ProcessToolContextCallback()
 	        {
 				@Override
 				public void withContext(ProcessToolContext ctx)

@@ -158,14 +158,18 @@
                         <Embed-Transitive>true</Embed-Transitive>
                         <ProcessTool-Step-Enhancement>pl.net.bluesoft.rnd.pt.ext.bpmnotifications.step.SendMailStep</ProcessTool-Step-Enhancement>
                         <ProcessTool-Model-Enhancement>
-                        	pl.net.bluesoft.rnd.pt.ext.bpmnotifications.model.BpmNotificationTemplate,
+                            pl.net.bluesoft.rnd.pt.ext.bpmnotifications.model.BpmNotificationTemplate,
                             pl.net.bluesoft.rnd.pt.ext.bpmnotifications.model.BpmNotification,
                             pl.net.bluesoft.rnd.pt.ext.bpmnotifications.model.BpmNotificationConfig,
-                            pl.net.bluesoft.rnd.pt.ext.bpmnotifications.model.BpmNotificationMailProperties
+                            pl.net.bluesoft.rnd.pt.ext.bpmnotifications.model.BpmNotificationMailProperties,
+                            pl.net.bluesoft.rnd.processtool.model.config.ProcessToolSetting
                         </ProcessTool-Model-Enhancement>
                         <ProcessTool-I18N-Property>messages</ProcessTool-I18N-Property>
 						<ProcessTool-Controller>
                             pl.net.bluesoft.rnd.pt.ext.bpmnotifications.controller.BpmNotificationsController
+                        </ProcessTool-Controller>
+                        <ProcessTool-Controller>
+                            pl.net.bluesoft.rnd.pt.ext.bpmnotifications.controller.SettingsController
                         </ProcessTool-Controller>
                         <ProcessTool-Spring-Beans>
                             pl.net.bluesoft.rnd.pt.ext.bpmnotifications.BpmNotificationEngine

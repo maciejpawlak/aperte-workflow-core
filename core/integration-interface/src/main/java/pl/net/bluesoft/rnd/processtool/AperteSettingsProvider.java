@@ -62,4 +62,9 @@ public class AperteSettingsProvider implements ISettingsProvider
             });
     }
 
+    @Override
+    public void invalidateCache() {
+        settings.clear();
+    }
+
 }

@@ -39,7 +39,7 @@
 			windowManager.showLoadingScreen();
 			//windowManager.changeUrl('?queueId='+queueId);
 
-			var widgetJson = $.post('<portlet:resourceURL id="loadQueue"/>',
+			var widgetJson = $.get('<portlet:resourceURL id="loadQueue"/>',
 			{
 				"queueId": queueId,
 				"ownerLogin": ownerLogin
@@ -157,7 +157,7 @@
         $(button).prop('disabled', true);
         windowManager.showLoadingScreen();
 
-        var bpmJson = $.post(claimTaskFromQueuePortlet,
+        var bpmJson = $.getJSON(claimTaskFromQueuePortlet,
         {
             "queueName": queueName,
             "taskId": taskId,

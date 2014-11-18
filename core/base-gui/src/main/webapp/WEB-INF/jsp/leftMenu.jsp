@@ -272,11 +272,11 @@
 		});
 
 		jqxhr.complete(function(data, textStatus, jqXHR)
-		{
-			clearAlerts();
-			windowManager.showProcessData(data.responseText);
-			checkIfViewIsLoaded();
-		});
+        		{
+        			clearAlerts();
+        			windowManager.showProcessData(data.responseText);
+        			checkIfViewIsLoaded();
+        		});
 	}
  
  </script>

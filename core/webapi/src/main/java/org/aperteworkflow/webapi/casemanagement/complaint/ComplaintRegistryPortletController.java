@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import org.springframework.web.portlet.ModelAndView;
@@ -30,7 +31,7 @@ import java.util.logging.Logger;
  * Created by pkuciapski on 2014-05-19.
  */
 @Controller(value = "ComplaintRegistryPortletController")
-@RequestMapping("VIEW")
+@RequestMapping(value = "VIEW", method = RequestMethod.GET)
 public class ComplaintRegistryPortletController extends CaseManagementPortletController {
     private static Logger logger = Logger.getLogger(ComplaintRegistryPortletController.class.getName());
 
