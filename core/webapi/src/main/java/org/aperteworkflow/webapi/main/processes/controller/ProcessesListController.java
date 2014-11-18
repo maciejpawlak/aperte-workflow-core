@@ -716,7 +716,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 		if(!context.isUserAuthorized())
 			return new DataPagingBean<TasksListViewBean>(adminAlertBeanList, 0, dataTable.getDraw());
 
-		final String searchString = request.getParameter("sSearch");
+		final String searchString = request.getParameter("search[value]");
 
 
 		final DataPagingBean<TasksListViewBean> pagingCollection = new DataPagingBean<TasksListViewBean>(
@@ -787,7 +787,8 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
                 logger.log(Level.INFO, "loadProcessesList.withContext total: " + (t4 - t0) + "ms, " +
                         "[1]: " + (t1 - t0) + "ms, " +
                         "[2]: " + (t2 - t1) + "ms, " +
-                        "[3]: " + (t3 - t2) + "ms, " +
+                        "[" +
+                                "3]: " + (t3 - t2) + "ms, " +
                         "[4]: " + (t4 - t3) + "ms "
                 );
 

@@ -280,14 +280,14 @@
 		$("#saveButton").on('click',function() {
 		    currentItem.key = $("#itemKey").val();
 		    currentItem.description = $("#itemDesc").val();
-            var widgetJson = $.post(dispatcherPortlet, {
+            var widgetJson = $.getJSON(dispatcherPortlet, {
                 "controller": "dictionaryeditorcontroller",
                 "action": "saveDictionaryItem",
                 "item": JSON.stringify(currentItem, null, 2),
                 "dictId": currentDict
             })
             .done(function(data) {
-                <!-- Errors handling -->
+                //<!-- Errors handling -->
                 clearAlerts();
                 var errors = [];
                 $.each(data.errors, function() {
@@ -351,14 +351,14 @@
 	}
 
 	function addNewValue() {
-		 $.post(dispatcherPortlet, {
+		 $.getJSON(dispatcherPortlet, {
                 "controller": "dictionaryeditorcontroller",
                 "action": "getNewItemValuePrototype",
                 "itemId": currentItem.id,
                 "dictId": currentDict
         })
         .done(function(data) {
-            <!-- Errors handling -->
+            //<!-- Errors handling -->
             clearAlerts();
             var errors = [];
             $.each(data.errors, function() {
@@ -389,14 +389,14 @@
 
 	function remove(item) {
 	    if (confirm('<@spring.message "dictionary.editor.dictionaryItems.confirm.delete"/>')) {
-            var widgetJson = $.post(dispatcherPortlet, {
+            var widgetJson = $.getJSON(dispatcherPortlet, {
                 "controller": "dictionaryeditorcontroller",
                 "action": "deleteDictionaryItem",
                 "item": JSON.stringify(item, null, 2),
                 "dictId": currentDict
             })
             .done(function(data) {
-                <!-- Errors handling -->
+                //<!-- Errors handling -->
                 clearAlerts();
                 var errors = [];
                 $.each(data.errors, function() {
@@ -424,7 +424,7 @@
 
 	function refreshValuesTable() {
 	    // get values from server
-		var widgetJson = $.post(dispatcherPortlet, {
+		var widgetJson = $.getJSON(dispatcherPortlet, {
                 "controller": "dictionaryeditorcontroller",
                 "action": "getItemValues",
                 "itemId": currentItem.id,
@@ -432,7 +432,7 @@
         })
         .done(function(data)
         {
-            <!-- Errors handling -->
+            //<!-- Errors handling -->
             clearAlerts();
             var errors = [];
             $.each(data.errors, function() {

@@ -200,7 +200,7 @@
 		
 		var JsonWidgetData = JSON.stringify(widgetData, null, 2);
 
-		var newBpmTask = $.post('<portlet:resourceURL id="saveAction"/>',
+		var newBpmTask = $.getJSON('<portlet:resourceURL id="saveAction"/>',
 		{
 			"taskId": taskId,
 			"widgetData": JsonWidgetData
@@ -447,7 +447,7 @@
 			JsonWidgetData = JSON.stringify(args.widgetData, null, 2);
 		}
 
-		var newBpmTask = $.post('<portlet:resourceURL id="performAction"/>',
+		var newBpmTask = $.getJSON('<portlet:resourceURL id="performAction"/>',
 		{
 			"taskId": args.taskId,
 			"actionName": args.actionName,
@@ -461,7 +461,7 @@
 		})
 		.done(function(data)
 		{
-			<!-- Errors handling -->
+			//<!-- Errors handling -->
 			windowManager.clearErrors();
 
 			var errors = [];
