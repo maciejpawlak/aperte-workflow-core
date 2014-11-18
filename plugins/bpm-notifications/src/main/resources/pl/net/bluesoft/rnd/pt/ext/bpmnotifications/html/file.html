@@ -886,9 +886,9 @@
 	function loadSettings(){
 		$('#SettingsOptions').html('');
 		var postData = {};
-		postData.controller = 'settingscontroller'
-		postData.action = 'getSettings'
-		var formUrl = dispatcherPortlet
+		postData.controller = 'settingscontroller';
+		postData.action = 'getSettings';
+		var formUrl = dispatcherPortlet;
 		$.ajax({
 			url : dispatcherPortlet,
 			type : "POST",
@@ -900,6 +900,8 @@
 						<div class="control-group string required profile_name">\
 							<label for="'+obj["key"]+'_id" class="string required control-label">\
 								'+obj["key"]+'\
+								<br />\
+								'+(obj["description"] ? obj["description"] : '')+'\
 							</label>\
 							<div class="controls">\
 								<input type="text" name="'+obj["key"]+'" id="'+obj["key"]+'_id"\
@@ -916,9 +918,9 @@
 	$("#SettingsForm").submit(function(e) {
 		e.preventDefault();
 		var postData = $(this).serializeObject();
-		postData.controller = 'settingscontroller'
-		postData.action = 'setSettings'
-		var formUrl = dispatcherPortlet
+		postData.controller = 'settingscontroller';
+		postData.action = 'setSettings';
+		var formUrl = dispatcherPortlet;
 		$.ajax({
 			url : dispatcherPortlet,
 			type : "POST",
