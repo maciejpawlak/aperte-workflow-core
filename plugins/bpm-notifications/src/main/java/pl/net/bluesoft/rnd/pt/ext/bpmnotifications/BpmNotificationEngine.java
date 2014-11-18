@@ -855,7 +855,7 @@ public class BpmNotificationEngine implements IBpmNotificationService
 		}
 
         if (body == null || topic == null || sender == null) {
-        	throw new Exception("Error sending email. Cannot find valid template configuration");
+        	throw new Exception("Error sending email. Cannot find valid template configuration, teplateName="+notificationData.getTemplateData().getTemplateName());
         }
         
         ProcessedNotificationData processedNotificationData = new ProcessedNotificationData(notificationData);
