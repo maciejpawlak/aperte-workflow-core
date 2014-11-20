@@ -24,6 +24,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -56,6 +58,15 @@ public class ComplaintRegistryPortletController extends CaseManagementPortletCon
             modelView.setViewName("complaint-registry");
         }
         addRefreshParameter(modelView);
+
+        Date referenceDate = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(referenceDate);
+        c.add(Calendar.MONTH, -6);
+        c.set(Calendar.DAY_OF_MONTH, 1);
+
+        modelView.addObject("startDate", c.getTime());
+
 
         HttpServletRequest httpServletRequest = portalUserSource.getHttpServletRequest(request);
         HttpServletRequest originalHttpServletRequest = portalUserSource.getOriginalHttpServletRequest(httpServletRequest);
