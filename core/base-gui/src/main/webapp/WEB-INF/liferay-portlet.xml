@@ -134,6 +134,7 @@
         <header-portlet-javascript>/sa/js/jquery.validate.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/iban.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.numeric.min.js</header-portlet-javascript>
+        <header-portlet-css>/sa/css/customComplaints.css</header-portlet-css>
     </portlet>
 
     <portlet id="aperte-case-management">
@@ -180,6 +181,7 @@
         <header-portlet-javascript>/sa/js/jquery.validate.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/iban.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.numeric.min.js</header-portlet-javascript>
+        <header-portlet-css>/sa/css/customComplaints.css</header-portlet-css>
     </portlet>
 
 	<portlet id="aperte-interactive-reports">
@@ -272,7 +274,8 @@
         <header-portlet-css>/sa/css/liferay.css</header-portlet-css>
 		<header-portlet-css>/sa/js/external/google-code-prettify/prettify.css</header-portlet-css>
         <header-portlet-javascript>/sa/js/respond.min.js</header-portlet-javascript>
-	</portlet>
+        <header-portlet-css>/sa/css/customComplaints.css</header-portlet-css>
+    </portlet>
 
 	<portlet>
 		<!-- Matches definition in portlet.xml. -->
@@ -345,6 +348,7 @@
         <header-portlet-css>/sa/css/select2.css</header-portlet-css>
         <header-portlet-css>/sa/css/select2-bootstrap.css</header-portlet-css>
         <header-portlet-css>/sa/css/liferay.css</header-portlet-css>
+        <header-portlet-css>/sa/css/customComplaints.css</header-portlet-css>
     </portlet>
 
 	<portlet>

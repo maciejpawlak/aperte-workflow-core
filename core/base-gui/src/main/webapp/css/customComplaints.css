@@ -1,0 +1,45 @@
+.aui.aui.aui.aui.aui.aui.aui body [id=case-list-view] label:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=case-list-view] input:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=case-list-view] span:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=case-list-view] td:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=case-list-view] button:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=case-list-view] th:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=case-list-view] a:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=case-list-view] div:not([class*=glyphicon]),
+
+.aui.aui.aui.aui.aui.aui.aui body [id=process-tasks-view] label:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=process-tasks-view] input:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=process-tasks-view] span:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=process-tasks-view] td:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=process-tasks-view] button:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=process-tasks-view] th:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=process-tasks-view] a:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=process-tasks-view] div:not([class*=glyphicon]),
+
+.aui.aui.aui.aui.aui.aui.aui body [id=case-data-view] label:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=case-data-view] input:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=case-data-view] span:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=case-data-view] td:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=case-data-view] button:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=case-data-view] th:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=case-data-view] a:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=case-data-view] div:not([class*=glyphicon]),
+
+.aui.aui.aui.aui.aui.aui.aui body [id=process-data-view] label:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=process-data-view] input:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=process-data-view] span:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=process-data-view] td:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=process-data-view] button:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=process-data-view] th:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=process-data-view] a:not([class*=glyphicon]),
+.aui.aui.aui.aui.aui.aui.aui body [id=process-data-view] div:not([class*=glyphicon])
+
+{
+	font-family: verdana;
+	font-size: 12px;
+}
+
+.no-margin-bottom.no-margin-bottom.no-margin-bottom.no-margin-bottom.no-margin-bottom.no-margin-bottom.no-margin-bottom
+{
+	margin-bottom: 0;
+}
