@@ -1,5 +1,7 @@
 package pl.net.bluesoft.rnd.pt.dict.global.facade;
 
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.StringUtils;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
 import pl.net.bluesoft.rnd.processtool.dict.DictionaryItem;
 import pl.net.bluesoft.rnd.processtool.dict.DictionaryItemExt;
@@ -18,20 +20,27 @@ import java.util.*;
  */
 public class GlobalDictionaryFacade implements IDictionaryFacade
 {
+    private static final String KEY_FILTER = "key";
+    private static final String VALUE_FILTER = "value";
+
     @Override
     public Collection<DictionaryItem> getAllDictionaryItems(String dictionaryName, Locale locale) {
-        return getAllDictionaryItems(dictionaryName, locale, null);
+        return getAllDictionaryItems(dictionaryName, locale, null, null);
     }
 
     @Override
     public Collection<DictionaryItem> getAllDictionaryItems(String dictionaryName, Locale locale, String filter){
-        return getAllDictionaryItems(dictionaryName, locale, filter, null);
+        return getAllDictionaryItems(dictionaryName, locale, filter, null, null);
     }
 
+    @Override
+    public Collection<DictionaryItem> getAllDictionaryItems(String dictionaryName, Locale locale, String filter, Date date){
+        return getAllDictionaryItems(dictionaryName, locale, filter, date, null);
+    }
 
-    public Collection<DictionaryItem> getAllDictionaryItems(String dictionaryName, Locale locale,String filter, Date date)
+    public List<DictionaryItem> getAllDictionaryItems(String dictionaryName, Locale locale,String filter, Date date, String sortBy)
     {
-        Collection<DictionaryItem> dictionaryItems = new LinkedList<DictionaryItem>();
+        List<DictionaryItem> dictionaryItems = new LinkedList<DictionaryItem>();
 
         ProcessToolContext ctx = ProcessToolContext.Util.getThreadProcessToolContext();
         if (ctx==null)
@@ -88,6 +97,11 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
 			}
         }
 
+        /** Sorting order given, sort items by key, value or extenstion key */
+        Comparator<DictionaryItem> comparator = createComparator(sortBy);
+        if(comparator != null)
+            Collections.sort(dictionaryItems, comparator);
+
         return dictionaryItems;
     }
 
@@ -114,8 +128,18 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
 
     private boolean checkForFilter(DictionaryItem item, DictFilter filter)
     {
+        if(filter.getKey().equals(KEY_FILTER)) {
+            String itemKey = item.getKey().toLowerCase();
+            if (itemKey.contains(filter.getValue()))
+                return true;
+        }
+
+        if(filter.getKey().equals(VALUE_FILTER))
+            if(item.getValue().toLowerCase().contains(filter.getValue()))
+                return true;
+
         for(DictionaryItemExt ext: item.getExtensions())
-            if(ext.getKey().equals(filter.getKey()) && ext.getValue().equals(filter.getValue()))
+            if(ext.getKey().toLowerCase().equals(filter.getKey()) && ext.getValue().toLowerCase().equals(filter.getValue()))
                 return true;
 
         return false;
@@ -140,13 +164,52 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
             String value = assignment[1];
 
             DictFilter dictFilter = new DictFilter();
-            dictFilter.setKey(key);
-            dictFilter.setValue(value);
+            dictFilter.setKey(key.toLowerCase());
+            dictFilter.setValue(value.toLowerCase());
 
             filters.add(dictFilter);
         }
 
         return filters;
+    }
+
+    private Comparator<DictionaryItem> createComparator(final String sortBy)
+    {
+        if(StringUtils.isEmpty(sortBy))
+            return null;
+
+        if(sortBy.equals(KEY_FILTER))
+            return new Comparator<DictionaryItem>() {
+                @Override
+                public int compare(DictionaryItem o1, DictionaryItem o2) {
+                    return o1.getKey().compareTo(o2.getKey());
+                }
+            };
+        else if(sortBy.equals(VALUE_FILTER))
+            return new Comparator<DictionaryItem>() {
+                @Override
+                public int compare(DictionaryItem o1, DictionaryItem o2) {
+                    return o1.getValue().compareTo(o2.getValue());
+                }
+            };
+        else
+            return new Comparator<DictionaryItem>() {
+                @Override
+                public int compare(DictionaryItem o1, DictionaryItem o2)
+                {
+                    DictionaryItemExt o1Ext = o1.getExtensionByKey(sortBy);
+                    DictionaryItemExt o2Ext = o2.getExtensionByKey(sortBy);
+                    if(o1Ext == null && o2Ext == null)
+                        return 0;
+                    else if(o1Ext == null)
+                        return -1;
+                    else if(o2Ext == null)
+                        return 1;
+                    else
+                        return o1Ext.getValue().compareTo(o2Ext.getValue());
+                }
+            };
+
     }
 
     private class DictFilter
@@ -168,6 +231,24 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
 
         public void setValue(String value) {
             this.value = value;
+        }
+    }
+
+    private class KeySorter implements Comparator<DictionaryItem>
+    {
+
+        @Override
+        public int compare(DictionaryItem o1, DictionaryItem o2) {
+            return o1.getKey().compareTo(o2.getKey());
+        }
+    }
+
+    private class ValueSorter implements Comparator<DictionaryItem>
+    {
+
+        @Override
+        public int compare(DictionaryItem o1, DictionaryItem o2) {
+            return o1.getKey().compareTo(o2.getKey());
         }
     }
 }
