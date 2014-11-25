@@ -29,7 +29,10 @@
         <property name="path" value="/pl/net/bluesoft/lot/complaint/ui/" />
         <property name="controllerName" value="complaintregistrycontroller" />
     </bean>
-
+    <bean id="localeResolver"
+          class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+        <property name="defaultLocale" value="en" />
+    </bean>
     <!-- freemarker config -->
     <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
         <property name="preferFileSystemAccess" value="false" />
