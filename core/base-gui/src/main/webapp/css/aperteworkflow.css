@@ -815,8 +815,24 @@ div.apw .panel-heading.panel-heading-aperte-queues,
 	color: #ffffff;
 }
 
+div.apw.apw.apw.apw.apw.apw.apw.apw h3{
+	font-family: verdana;
+}
+
 div.apw .panel-nomargin {
     margin-bottom: 0px;
+}
+
+div.apw.panel-nomargin.panel-nomargin.panel-nomargin.panel-nomargin {
+	margin-bottom: 3px;
+}
+
+.panel-heading.panel-heading.panel-heading.panel-heading.panel-heading.panel-heading{
+	background-color: lightblue;
+}
+
+.red-color {
+	color: red;
 }
 
 .vaadin-widget-view
