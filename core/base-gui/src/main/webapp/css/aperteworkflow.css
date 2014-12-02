@@ -827,12 +827,24 @@ div.apw.panel-nomargin.panel-nomargin.panel-nomargin.panel-nomargin {
 	margin-bottom: 3px;
 }
 
-.panel-heading.panel-heading.panel-heading.panel-heading.panel-heading.panel-heading{
+.process-data-view .panel-heading.panel-heading.panel-heading.panel-heading.panel-heading.panel-heading{
 	background-color: lightblue;
 }
 
 .red-color {
 	color: red;
+}
+
+.attachment-color {
+	color: blue;
+}
+
+.edit-color {
+	color: green;
+}
+
+.resend-color {
+	color: purple;
 }
 
 .vaadin-widget-view
