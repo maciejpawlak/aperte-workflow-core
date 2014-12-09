@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
 import pl.net.bluesoft.rnd.processtool.ReturningProcessToolContextCallback;
+import pl.net.bluesoft.rnd.processtool.exceptions.BusinessException;
+import pl.net.bluesoft.rnd.processtool.exceptions.ExceptionsUtils;
 import pl.net.bluesoft.rnd.processtool.web.controller.ControllerMethod;
 import pl.net.bluesoft.rnd.processtool.web.controller.IOsgiWebController;
 import pl.net.bluesoft.rnd.processtool.web.controller.OsgiWebRequest;
@@ -77,6 +79,13 @@ public class DispatcherController extends AbstractProcessToolServletController
 						Object result = controllerMethod.invoke(servletController, controllerInvocation);
 						return result;
 					}
+					catch(BusinessException e)
+					{
+						logger.log(Level.WARNING, "Business error", e);
+						resultBean.addError(SYSTEM_SOURCE, e.getMessage());
+
+						return resultBean;
+					}
 					catch (IllegalAccessException e) {
 						resultBean.addError(SYSTEM_SOURCE, e.getMessage());
 						logger.log(Level.SEVERE, "Problem during plugin request processing in dispatcher [" + controllerName + "]", e);
@@ -87,6 +96,21 @@ public class DispatcherController extends AbstractProcessToolServletController
 						logger.log(Level.SEVERE, "Problem during plugin request processing in dispatcher [" + controllerName + "]", e);
 						return resultBean;
 					}
+					catch(Throwable e)
+					{
+						if(ExceptionsUtils.isExceptionOfClassExistis(e, BusinessException.class))
+						{
+							BusinessException businessException = ExceptionsUtils.getExceptionByClassFromStack(e, BusinessException.class);
+							logger.log(Level.WARNING, "Business error", businessException);
+							resultBean.addError(SYSTEM_SOURCE, businessException.getMessage());
+						}
+						else {
+							logger.log(Level.SEVERE, "Problem during controller invocation", e);
+							resultBean.addError(SYSTEM_SOURCE, e.getMessage());
+						}
+						return resultBean;
+					}
+
 				}
 			});
 		}

@@ -48,7 +48,7 @@
     </bean>
     <bean id="localeResolver"
           class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
-        <property name="defaultLocale" value="en" />
+        <property name="defaultLocale" value="pl" />
     </bean>
     <!--
       View resolvers can also be configured with ResourceBundles or XML files. If you need

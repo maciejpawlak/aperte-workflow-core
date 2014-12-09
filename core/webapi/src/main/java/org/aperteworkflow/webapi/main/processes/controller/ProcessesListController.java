@@ -13,7 +13,6 @@ import org.aperteworkflow.webapi.main.processes.domain.HtmlWidget;
 import org.aperteworkflow.webapi.main.processes.domain.KeyValueBean;
 import org.aperteworkflow.webapi.main.processes.domain.NewProcessInstanceBean;
 import org.aperteworkflow.webapi.main.processes.processor.TaskProcessor;
-import org.aperteworkflow.webapi.main.ui.TaskViewBuilder;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.JavaType;
 import org.springframework.stereotype.Controller;
@@ -25,10 +24,10 @@ import pl.net.bluesoft.rnd.processtool.ProcessToolContextCallback;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContextFactory.ExecutionType;
 import pl.net.bluesoft.rnd.processtool.ReturningProcessToolContextCallback;
 import pl.net.bluesoft.rnd.processtool.bpm.StartProcessResult;
+import pl.net.bluesoft.rnd.processtool.exceptions.BusinessException;
+import pl.net.bluesoft.rnd.processtool.exceptions.ExceptionsUtils;
 import pl.net.bluesoft.rnd.processtool.model.*;
-import pl.net.bluesoft.rnd.processtool.model.config.ProcessStateAction;
 import pl.net.bluesoft.rnd.processtool.model.config.ProcessStateConfiguration;
-import pl.net.bluesoft.rnd.processtool.model.config.ProcessStateWidget;
 import pl.net.bluesoft.rnd.processtool.model.processdata.ProcessComment;
 import pl.net.bluesoft.rnd.processtool.plugins.GuiRegistry;
 import pl.net.bluesoft.rnd.processtool.plugins.ProcessToolRegistry;
@@ -189,9 +188,19 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
                         );
 
                         return processBean;
-                    } catch (Throwable ex) {
-                        logger.log(Level.SEVERE, ex.getMessage(), ex);
-                        resultBean.addError(taskId, ex.getMessage());
+                    }
+                    catch (Throwable ex) {
+                        if(ExceptionsUtils.isExceptionOfClassExistis(ex, BusinessException.class))
+                        {
+                            BusinessException businessException = ExceptionsUtils.getExceptionByClassFromStack(ex, BusinessException.class);
+                            logger.log(Level.WARNING, "Business error", businessException);
+                            resultBean.addError(SYSTEM_SOURCE, businessException.getMessage());
+                        }
+                        else {
+                            logger.log(Level.SEVERE, "Error during performing BPM action", ex);
+                            resultBean.addError(SYSTEM_SOURCE, ex.getMessage());
+                        }
+
                         return null;
                     }
                 }
@@ -247,12 +256,9 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 					);
             
         }
-        catch (Throwable e)
+        catch(Throwable e)
         {
-            logger.log(Level.SEVERE, "Error during process starting", e);
-
-            resultBean.addError(SYSTEM_SOURCE, e.getMessage());
-            return resultBean;
+            logger.log(Level.WARNING, "Business error", e);
         }
 
 		return resultBean;
@@ -374,13 +380,28 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
             }, ExecutionType.TRANSACTION_SYNCH);
 
         }
+        catch(BusinessException e)
+        {
+            logger.log(Level.WARNING, "Business error", e);
+            resultBean.addError(SYSTEM_SOURCE, e.getMessage());
+        }
         catch(Throwable e)
         {
-            logger.log(Level.SEVERE, "Problem during data saving", e);
-            resultBean.addError(SYSTEM_SOURCE, context.getMessageSource().getMessage(
-					"request.handle.error.saveerror",
-					e.getLocalizedMessage()));
+            if(ExceptionsUtils.isExceptionOfClassExistis(e, BusinessException.class))
+            {
+                BusinessException businessException = ExceptionsUtils.getExceptionByClassFromStack(e, BusinessException.class);
+                logger.log(Level.WARNING, "Business error", businessException);
+                resultBean.addError(SYSTEM_SOURCE, businessException.getMessage());
+            }
+            else {
+                logger.log(Level.SEVERE, "Problem during data saving", e);
+                resultBean.addError(SYSTEM_SOURCE, context.getMessageSource().getMessage(
+                        "request.handle.error.saveerror",
+                        e.getLocalizedMessage()));
+            }
         }
+
+
 		
 		long t2 = System.currentTimeMillis();
 

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContextFactory;
 import pl.net.bluesoft.rnd.processtool.ReturningProcessToolContextCallback;
+import pl.net.bluesoft.rnd.processtool.exceptions.ExceptionsUtils;
 import pl.net.bluesoft.rnd.processtool.plugins.ProcessToolRegistry;
 import pl.net.bluesoft.rnd.pt.ext.jbpm.service.JbpmService;
 
@@ -189,7 +190,7 @@ public class ProcessToolContextFactoryImpl implements ProcessToolContextFactory
                     }
 
 
-                    if (reload && isExceptionOfClassExistis(ex, StaleObjectStateException.class))
+                    if (reload && ExceptionsUtils.isExceptionOfClassExistis(ex, StaleObjectStateException.class))
                     {
                         /* Hardcore fix //TODO change */
                         logger.severe("Ksession problem, retry: "+reload);
@@ -210,7 +211,7 @@ public class ProcessToolContextFactoryImpl implements ProcessToolContextFactory
                         ProcessToolContext.Util.removeThreadProcessToolContext();
                         executeWithProcessToolContextNonJta(callback,false, stats);
                     }
-                    else if (reload && isExceptionOfClassExistis(ex, TransactionException.class))
+                    else if (reload && ExceptionsUtils.isExceptionOfClassExistis(ex, TransactionException.class))
                     {
                         /* Hardcore fix //TODO change */
                         logger.severe("UserTransaction problem, retry: "+reload);
@@ -267,16 +268,7 @@ public class ProcessToolContextFactoryImpl implements ProcessToolContextFactory
     }
 
 
-    private boolean isExceptionOfClassExistis(Throwable rootException, Class<? extends Throwable> clazz)
-    {
-        if(rootException.getClass().equals(clazz))
-            return true;
 
-        if(rootException.getCause() == null)
-            return false;
-
-        return isExceptionOfClassExistis(rootException.getCause(), clazz);
-    }
 
     private synchronized <T> T executeWithProcessToolContextSynch(ReturningProcessToolContextCallback<T> callback, ContextStats stats) {
         return executeWithProcessToolContext(callback, stats);

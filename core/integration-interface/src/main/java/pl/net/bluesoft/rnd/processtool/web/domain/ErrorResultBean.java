@@ -23,4 +23,21 @@ public class ErrorResultBean
 		this.message = message;
 	}
 
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		ErrorResultBean that = (ErrorResultBean) o;
+
+		if (!message.equals(that.message)) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return message.hashCode();
+	}
 }

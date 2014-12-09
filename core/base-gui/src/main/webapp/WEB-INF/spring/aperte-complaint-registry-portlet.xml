@@ -31,7 +31,7 @@
     </bean>
     <bean id="localeResolver"
           class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
-        <property name="defaultLocale" value="en" />
+        <property name="defaultLocale" value="pl" />
     </bean>
     <!-- freemarker config -->
     <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
