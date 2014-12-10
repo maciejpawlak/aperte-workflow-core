@@ -25,6 +25,8 @@ import pl.net.bluesoft.rnd.processtool.ProcessToolContextCallback;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContextFactory.ExecutionType;
 import pl.net.bluesoft.rnd.processtool.ReturningProcessToolContextCallback;
 import pl.net.bluesoft.rnd.processtool.bpm.StartProcessResult;
+import pl.net.bluesoft.rnd.processtool.exceptions.BusinessException;
+import pl.net.bluesoft.rnd.processtool.exceptions.ExceptionsUtils;
 import pl.net.bluesoft.rnd.processtool.model.*;
 import pl.net.bluesoft.rnd.processtool.model.config.ProcessStateAction;
 import pl.net.bluesoft.rnd.processtool.model.config.ProcessStateConfiguration;
@@ -188,9 +190,21 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
                         );
 
                         return processBean;
-                    } catch (Throwable ex) {
-                        logger.log(Level.SEVERE, ex.getMessage(), ex);
-                        resultBean.addError(taskId, ex.getMessage());
+                    }
+                    catch (Throwable ex) {
+                        if(ExceptionsUtils.isExceptionOfClassExistis(ex, BusinessException.class))
+                        {
+                            BusinessException businessException = ExceptionsUtils.getExceptionByClassFromStack(ex, BusinessException.class);
+                            String message = context.getMessageSource().getMessage(businessException.getMessage(), businessException.getParameters());
+
+                            logger.log(Level.WARNING, "Business error: "+message, businessException);
+                            resultBean.addError(SYSTEM_SOURCE, message);
+                        }
+                        else {
+                            logger.log(Level.SEVERE, "Error during performing BPM action", ex);
+                            resultBean.addError(SYSTEM_SOURCE, ex.getMessage());
+                        }
+
                         return null;
                     }
                 }
@@ -250,7 +264,6 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
         {
             logger.log(Level.SEVERE, "Error during process starting", e);
 
-            resultBean.addError(SYSTEM_SOURCE, e.getMessage());
             return resultBean;
         }
 
