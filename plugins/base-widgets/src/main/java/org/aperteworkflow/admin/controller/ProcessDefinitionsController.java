@@ -38,14 +38,10 @@ public class ProcessDefinitionsController implements IOsgiWebController {
 	public GenericResultBean loadProcessDefinitions(
 			final OsgiWebRequest invocation) {
 
-		// IProcessToolRequestContext requestContext = invocation
-		// .getProcessToolRequestContext();
-		// ProcessToolContext ctx = invocation.getProcessToolContext();
-		//
+
 		JQueryDataTable dataTable = JQueryDataTableUtil
 				.analyzeRequest(invocation.getRequest().getParameterMap());
-		// JQueryDataTableColumn sortingColumn =
-		// dataTable.getFirstSortingColumn();
+
 
 		ProcessDefinitionDAO dao = getThreadProcessToolContext()
 				.getProcessDefinitionDAO();
@@ -66,51 +62,5 @@ public class ProcessDefinitionsController implements IOsgiWebController {
 		return dataPagingBean;
 	}
 
-	// @ControllerMethod(action="deleteSubtitution")
-	// public GenericResultBean deleteSubtitution(final OsgiWebRequest
-	// invocation)
-	// {
-	//
-	// GenericResultBean result = new GenericResultBean();
-	//
-	// String substitutionId =
-	// invocation.getRequest().getParameter("substitutionId");
-	//
-	// IProcessToolRequestContext requestContext =
-	// invocation.getProcessToolRequestContext();
-	// ProcessToolContext ctx = invocation.getProcessToolContext();
-	//
-	// ctx.getUserSubstitutionDAO().deleteById(Long.parseLong(substitutionId));
-	//
-	// return result;
-	// }
-	//
-	// @ControllerMethod(action="addNewSubstitution")
-	// public GenericResultBean addNewSubstitution(final OsgiWebRequest
-	// invocation)
-	// {
-	//
-	// GenericResultBean result = new GenericResultBean();
-	//
-	// String userLogin = invocation.getRequest().getParameter("userLogin");
-	// String userSubstituteLogin =
-	// invocation.getRequest().getParameter("userSubstituteLogin");
-	// String dateFrom = invocation.getRequest().getParameter("dateFrom");
-	// String dateTo = invocation.getRequest().getParameter("dateTo");
-	//
-	// UserSubstitution userSubstitution = new UserSubstitution();
-	//
-	// userSubstitution.setUserLogin(userLogin);
-	// userSubstitution.setDateFrom(beginOfDay(parseShortDate(dateFrom)));
-	// userSubstitution.setDateTo(endOfDay(parseShortDate(dateTo)));
-	// userSubstitution.setUserSubstituteLogin(userSubstituteLogin);
-	//
-	// IProcessToolRequestContext requestContext =
-	// invocation.getProcessToolRequestContext();
-	// ProcessToolContext ctx = invocation.getProcessToolContext();
-	//
-	// ctx.getUserSubstitutionDAO().saveOrUpdate(userSubstitution);
-	//
-	// return result;
-	// }
+
 }
