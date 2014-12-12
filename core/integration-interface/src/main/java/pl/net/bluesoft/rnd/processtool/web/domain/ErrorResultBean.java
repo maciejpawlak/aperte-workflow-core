@@ -23,7 +23,6 @@ public class ErrorResultBean
 		this.message = message;
 	}
 
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -31,13 +30,13 @@ public class ErrorResultBean
 
 		ErrorResultBean that = (ErrorResultBean) o;
 
-		if (!message.equals(that.message)) return false;
+		if (message != null ? !message.equals(that.message) : that.message != null) return false;
 
 		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		return message.hashCode();
+		return message != null ? message.hashCode() : 0;
 	}
 }

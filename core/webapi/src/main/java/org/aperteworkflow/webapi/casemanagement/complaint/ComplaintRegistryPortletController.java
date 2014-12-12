@@ -35,6 +35,11 @@ import java.util.logging.Logger;
 @Controller(value = "ComplaintRegistryPortletController")
 @RequestMapping(value = "VIEW", method = RequestMethod.GET)
 public class ComplaintRegistryPortletController extends CaseManagementPortletController {
+    public static final String PORTLET_PROCESS_ID_PARAMETER = "processId";
+    public static final String PORTLET_PIR_PARAMETER = "pir";
+    public static final String PORLET_FLIGHT_DATE_PARAMETER = "flightDate";
+    public static final String PORLET_FLIGHT_NO_PARAMETER = "flightNo";
+    public static final String PORLET_PERSON_NAME_PARAMETER = "personName";
     private static Logger logger = Logger.getLogger(ComplaintRegistryPortletController.class.getName());
 
     @Autowired(required = false)
@@ -70,6 +75,20 @@ public class ComplaintRegistryPortletController extends CaseManagementPortletCon
 
         HttpServletRequest httpServletRequest = portalUserSource.getHttpServletRequest(request);
         HttpServletRequest originalHttpServletRequest = portalUserSource.getOriginalHttpServletRequest(httpServletRequest);
+
+        /* Assign to case */
+        String processId = originalHttpServletRequest.getParameter(PORTLET_PROCESS_ID_PARAMETER);
+        String pir = originalHttpServletRequest.getParameter(PORTLET_PIR_PARAMETER);
+        String flightDate = originalHttpServletRequest.getParameter(PORLET_FLIGHT_DATE_PARAMETER);
+        String flightNo = originalHttpServletRequest.getParameter(PORLET_FLIGHT_NO_PARAMETER);
+        String personName = originalHttpServletRequest.getParameter(PORLET_PERSON_NAME_PARAMETER);
+        if (processId != null){
+            modelView.addObject(PORTLET_PROCESS_ID_PARAMETER, processId);
+            modelView.addObject(PORTLET_PIR_PARAMETER, pir);
+            modelView.addObject(PORLET_FLIGHT_DATE_PARAMETER, flightDate);
+            modelView.addObject(PORLET_FLIGHT_NO_PARAMETER, flightNo);
+            modelView.addObject(PORLET_PERSON_NAME_PARAMETER, personName);
+        }
 
         /* Start from case view */
         String showCaseId = originalHttpServletRequest.getParameter(PORTLET_CASE_ID_PARAMTER);
