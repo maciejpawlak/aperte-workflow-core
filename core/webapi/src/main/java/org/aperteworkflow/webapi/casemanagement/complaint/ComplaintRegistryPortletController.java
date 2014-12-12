@@ -16,6 +16,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
+import pl.net.bluesoft.rnd.processtool.ISettingsProvider;
 import pl.net.bluesoft.rnd.processtool.model.UserData;
 import pl.net.bluesoft.rnd.processtool.usersource.IPortalUserSource;
 
@@ -40,12 +41,15 @@ public class ComplaintRegistryPortletController extends CaseManagementPortletCon
     public static final String PORLET_FLIGHT_DATE_PARAMETER = "flightDate";
     public static final String PORLET_FLIGHT_NO_PARAMETER = "flightNo";
     public static final String PORLET_PERSON_NAME_PARAMETER = "personName";
+    public static final String PORTLET_TASK_ID_PARAMETER = "taskId";
     private static Logger logger = Logger.getLogger(ComplaintRegistryPortletController.class.getName());
 
     @Autowired(required = false)
     private TaskViewController taskViewController;
     @Autowired(required = false)
     private ProcessesListController processesListController;
+    @Autowired
+    ISettingsProvider settingsProvider;
 
     @RenderMapping()
     /**
@@ -90,10 +94,18 @@ public class ComplaintRegistryPortletController extends CaseManagementPortletCon
             modelView.addObject(PORLET_PERSON_NAME_PARAMETER, personName);
         }
 
+        modelView.addObject("settingsProvider", settingsProvider);
+
         /* Start from case view */
         String showCaseId = originalHttpServletRequest.getParameter(PORTLET_CASE_ID_PARAMTER);
         if (showCaseId != null) {
             modelView.addObject(PORTLET_CASE_ID_PARAMTER, showCaseId);
+        }
+
+        /* Start form task view */
+        String showTaskId = originalHttpServletRequest.getParameter(PORTLET_TASK_ID_PARAMETER);
+        if (showTaskId != null) {
+            modelView.addObject(PORTLET_TASK_ID_PARAMETER, showTaskId);
         }
 
         return modelView;
