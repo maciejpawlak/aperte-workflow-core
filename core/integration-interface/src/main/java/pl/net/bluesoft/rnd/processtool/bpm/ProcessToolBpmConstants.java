@@ -12,7 +12,7 @@ public interface ProcessToolBpmConstants {
 
     String PATTERN_MATCH_ALL = ".*";
 
-    String REQUEST_PARAMETER_TASK_ID = "bpmTaskId";
+    String REQUEST_PARAMETER_TASK_ID = "taskId";
     
     /** Token ID for external access */
     String REQUEST_PARAMETER_TOKEN_ID = "tokenId";
