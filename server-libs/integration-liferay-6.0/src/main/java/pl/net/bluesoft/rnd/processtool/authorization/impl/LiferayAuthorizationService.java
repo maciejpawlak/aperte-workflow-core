@@ -237,10 +237,10 @@ public class LiferayAuthorizationService implements IAuthorizationService
             }
 
 			/* Get userId by login and password using screen-name authentication type */
-            int authResult = UserLocalServiceUtil.authenticateByScreenName(defaultCompanyId, login, password, headerMap, parameterMap);
-
-            if(authResult == Authenticator.FAILURE)
-                throw new InvalidCredentialsUserSourceException("Invalid credentials");
+//            int authResult = UserLocalServiceUtil.authenticateByScreenName(defaultCompanyId, login, password, headerMap, parameterMap);
+//
+//            if(authResult == Authenticator.FAILURE)
+//                throw new InvalidCredentialsUserSourceException("Invalid credentials");
 
             long userId = UserLocalServiceUtil.getUserIdByScreenName(defaultCompanyId, login);
 
