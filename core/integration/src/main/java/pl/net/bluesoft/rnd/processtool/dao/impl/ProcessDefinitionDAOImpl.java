@@ -33,8 +33,8 @@ public class ProcessDefinitionDAOImpl extends SimpleHibernateBean<ProcessDefinit
 	private static final ExpiringCache<Long, ProcessStateWidget> WIDGET_BY_ID =
 			new ExpiringCache<Long, ProcessStateWidget>(Long.MAX_VALUE);
 
-	private static final ExpiringCache<Object, List<ProcessQueueConfig>> QUEUE_CONFIGS =
-			new ExpiringCache<Object, List<ProcessQueueConfig>>(Long.MAX_VALUE);
+	private static final ExpiringCache<String, ProcessQueueConfig> QUEUE_CONFIGS =
+			new ExpiringCache<String, ProcessQueueConfig>(Long.MAX_VALUE);
 
 	private static final ExpiringCache<Object, Map<Long, String>> ALL_DEFINITION_DESCRIPTIONS =
 			new ExpiringCache<Object, Map<Long, String> >(Long.MAX_VALUE);
@@ -128,11 +128,18 @@ public class ProcessDefinitionDAOImpl extends SimpleHibernateBean<ProcessDefinit
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Collection<ProcessQueueConfig> getQueueConfigs() {
-		return QUEUE_CONFIGS.get(null, new ExpiringCache.NewValueCallback<Object, List<ProcessQueueConfig>>() {
+	public Collection<ProcessQueueConfig> getQueueConfigs()
+	{
+		return getSession().createCriteria(ProcessQueueConfig.class).list();
+	}
+
+	@Override
+	public ProcessQueueConfig getQueueConfig(final String queueName)
+	{
+		return QUEUE_CONFIGS.get(queueName, new ExpiringCache.NewValueCallback<String, ProcessQueueConfig>() {
 			@Override
-			public List<ProcessQueueConfig> getNewValue(Object key) {
-				return getSession().createCriteria(ProcessQueueConfig.class).list();
+			public ProcessQueueConfig getNewValue(String s) {
+				return (ProcessQueueConfig)(getSession().createCriteria(ProcessQueueConfig.class).add(Restrictions.eq("name", queueName)).uniqueResult());
 			}
 		});
 	}
