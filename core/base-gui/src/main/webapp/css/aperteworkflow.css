@@ -1548,6 +1548,10 @@ border-radius: 4px;
     background-color: white;
 }
 
+.actions-view.sticky {
+	left: auto;
+}
+
 .tooltip-inner {
     white-space:pre-wrap;
 }
