@@ -29,7 +29,7 @@ public interface ProcessToolBpmConstants {
 	Integer DEFAULT_QUEUE_INTERVAL = 30000;
 
 	UserData SYSTEM_USER = new UserDataBean("system");
-	UserData ADMIN_USER = new UserDataBean("admin");
+	UserData ADMIN_USER = new UserDataBean("admin", "System", "");
 	
 	/** Text modes enumeration type */
 	enum TextModes
