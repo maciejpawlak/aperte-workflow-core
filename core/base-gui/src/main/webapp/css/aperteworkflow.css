@@ -849,6 +849,14 @@ div.apw.panel-nomargin.panel-nomargin.panel-nomargin.panel-nomargin {
 	color: purple;
 }
 
+.new-stage-color {
+	color: #3D8B3D;
+}
+
+.copy-case-color {
+	color: #357ebd;
+}
+
 .vaadin-widget-view
 {
 	background-repeat: no-repeat;
