@@ -1,5 +1,6 @@
 package pl.net.bluesoft.rnd.pt.ext.jbpm;
 
+import org.apache.commons.lang3.StringUtils;
 import org.aperteworkflow.util.SimpleXmlTransformer;
 import org.drools.event.process.*;
 import org.drools.runtime.process.NodeInstance;
@@ -183,8 +184,10 @@ public class ProcessToolJbpmSession extends AbstractProcessToolSession implement
 	public List<BpmTask> performAction(ProcessStateAction action, BpmTask task) {
 		return doPerformAction(action, getTaskData(toAwfTaskId(task)));
 	}
-
 	private List<BpmTask> doPerformAction(ProcessStateAction action, BpmTask task) {
+		return doPerformAction(action, task, userLogin);
+	}
+	private List<BpmTask> doPerformAction(ProcessStateAction action, BpmTask task, String taskUserLogin) {
 		if (task == null || task.isFinished()) {
 			return null;
 		}
@@ -198,7 +201,7 @@ public class ProcessToolJbpmSession extends AbstractProcessToolSession implement
 		Task jbpmTask = ((JbpmTask)task).getTask();
 		completeTaskParams = new CompleteTaskParams(task);
 		try {
-			getJbpmService().endTask(jbpmTask.getId(), userLogin, null, jbpmTask.getTaskData().getStatus() != Status.InProgress);
+			getJbpmService().endTask(jbpmTask.getId(), taskUserLogin, null, jbpmTask.getTaskData().getStatus() != Status.InProgress);
 			generateStepInfo(completeTaskParams.createdTasks);
 			return completeTaskParams.createdTasksForCurrentUser;
 		} finally {
@@ -662,7 +665,15 @@ public class ProcessToolJbpmSession extends AbstractProcessToolSession implement
 	@Override
 	public void adminCompleteTask(String taskId, String actionName) {
 		log.severe("User: " + userLogin + " attempting to complete task " + taskId + " for process: " + " to outcome: " + actionName);
-		performAction(actionName, taskId);
+
+		BpmTask task = getTaskData(taskId);
+		ProcessStateAction action = task.getCurrentProcessStateConfiguration().getProcessStateActionByName(actionName);
+
+		if(StringUtils.isEmpty(task.getAssignee()))
+			doPerformAction(action, task);
+		else
+			doPerformAction(action, task, task.getAssignee());
+
 		log.severe("User: " + userLogin + " has completed task " + taskId + " for process: " + " to outcome: " + actionName);
 	}
 
