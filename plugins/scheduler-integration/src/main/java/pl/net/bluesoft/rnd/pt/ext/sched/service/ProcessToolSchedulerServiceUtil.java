@@ -2,6 +2,7 @@ package pl.net.bluesoft.rnd.pt.ext.sched.service;
 
 import org.quartz.*;
 
+import static org.quartz.CronScheduleBuilder.*;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import static pl.net.bluesoft.rnd.processtool.plugins.ProcessToolRegistry.Util.getRegistry;
 
@@ -15,6 +16,18 @@ public class ProcessToolSchedulerServiceUtil {
 	}
 
 	public static void schedule(Class<? extends Job> clazz, int interval, JobDataMap dataMap) {
+		schedule(clazz, simpleSchedule().withIntervalInSeconds(interval).repeatForever(), dataMap);
+	}
+
+	public static void schedule(Class<? extends Job> clazz, String cron) {
+		schedule(clazz, cron, new JobDataMap());
+	}
+
+	public static void schedule(Class<? extends Job> clazz, String cron, JobDataMap dataMap) {
+		schedule(clazz, cronSchedule(cron), dataMap);
+	}
+
+	private static void schedule(Class<? extends Job> clazz, ScheduleBuilder scheduleBuilder, JobDataMap dataMap) {
 		ProcessToolSchedulerService service = getRegistry().getRegisteredService(ProcessToolSchedulerService.class);
 
 		String identity = "job";
@@ -26,7 +39,7 @@ public class ProcessToolSchedulerServiceUtil {
 
 		Trigger trigger = TriggerBuilder.newTrigger()
 				.withIdentity(identity, clazz.getName())
-				.withSchedule(simpleSchedule().withIntervalInSeconds(interval).repeatForever())
+				.withSchedule(scheduleBuilder)
 				.forJob(jobDetail)
 				.build();
 
