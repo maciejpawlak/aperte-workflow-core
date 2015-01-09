@@ -31,7 +31,7 @@ public class WidgetData
     {
         Collection<WidgetDataEntry> entries = new ArrayList<WidgetDataEntry>();
         for(WidgetDataEntry entry: widgetDataEntries)
-            if(entry.getType().equals(type))
+            if(entry != null && entry.getType().equals(type))
                 entries.add(entry);
 
         return entries;
