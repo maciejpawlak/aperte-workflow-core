@@ -379,25 +379,36 @@
 		if(skipSaving != true)
 		{
 			clearAlerts();
-			
+
 			var errors = [];
+
+			var validateAllEnabled = true;
+
+			$.each(widgets, function() {
+				if (this.isValidateAllEnabled && !this.isValidateAllEnabled(actionName)) {
+					validateAllEnabled = false;
+				}
+			});
+
 			<!-- Validate html widgets -->
-			$.each(widgets, function() 
+			$.each(widgets, function()
 			{
-				var errorMessages = this.validate(actionName);
+				var errorMessages = validateAllEnabled ? this.validate(actionName) :
+								this.partialValidate ? this.partialValidate(actionName) : [];
+
 				$.each(errorMessages, function() {
 					errors.push(this);
 					addAlert(this);
 				});
 			});
-			
+
 			if(errors.length > 0)
 			{
 				enableButtons();
 				return;
 			}
-			
-			$.each(widgets, function() 
+
+			$.each(widgets, function()
 			{
 				var widgetDataBean = new WidgetDataBean(this.widgetId, this.name, this.getData());
 				widgetData.push(widgetDataBean);
