@@ -34,6 +34,12 @@
 <#assign updateDescriptionAreYouSure = messageSource.getMessage("widget.file.repository.results.table.updateDescription.areYouSure")/>
 <#assign updateDescriptionSuccess = messageSource.getMessage("widget.file.repository.results.table.updateDescription.success")/>
 
+<style type="text/css">
+    .red{
+        color: red;
+    }
+</style>
+
 <!-- Important: macros fileTableTr fileTableTrJs should not be formated due to javascript processor lack of new lines handling -->
 <#macro fileTableTr fileId fileName fileDescription fileCreateDate fileCreatorLogin fileSendWithMail b="" e="">
 ${b}	<tr class="file-tr-l-${fileCreatorLogin}-l">${e}
@@ -52,7 +58,7 @@ ${b}			<button class="btn btn-xs downloadFileBtn" style="margin-right: 10px;" al
 ${b}				<span class="glyphicon glyphicon-floppy-save"/>${e}
 ${b}			</button>${e}
 ${b}			<button class="btn btn-xs deleteFileBtn" style="margin-right: 10px;" alt="Usuń plik">${e}
-${b}				<span class="glyphicon glyphicon-remove"/>${e}
+${b}				<span class="glyphicon glyphicon-trash red"/>${e}
 ${b}			</button>${e}
 ${b}		</td>${e}
 ${b}	</tr>${b}
@@ -62,14 +68,14 @@ ${b}	</tr>${b}
 <div class="panel panel-default">
 	<div class="panel-body">
 		<style type="text/css">
-			#files-table {table-layout: fixed;}
+			#files-table {table-layout: fixed; width: 100%}
 			#files-table td {
 				word-wrap:break-word;
 				background-color: transparent;
 			}
 		</style>
 
-		<div class="form-group col-md-6" >
+		<div class="form-group col-md-12" >
 			<table cellpadding="0" cellspacing="0" border="0" id="files-table" class="table table-hover table-bordered narrow-rows" style="border-collapse:collapse;">
 				<colgroup>
 					<col>
