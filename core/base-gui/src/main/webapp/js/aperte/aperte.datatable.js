@@ -1,4 +1,4 @@
-	function AperteDataTable(tableId, columnDefs, sortingOrder)
+	function AperteDataTable(tableId, columnDefs, sortingOrder, options)
 	{
 		this.tableId = tableId;
 		this.requestUrl = '';
@@ -73,35 +73,42 @@
 		    var sDom = (tableElementsPlacement !== undefined) ? tableElementsPlacement : 'R<"top"t><"bottom"plr>';
 
 			var aperteDataTable = this;
-			this.dataTable = $('#'+this.tableId).DataTable({
-                            serverSide: true,
-                            ordering: true,
-                            lengthChange: true,
-                            stateSave: true,
-                            dom: sDom,
-                            processing: true,
-                            order: sortingOrder,
-            				ajax: {
-                                    dataType: 'json',
-                                    type: "POST",
-                                    url: aperteDataTable.requestUrl,
-									"data": function ( d ) 
-									{
-										
-										$.each(aperteDataTable.requestParameters, function (index, parameter)
-										{
-											var key = parameter["name"];
-											var value = parameter["value"];
-											d[key] = value;
-										});
-									 },
-									dataSrc: "listData"
-                                },
-            				columns: aperteDataTable.columnDefs,
-            				language: dataTableLanguage
-                        });
-						
 
+			var definition = {
+				 serverSide: true,
+				 ordering: true,
+				 lengthChange: true,
+				 stateSave: true,
+				 dom: sDom,
+				 processing: true,
+				 order: sortingOrder,
+				ajax: {
+						 dataType: 'json',
+						 type: "POST",
+						 url: aperteDataTable.requestUrl,
+						"data": function ( d )
+						{
+
+							$.each(aperteDataTable.requestParameters, function (index, parameter)
+							{
+								var key = parameter["name"];
+								var value = parameter["value"];
+								d[key] = value;
+							});
+						 },
+						dataSrc: "listData"
+					 },
+				columns: aperteDataTable.columnDefs,
+				language: dataTableLanguage
+			 };
+
+			if (options) {
+				for (var key in options) {
+					definition[key] = options[key];
+				}
+			}
+console.log(tableId, definition)
+			this.dataTable = $('#'+this.tableId).DataTable(definition);
 		}
 
 		this.toggleColumnButton = function(columnName, active)
