@@ -9,10 +9,11 @@
 		this.taskId = taskId;
 		this.formId = 'test';
 		this.validate = function() {};
+		this.validateDataCorrectness = function() {};
 		this.getData = function() { return null; };
 		this.isEnabled = true;
 	}
-
+	
 	function WidgetDataBean(widgetId, widgetName, data)
 	{
 		this.widgetId = widgetId;

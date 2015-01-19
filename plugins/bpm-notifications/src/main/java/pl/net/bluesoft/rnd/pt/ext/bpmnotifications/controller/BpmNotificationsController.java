@@ -71,6 +71,7 @@ public class BpmNotificationsController implements IOsgiWebController {
 		profile.setStarttls("1".equals(request.getParameter("ProfileStartTls")));
 		profile.setDebug("1".equals(request.getParameter("ProfileDebug")));
 
+
 		BpmNotificationMailPropertiesDAO bpmNotificationMailPropertiesDAO = new BpmNotificationMailPropertiesDAO();
 		bpmNotificationMailPropertiesDAO.saveOrUpdate(profile);
 
@@ -103,6 +104,7 @@ public class BpmNotificationsController implements IOsgiWebController {
 		template.setSender(request.getParameter("TemplateSender"));
 		template.setSubjectTemplate(request.getParameter("TemplateSubject"));
 		template.setTemplateBody(request.getParameter("TemplateBody"));
+		template.setFooterTemplate(request.getParameter("TemplateFooter"));
 
 		BpmNotificationTemplateDAO bpmNotificationTemplateDAO = new BpmNotificationTemplateDAO();
 		bpmNotificationTemplateDAO.saveOrUpdate(template);
