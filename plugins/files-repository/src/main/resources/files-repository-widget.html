@@ -38,13 +38,19 @@
     .red{
         color: red;
     }
+    .ellips{
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 </style>
 
 <!-- Important: macros fileTableTr fileTableTrJs should not be formated due to javascript processor lack of new lines handling -->
 <#macro fileTableTr fileId fileName fileDescription fileCreateDate fileCreatorLogin fileSendWithMail b="" e="">
 ${b}	<tr class="file-tr-l-${fileCreatorLogin}-l">${e}
 ${b}		<td class="fileId" style="display:none">${fileId}</td>${e}
-${b}		<td class="fileName"><a href="#" class="fileNameDownloadHref">${fileName?html}</a></td>${e}
+${b}		<td class="fileName"><a href="#" class="fileNameDownloadHref ellips">${fileName?html}</a></td>${e}
 ${b}		<td class="fileDescription"><textarea class="form-control file-description-input" style="width:100%; height:100%" placeholder="Opis dokumentu">${(fileDescription!"")?html}</textarea></td>${e}
 ${b}		<#if isMailMode>${e}
 ${b}			<td>${e}
@@ -70,7 +76,6 @@ ${b}	</tr>${b}
 		<style type="text/css">
 			#files-table {table-layout: fixed; width: 100%}
 			#files-table td {
-				word-wrap:break-word;
 				background-color: transparent;
 			}
 		</style>
