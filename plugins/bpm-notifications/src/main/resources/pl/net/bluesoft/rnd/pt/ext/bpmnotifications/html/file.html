@@ -233,6 +233,15 @@
 					</div>
 				</div>
 
+				<div class="control-group string optional template_footer">
+					<label for="template_body" class="string optional control-label">
+						${messageSource.getMessage("bpmnot.footer")} </label>
+					<div class="controls">
+						<input type="text" name="TemplateFooter" id="TemplateFooter"
+								  class="string optional span6"></textarea>
+					</div>
+				</div>
+
 				<p class="help-block">${templateInfo}</p>
 
 				<div class="form-group">
@@ -823,6 +832,7 @@
 			$("#TemplateSender").val(obj.sender);
 			$("#TemplateSubject").val(obj.subjectTemplate);
 			$("#TemplateBody").val(obj.templateBody);
+			$("#TemplateFooter").val(obj.footerTemplate);
 		}
 		else if(target == "Notification")
 		{

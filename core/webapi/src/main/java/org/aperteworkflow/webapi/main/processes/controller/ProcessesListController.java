@@ -73,7 +73,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(method = RequestMethod.GET, value = "/processes/performAction.json")
+	@RequestMapping(method = RequestMethod.GET, value = "/processes/performAction.json", headers = "Content-Type=application/json")
 	@ResponseBody
 	public PerformActionResultBean performAction(final HttpServletRequest request)
 	{

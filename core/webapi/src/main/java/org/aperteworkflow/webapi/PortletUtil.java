@@ -42,6 +42,7 @@ public class PortletUtil
         ModelAndView mav = new ModelAndView();
         MappingJacksonJsonViewEx v = new MappingJacksonJsonViewEx();
         v.setBeanName(resultName);
+        v.setContentType("application/json");
 
         mav.setView(v);
         mav.addObject(resultName, result);

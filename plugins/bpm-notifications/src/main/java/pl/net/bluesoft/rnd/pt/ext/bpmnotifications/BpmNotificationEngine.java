@@ -1,5 +1,6 @@
 package pl.net.bluesoft.rnd.pt.ext.bpmnotifications;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -851,7 +852,7 @@ public class BpmNotificationEngine implements IBpmNotificationService
 			topic = notificationData.getSubjectOverride();
 		}
 
-		if (sender == null) {
+		if (StringUtils.isEmpty(sender)) {
 			sender = notificationData.getDefaultSender();
 		}
 
