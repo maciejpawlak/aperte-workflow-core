@@ -59,6 +59,9 @@ public class FilesRepositoryItem extends PersistentEntity implements IFilesRepos
 	@Column(name = "att_entity_id")
 	private Long attachedEntityId;
 
+	@Column(name = "group_id", length = 20)
+	private String groupId;
+
 	@Override
 	public String getName() {
 		return name;
@@ -147,5 +150,15 @@ public class FilesRepositoryItem extends PersistentEntity implements IFilesRepos
 	public void attachToEntity(String entityType, Long entityId) {
 		this.attachedEntityType = entityType;
 		this.attachedEntityId = entityId;
+	}
+
+	@Override
+	public String getGroupId() {
+		return groupId;
+	}
+
+	@Override
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
 	}
 }

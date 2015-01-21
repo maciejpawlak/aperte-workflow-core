@@ -38,4 +38,7 @@ public interface IFilesRepositoryItem {
 	void setAttachedEntityId(Long attachedEntityId);
 
 	void attachToEntity(String entityType, Long entityId);
+
+    String getGroupId();
+    void setGroupId(String groupId);
 }

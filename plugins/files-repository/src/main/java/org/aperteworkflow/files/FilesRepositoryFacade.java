@@ -69,10 +69,17 @@ public class FilesRepositoryFacade implements IFilesRepositoryFacade {
 		return uploadFile(inputStream, contentType, filesConsumer, fileName, fileDescription, creatorLogin, factory, null);
 	}
 
+    @Override
+    public IFilesRepositoryItem uploadFile(InputStream inputStream, String contentType, IAttributesConsumer filesConsumer,
+                                           String fileName, String fileDescription, String creatorLogin, FilesRepositoryAttributeFactory factory,
+                                           Boolean sendWithMail) throws UploadFileException {
+        return uploadFile(inputStream, contentType, filesConsumer, fileName, fileDescription, creatorLogin, factory, sendWithMail, null);
+    }
+
 	@Override
 	public IFilesRepositoryItem uploadFile(InputStream inputStream, String contentType, IAttributesConsumer filesConsumer,
 			String fileName, String fileDescription, String creatorLogin, FilesRepositoryAttributeFactory factory,
-			Boolean sendWithMail) throws UploadFileException {
+			Boolean sendWithMail, String groupId) throws UploadFileException {
         IFilesRepositoryItem result;
         String filePath = prepareFilePath(filesConsumer.getId(), fileName);
         try {
@@ -80,7 +87,7 @@ public class FilesRepositoryFacade implements IFilesRepositoryFacade {
         } catch (IOException e) {
             throw new UploadFileException("Cannot write file to storage", e);
         }
-        result = getFilesRepositoryItemDAO().addItem(filesConsumer, fileName, fileDescription, filePath, contentType, creatorLogin, sendWithMail, factory);
+        result = getFilesRepositoryItemDAO().addItem(filesConsumer, fileName, fileDescription, filePath, contentType, creatorLogin, sendWithMail, groupId, factory);
         return result;
     }
 
@@ -136,7 +143,7 @@ public class FilesRepositoryFacade implements IFilesRepositoryFacade {
 
 		for (IFilesRepositoryItem file : files) {
 			getFilesRepositoryItemDAO().addItem(filesConsumer, file.getName(), file.getDescription(), file.getRelativePath(),
-					file.getContentType(), file.getCreatorLogin(), file.getSendWithMail(), factory);
+					file.getContentType(), file.getCreatorLogin(), file.getSendWithMail(), file.getGroupId(), factory);
 		}
 		return result;
 	}
