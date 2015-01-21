@@ -82,7 +82,7 @@ public class TemplateDataProvider implements ITemplateDataProvider
 	public TemplateDataProvider addProcessData(TemplateData templateData, IAttributesProvider provider) {
         if (provider != null && provider instanceof ProcessInstance) {
             ProcessInstance pi = (ProcessInstance) provider;
-            templateData.addEntry(_PROCESS_VISIBLE_ID, hasText(pi.getExternalKey()) ? pi.getExternalKey() : pi.getInternalId());
+            templateData.addEntry(_PROCESS_VISIBLE_ID, hasText(pi.getRootProcessInstance().getExternalKey()) ? pi.getRootProcessInstance().getExternalKey() : pi.getInternalId());
             templateData.addEntry(_PROCESS_ID, hasText(pi.getExternalKey()) ? pi.getExternalKey() : pi.getInternalId());
             templateData.addEntry(_PROCESS, pi);
             templateData.addEntry(_CREATOR, getRegistry().getUserSource().getUserByLogin(pi.getCreatorLogin()));
