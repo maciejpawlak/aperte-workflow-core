@@ -145,10 +145,10 @@ public class ProcessToolContextFactoryImpl implements ProcessToolContextFactory
     }
 
     private <T> T executeWithProcessToolContextNonJta(ReturningProcessToolContextCallback<T> callback, ContextStats stats) {
-        return executeWithProcessToolContextNonJta(callback, true, stats);
+        return executeWithProcessToolContextNonJta(callback, true, stats, false);
     }
 
-    private <T> T executeWithProcessToolContextNonJta(ReturningProcessToolContextCallback<T> callback, boolean reload, ContextStats stats)
+    private <T> T executeWithProcessToolContextNonJta(ReturningProcessToolContextCallback<T> callback, boolean reload, ContextStats stats, boolean doReloadJbpm)
     {
         T result = null;
 
@@ -164,6 +164,13 @@ public class ProcessToolContextFactoryImpl implements ProcessToolContextFactory
             ProcessToolContext.Util.setThreadProcessToolContext(ctx);
             try
             {
+                if (doReloadJbpm) {
+                    stats.beforeReloadJbpm();
+                    reloadJbpm();
+                    stats.afterReloadJbpm();
+                }
+
+
                 result = callback.processWithContext(ctx);
 
                 try {
@@ -203,12 +210,8 @@ public class ProcessToolContextFactoryImpl implements ProcessToolContextFactory
 
                         ctx.close();
 
-						stats.beforeReloadJbpm();
-                        reloadJbpm();
-						stats.afterReloadJbpm();
-
                         ProcessToolContext.Util.removeThreadProcessToolContext();
-                        executeWithProcessToolContextNonJta(callback,false, stats);
+                        executeWithProcessToolContextNonJta(callback,false, stats, true);
                     }
                     else if (reload && isExceptionOfClassExistis(ex, TransactionException.class))
                     {
@@ -225,7 +228,7 @@ public class ProcessToolContextFactoryImpl implements ProcessToolContextFactory
                         ctx.close();
 
                         ProcessToolContext.Util.removeThreadProcessToolContext();
-                        executeWithProcessToolContextNonJta(callback,false, stats);
+                        executeWithProcessToolContextNonJta(callback,false, stats, false);
                     }
                     else
                     {
