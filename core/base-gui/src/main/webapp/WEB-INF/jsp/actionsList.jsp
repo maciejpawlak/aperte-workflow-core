@@ -162,9 +162,9 @@
 	    var state = 'OK';
 		clearAlerts();
 		windowManager.showSavingScreen();
-		
+
 		var errors = [];
-		<!-- Validate html widgets -->
+		/* Validate html widgets */
 		$.each(widgets, function() 
 		{
 			var errorMessages = this.validateDataCorrectness();
@@ -181,7 +181,7 @@
 				});
 			}
 	    });
-		
+
 		if(errors.length > 0)
 		{
 			enableButtons();
@@ -191,8 +191,7 @@
 		}
 		
 		var widgetData = [];
-		
-		$.each(widgets, function() 
+		$.each(widgets, function()
 		{
 			var widgetDataBean = new WidgetDataBean(this.widgetId, this.name, this.getData());
 			widgetData.push(widgetDataBean);
@@ -204,7 +203,7 @@
 		{
 			"taskId": taskId,
 			"widgetData": JsonWidgetData
-		},'json')
+		}, null, 'json')
 		.done(function(data)
 		{
 			if(data.errors != null)
@@ -282,7 +281,7 @@
 		$('#alerts-list').empty();
 	}
 	
-	<!-- Check for comment required field -->
+	/* Check for comment required field */
 	function performAction(button, actionName, skipSaving, commentNeeded, changeOwner, changeOwnerAttributeKey, taskId)
 	{
 		if(skipSaving != true)
@@ -290,10 +289,10 @@
 			clearAlerts();
 			
 			var errors = [];
-			<!-- Validate html widgets -->
+			/* Validate html widgets */
 			$.each(widgets, function() 
 			{
-				<!-- Validate technical correctness -->
+				/* Validate technical correctness */
                 var errorMessages = this.validateDataCorrectness();
 				if(errorMessages)
 				{
@@ -303,7 +302,7 @@
 					});
 				}
 
-                <!-- Validate business correctness -->
+                /* Validate business correctness */
 				errorMessages = this.validate();
 				if(errorMessages)
 				{
@@ -425,7 +424,7 @@
 				}
 			});
 
-			<!-- Validate html widgets -->
+			/* Validate html widgets */
 			$.each(widgets, function()
 			{
 				var errorMessages = validateAllEnabled ? this.validate(actionName) :
@@ -504,10 +503,10 @@
 			"changeOwnerAttributeKey": args.changeOwnerAttributeKey,
 			"changeOwnerAttributeValue": args.changeOwnerAttributeValue,
 			"widgetData": JsonWidgetData
-		},'json')
+		}, null, 'json')
 		.done(function(data)
 		{
-			//<!-- Errors handling -->
+			/* Errors handling */
 			windowManager.clearErrors();
 
 			var errors = [];
