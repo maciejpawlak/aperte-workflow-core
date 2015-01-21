@@ -107,7 +107,7 @@
 					definition[key] = options[key];
 				}
 			}
-console.log(tableId, definition)
+
 			this.dataTable = $('#'+this.tableId).DataTable(definition);
 		}
 

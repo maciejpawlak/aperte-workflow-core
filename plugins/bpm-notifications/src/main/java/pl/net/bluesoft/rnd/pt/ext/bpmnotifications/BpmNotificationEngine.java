@@ -31,9 +31,7 @@ import pl.net.bluesoft.rnd.util.i18n.I18NSource;
 import pl.net.bluesoft.rnd.util.i18n.I18NSourceFactory;
 
 import javax.activation.DataHandler;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.*;
 import javax.mail.util.ByteArrayDataSource;
 import java.net.ConnectException;
@@ -508,6 +506,7 @@ public class BpmNotificationEngine implements IBpmNotificationService
         notification.setRecipient(processedNotificationData.getRecipient().getEmail());
         notification.setSendAsHtml(processedNotificationData.isSendAsHtml());
         notification.setProfileName(processedNotificationData.getProfileName());
+        notification.setSentFolderName(processedNotificationData.getSentFolderName());
         Boolean isGroup = null;
 
 
@@ -564,10 +563,12 @@ public class BpmNotificationEngine implements IBpmNotificationService
         
         try 
         {
+            Properties emailPrtoperties = mailSession.getProperties();
+            String sentFolderName = notification.getSentFolderName();
+
 	    	/* If smtps is required, force diffrent transport properties */
 	    	if(isSmtpsRequired(mailSession))
 	    	{
-	    		Properties emailPrtoperties = mailSession.getProperties();
 	    		
 	    		String secureHost = emailPrtoperties.getProperty("mail.smtp.host");
 	    		String securePort = emailPrtoperties.getProperty("mail.smtp.port");
@@ -587,6 +588,10 @@ public class BpmNotificationEngine implements IBpmNotificationService
 
 			fireNotificationSent(notification, message);
 
+            /** Wymagany refactor, nie odkomentowywac! */
+//            if(StringUtils.isNotEmpty(sentFolderName))
+//                saveEmailInSentFolder(mailSession, sentFolderName, message);
+
 			history.notificationSent(notification);
 
 	    	logger.info("Emails sent");
@@ -599,6 +604,34 @@ public class BpmNotificationEngine implements IBpmNotificationService
 
             throw new RuntimeException("Problem during notification sending...", e);
         }
+    }
+
+    /** Save message in sent folder */
+    private void saveEmailInSentFolder(javax.mail.Session mailSession, String folderName, Message message) throws MessagingException {
+        Store store = mailSession.getStore("imaps");
+
+        Properties emailPrtoperties = mailSession.getProperties();
+
+        String secureHost = emailPrtoperties.getProperty("mail.smtp.host");
+        String securePort = emailPrtoperties.getProperty("mail.smtp.port");
+        String userName = emailPrtoperties.getProperty("mail.smtp.user");
+        String userPassword = emailPrtoperties.getProperty("mail.smtp.password");
+
+        store.connect(secureHost, userName,userPassword);
+
+        Folder dfolder = getFolder(store, folderName);
+        Message[] messages = new Message[1];
+        messages[0]= message;
+        dfolder.appendMessages(messages);
+    }
+
+    private Folder getFolder(Store store, String folderName) throws MessagingException {
+        Folder folder = store.getDefaultFolder().getFolder(folderName);
+        if (!folder.exists()) {
+            folder.create(Folder.HOLDS_MESSAGES);
+            logger.info("Created folder " + folderName);
+        }
+        return folder;
     }
     
     public static Message createMessageFromNotification(Connection connection, BpmNotification notification, javax.mail.Session mailSession) throws Exception
@@ -844,9 +877,11 @@ public class BpmNotificationEngine implements IBpmNotificationService
 	@Override
 	public ProcessedNotificationData processNotificationData(NotificationData notificationData) throws Exception 
 	{
+
     	String body = processTemplate(notificationData.getTemplateData().getTemplateName(), notificationData.getTemplateData());
     	String topic = processTemplate(notificationData.getTemplateData().getTemplateName() + SUBJECT_TEMPLATE_SUFFIX, notificationData.getTemplateData());
     	String sender = findTemplate(notificationData.getTemplateData().getTemplateName() + SENDER_TEMPLATE_SUFFIX);
+        String sentFolderName = templateProvider.getTemplateSentFolderName(notificationData.getTemplateData().getTemplateName());
 
 		if (hasText(notificationData.getSubjectOverride())) {
 			topic = notificationData.getSubjectOverride();
@@ -860,11 +895,11 @@ public class BpmNotificationEngine implements IBpmNotificationService
         	throw new Exception("Error sending email. Cannot find valid template configuration, teplateName="+notificationData.getTemplateData().getTemplateName());
         }
         
-        ProcessedNotificationData processedNotificationData = new ProcessedNotificationData(notificationData);
-        processedNotificationData
-        	.setBody(body)
-        	.setSubject(topic)
-        	.setSender(sender);
+        ProcessedNotificationData processedNotificationData = new ProcessedNotificationData(notificationData)
+        	    .setBody(body)
+        	    .setSubject(topic)
+                .setSender(sender)
+                .setSentFolderName(sentFolderName);
 
 		return processedNotificationData;
 	}

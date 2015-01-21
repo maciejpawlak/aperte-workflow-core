@@ -242,6 +242,15 @@
 					</div>
 				</div>
 
+				<div class="control-group string optional template_footer">
+					<label for="TemplateSentFolder" class="string optional control-label">
+						${messageSource.getMessage("bpmnot.sentfolder")} </label>
+					<div class="controls">
+						<input type="text" name="TemplateSentFolder" id="TemplateSentFolder"
+							   class="string optional span6"></textarea>
+					</div>
+				</div>
+
 				<p class="help-block">${templateInfo}</p>
 
 				<div class="form-group">
@@ -833,6 +842,7 @@
 			$("#TemplateSubject").val(obj.subjectTemplate);
 			$("#TemplateBody").val(obj.templateBody);
 			$("#TemplateFooter").val(obj.footerTemplate);
+			$("#TemplateSentFolder").val(obj.sentFolderName);
 		}
 		else if(target == "Notification")
 		{

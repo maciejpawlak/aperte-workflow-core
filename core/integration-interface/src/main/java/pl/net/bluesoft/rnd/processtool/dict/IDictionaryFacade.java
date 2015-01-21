@@ -35,4 +35,6 @@ public interface IDictionaryFacade
     List<DictionaryItem> getAllDictionaryItems(String dictionaryName, Locale locale, String filter, Date date, String sortBy);
 
     DictionaryItem getDictionaryItem(String dictionaryName, String key, Locale locale);
+
+    DictionaryItem getDictionaryItemForDate(String dictionaryName, String key, Locale locale, Date date);
 }

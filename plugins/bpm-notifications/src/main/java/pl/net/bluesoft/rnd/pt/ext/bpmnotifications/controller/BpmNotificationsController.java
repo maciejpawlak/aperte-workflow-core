@@ -105,6 +105,7 @@ public class BpmNotificationsController implements IOsgiWebController {
 		template.setSubjectTemplate(request.getParameter("TemplateSubject"));
 		template.setTemplateBody(request.getParameter("TemplateBody"));
 		template.setFooterTemplate(request.getParameter("TemplateFooter"));
+		template.setSentFolderName(request.getParameter("TemplateSentFolder"));
 
 		BpmNotificationTemplateDAO bpmNotificationTemplateDAO = new BpmNotificationTemplateDAO();
 		bpmNotificationTemplateDAO.saveOrUpdate(template);

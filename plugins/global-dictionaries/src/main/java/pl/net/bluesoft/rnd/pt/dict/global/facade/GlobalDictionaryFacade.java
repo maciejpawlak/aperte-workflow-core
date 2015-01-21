@@ -116,6 +116,16 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
         return null;
     }
 
+    @Override
+    public DictionaryItem getDictionaryItemForDate(String dictionaryName, String key, Locale locale, Date date) {
+        Collection<DictionaryItem> items = getAllDictionaryItems(dictionaryName, locale, null, date);
+        for(DictionaryItem item: items)
+            if(item.getKey().equals(key))
+                return item;
+
+        return null;
+    }
+
 
     private boolean checkForFilters(DictionaryItem item, Collection<DictFilter> filters)
     {

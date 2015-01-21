@@ -3,6 +3,7 @@ package pl.net.bluesoft.rnd.pt.ext.bpmnotifications.model;
 import org.hibernate.annotations.Type;
 import pl.net.bluesoft.rnd.processtool.model.PersistentEntity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
@@ -26,6 +27,16 @@ public class BpmNotificationTemplate extends PersistentEntity {
     @Type(type = "org.hibernate.type.StringClobType")
 	private String templateBody;
 	private String footerTemplate;
+	@Column(name = "sent_folder_name", length = 100, nullable = true)
+	private String sentFolderName;
+
+	public String getSentFolderName() {
+		return sentFolderName;
+	}
+
+	public void setSentFolderName(String sentFolderName) {
+		this.sentFolderName = sentFolderName;
+	}
 
 	public String getSender() {
 		return sender;

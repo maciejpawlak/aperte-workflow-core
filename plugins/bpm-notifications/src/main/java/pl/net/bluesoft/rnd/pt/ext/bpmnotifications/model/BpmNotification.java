@@ -68,6 +68,16 @@ public class BpmNotification extends PersistentEntity
 	private String tag;
 	@Column(name = "template_name")
 	private String templateName;
+	@Column(name = "sent_folder_name", length = 100)
+	private String sentFolderName;
+
+	public String getSentFolderName() {
+		return sentFolderName;
+	}
+
+	public void setSentFolderName(String sentFolderName) {
+		this.sentFolderName = sentFolderName;
+	}
 
 	public BpmNotification(){
         notificationCreated = new Date();
