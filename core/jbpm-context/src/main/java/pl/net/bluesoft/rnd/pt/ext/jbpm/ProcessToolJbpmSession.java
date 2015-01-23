@@ -375,11 +375,19 @@ public class ProcessToolJbpmSession extends AbstractProcessToolSession implement
 	public int getTasksCount(ProcessInstanceFilter queueFilter)
     {
 
-        return new BpmTaskQuery(dataRegistry.getHibernateDialect())
-                .user(queueFilter.getFilterOwnerLogin())
-                .virtualQueues(queueFilter.getQueueTypes())
-                .queryConditions(new BpmTaskQueryCondition())
-                .count();
+		BpmTaskQuery taskQuery = new BpmTaskQuery(dataRegistry.getHibernateDialect());
+
+		if(StringUtils.isNotEmpty(queueFilter.getFilterOwnerLogin()))
+			taskQuery.user(queueFilter.getFilterOwnerLogin());
+		if(queueFilter.getQueueTypes() != null && !queueFilter.getQueueTypes().isEmpty())
+			taskQuery.virtualQueues(queueFilter.getQueueTypes());
+
+		if(queueFilter.getQueues() != null && !queueFilter.getQueues().isEmpty())
+			taskQuery.queues(queueFilter.getQueues());
+
+		taskQuery.queryConditions(queueFilter.getBpmTaskQueryCondition());
+
+		return taskQuery.count();
 	}
 
 	@Override
@@ -506,7 +514,8 @@ public class ProcessToolJbpmSession extends AbstractProcessToolSession implement
         {
             AbstractTaskListView taskView = registry.getGuiRegistry().getTasksListView(filter.getViewName());
 
-            taskFilterQuery.queryConditions(taskView.getBpmTaskQueryCondition());
+
+            taskFilterQuery.queryConditions(filter.getBpmTaskQueryCondition());
         }
 
         if (!filter.getQueueTypes().isEmpty()) {

@@ -102,7 +102,7 @@ public abstract class AbstractProcessToolSession implements ProcessToolBpmSessio
         return result;
     }
 
-	protected List<ProcessQueue> getUserQueuesFromConfig() {
+	public List<ProcessQueue> getUserQueuesFromConfig() {
 		return getQueuesFromConfig(getRoleNames(), "admin".equals(userLogin));
     }
 

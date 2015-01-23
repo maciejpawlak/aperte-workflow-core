@@ -321,7 +321,9 @@ public class BpmTaskQuery {
 
         /* Add additional join conditions */
         for(SortingOrder sortingOrder: columnSorting)
-            sb.append(queryConditions.getJoinCondition(sortingOrder.getColumnName()));
+            sb.append(queryConditions.getSortJoinCondition(sortingOrder.getColumnName()));
+
+        sb.append(queryConditions.getJoin());
 
         sb.append(" WHERE 1=1");
 
@@ -362,6 +364,8 @@ public class BpmTaskQuery {
             sb.append(" AND process.definitionname = :processBpmKey");
             queryParameters.add(new QueryParameter("processBpmKey", processBpmKey));
         }
+
+        sb.append(queryConditions.getWhereCondition());
 
         if (hasText(searchExpression)) {
             sb.append(" AND (");

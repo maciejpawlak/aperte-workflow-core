@@ -10,6 +10,7 @@ import pl.net.bluesoft.rnd.processtool.filters.factory.ProcessInstanceFilterFact
 import pl.net.bluesoft.rnd.processtool.model.nonpersistent.ProcessQueue;
 import pl.net.bluesoft.rnd.processtool.plugins.GuiRegistry;
 import pl.net.bluesoft.rnd.processtool.plugins.ProcessToolRegistry;
+import pl.net.bluesoft.rnd.processtool.usersource.IPortalUserSource;
 import pl.net.bluesoft.rnd.processtool.web.view.AbstractTaskListView;
 import pl.net.bluesoft.rnd.processtool.web.view.ProcessInstanceFilter;
 import pl.net.bluesoft.rnd.util.i18n.I18NSource;
@@ -36,6 +37,9 @@ public class UserProcessQueuesSizeProvider
 
     @Autowired
 	private ProcessToolRegistry processToolRegistry;
+
+	@Autowired
+	private IPortalUserSource userSource;
 
 
 	private I18NSource messageSource;
@@ -115,6 +119,7 @@ public class UserProcessQueuesSizeProvider
 
             Map<String, Object> listViewParameters = new HashMap<String, Object>();
             listViewParameters.put(AbstractTaskListView.PARAMETER_USER_LOGIN, userLogin);
+			listViewParameters.put(AbstractTaskListView.PARAMETER_USER, userSource.getUserByLogin(userLogin));
 
             ProcessInstanceFilter queueFilter = listView.getProcessInstanceFilter(listViewParameters);
 
@@ -137,20 +142,26 @@ public class UserProcessQueuesSizeProvider
 		List<ProcessQueue> userAvailableQueues = new ArrayList<ProcessQueue>(bpmSession.getUserAvailableQueues());
 		for(ProcessQueue processQueue: userAvailableQueues)
 		{
-			int processCount = processQueue.getProcessCount();
-			
 			String queueId = processQueue.getName();
 
             AbstractTaskListView listView = getCustomQueue(listViews, queueId);
             if(listView == null)
                 listView = processToolRegistry.getGuiRegistry().getTasksListView(GuiRegistry.STANDARD_PROCESS_QUEUE_ID);
 
+			Map<String, Object> listViewParameters = new HashMap<String, Object>();
+			listViewParameters.put(AbstractTaskListView.PARAMETER_USER_LOGIN, userLogin);
+			listViewParameters.put(AbstractTaskListView.PARAMETER_USER, userSource.getUserByLogin(userLogin));
+
+			ProcessInstanceFilter queueFilter = listView.getProcessInstanceFilter(listViewParameters);
+
+			int filteredQueueSize = bpmSession.getTasksCount(queueFilter);
+
 
             String queueName = messageSource.getMessage(processQueue.getDescription());
             String queueDesc = messageSource.getMessage(processQueue.getDescription());
 			
-			userQueueSize.addQueueSize(queueName, queueId, queueDesc, processCount);
-            userQueueSize.setActiveTasks(userQueueSize.getActiveTasks() + processCount);
+			userQueueSize.addQueueSize(queueName, queueId, queueDesc, filteredQueueSize);
+            userQueueSize.setActiveTasks(userQueueSize.getActiveTasks() + filteredQueueSize);
 		}
 		
 		usersQueuesSize.add(userQueueSize);

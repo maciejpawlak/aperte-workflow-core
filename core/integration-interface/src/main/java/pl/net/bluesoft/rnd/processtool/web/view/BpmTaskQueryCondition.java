@@ -23,7 +23,12 @@ public class BpmTaskQueryCondition implements IBpmTaskQueryCondition
     private static final String TASK_CREATION_DATE = "assignDate";
 
     @Override
-    public String getJoinCondition(String sortColumnName) {
+    public String getSortJoinCondition(String sortColumnName) {
+        return "";
+    }
+
+    @Override
+    public String getJoin() {
         return "";
     }
 
@@ -53,6 +58,11 @@ public class BpmTaskQueryCondition implements IBpmTaskQueryCondition
     @Override
     public String getSearchCondition()
     {
+        return "";
+    }
+
+    @Override
+    public String getWhereCondition() {
         return "";
     }
 

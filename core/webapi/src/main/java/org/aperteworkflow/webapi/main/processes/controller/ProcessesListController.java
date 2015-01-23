@@ -762,6 +762,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 
                 Map<String, Object> listViewParameters = new HashMap<String, Object>();
                 listViewParameters.put(AbstractTaskListView.PARAMETER_USER_LOGIN, ownerLogin);
+                listViewParameters.put(AbstractTaskListView.PARAMETER_USER, context.getUser());
                 listViewParameters.put(AbstractTaskListView.PARAMETER_QUEUE_ID, viewName);
 
                 ProcessInstanceFilter filter = finalListView.getProcessInstanceFilter(listViewParameters);

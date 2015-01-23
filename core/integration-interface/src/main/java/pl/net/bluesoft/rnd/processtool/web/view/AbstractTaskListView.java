@@ -19,6 +19,7 @@ public abstract class AbstractTaskListView implements Comparable<AbstractTaskLis
 
 
     public static final String PARAMETER_USER_LOGIN = "userLogin";
+    public static final String PARAMETER_USER = "user";
     public static final String PARAMETER_QUEUE_ID = "queueId";
 
     private QueueTypes queueType;
@@ -79,8 +80,6 @@ public abstract class AbstractTaskListView implements Comparable<AbstractTaskLis
     }
 
     public abstract ProcessInstanceFilter getProcessInstanceFilter(Map<String, Object> parameters);
-
-    public abstract IBpmTaskQueryCondition getBpmTaskQueryCondition();
 
     /** Get role names which user is required to have, to see this view. Default no role is required */
     public Set<String> getRoleNames()

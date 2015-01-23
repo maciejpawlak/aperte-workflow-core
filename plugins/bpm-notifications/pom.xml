@@ -170,7 +170,8 @@
                             pl.net.bluesoft.rnd.pt.ext.bpmnotifications.controller.BpmNotificationsController
                         </ProcessTool-Controller>
                         <ProcessTool-Spring-Beans>
-                            pl.net.bluesoft.rnd.pt.ext.bpmnotifications.BpmNotificationEngine
+                            pl.net.bluesoft.rnd.pt.ext.bpmnotifications.BpmNotificationEngine,
+                            pl.net.bluesoft.rnd.pt.ext.bpmnotifications.sessions.IMAPPropertiesSessionProvider
                         </ProcessTool-Spring-Beans>
                     </instructions>
                 </configuration>
