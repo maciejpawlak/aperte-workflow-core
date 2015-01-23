@@ -1,4 +1,5 @@
 <#assign null = "null"/>
+<#assign documentsIconsUrl = settingsProvider.getSetting("documents.icons.url")!""/>
 <#assign isMailMode =((mode!"STANDARD")=="MAIL")>
 <#if attributesProvider.processInstance??>
     <#assign providerId = attributesProvider.processInstance.getId()!""/>
@@ -50,7 +51,7 @@
 <#macro fileTableTr fileId fileName fileDescription fileCreateDate fileCreatorLogin fileSendWithMail b="" e="">
 ${b}	<tr class="file-tr-l-${fileCreatorLogin}-l">${e}
 ${b}		<td class="fileId" style="display:none">${fileId}</td>${e}
-${b}		<td class="fileName"><a href="#" class="fileNameDownloadHref ellips">${fileName?html}</a></td>${e}
+${b}		<td class="fileName"><a href="#" class="fileNameDownloadHref ellips"><span class="js-file-icon" data-id="${fileId}"></span><span class="js-file-name" data-id="${fileId}">${fileName?html}</span></a></td>${e}
 ${b}		<td class="fileDescription"><textarea class="form-control file-description-input" style="width:100%; height:100%" placeholder="Opis dokumentu">${(fileDescription!"")?html}</textarea></td>${e}
 ${b}		<#if isMailMode>${e}
 ${b}			<td>${e}
@@ -127,6 +128,70 @@ ${b}	</tr>${b}
 </div>
 
 <script>
+    var fileIcons = {
+		'default' : 'ods.png',
+		'txt' : 'txt.png',
+		'pdf' : 'pdf.png',
+		'bmp' : 'bmp.png',
+		'gif' : 'gif.png',
+		'jpg' : 'jpg.png',
+		'ods' : 'ods.png',
+		'png' : 'png.png',
+		'doc' : 'doc.png',
+		'docx' : 'doc.png',
+		'ppt' : 'ppt.png',
+		'pptx' : 'ppt.png',
+		'xls' : 'xls.png',
+		'xlsx' : 'xls.png',
+		'' : 'odf.png'
+	};
+	function getFileIcon(filename){
+		if (typeof fileIcons == 'undefined') {console.log('WARNING! fileIcons undefined'); return;}
+		if (typeof fileIcons != 'object') {console.log('WARNING! fileIcons not an object'); return;}
+		if (typeof fileIcons['default'] == 'undefined') {console.log('WARNING! fileIcons["default"] undefined');}
+		if (typeof filename == 'undefined') return '';
+		if (typeof filename != 'string') return '';
+		var extDotIndex = filename.lastIndexOf(".");
+		if (extDotIndex <= -1){
+			return fileIcons['default'];
+		}
+		var ext = filename.substring(extDotIndex+1);
+		var iconFile = fileIcons[ext];
+		if (typeof iconFile == 'undefined'){
+			return fileIcons['default'];
+		}
+		return iconFile;
+	}
+
+	function getFileIconUrl(filename){
+		if (typeof getFileIcon != 'function'){console.log('WARNING! getFileIcon undefined'); return;}
+		var iconFileName = getFileIcon(filename);
+		if (!iconFileName){
+			return '';
+		} else {
+			return "${documentsIconsUrl?js_string}/" + iconFileName;
+		}
+	}
+
+	function getFileIconHtml(filename){
+		if (typeof getFileIcon != 'function'){console.log('WARNING! getFileIconUrl undefined'); return;}
+		var iconFileUrl = getFileIconUrl(filename);
+		if (!iconFileUrl){
+			return '';
+		} else {
+			return '<img src="'+iconFileUrl+'" style="width: 16px; height: 16px;" />';
+		}
+	}
+
+	function applyIconsToFileNames(){
+        $('.js-file-name').each(function(){
+            var fileId = this.getAttribute('data-id');
+            var fileName = $(this).text();
+            var iconHtml = getFileIconHtml(fileName);
+            $('.js-file-icon[data-id='+fileId+']').html(iconHtml+' ');
+        });
+	}
+
     function downloadURL(url) {
         var hiddenIFrameID = 'hiddenDownloader',
                 iframe = document.getElementById(hiddenIFrameID);
@@ -376,6 +441,8 @@ ${b}	</tr>${b}
 
             initTable("${viewMode}");
 
+            applyIconsToFileNames();
+
         }).on('fileuploadfail',function (e, dataObj) {
 
             data = dataObj.jqXHR != null ? dataObj.jqXHR.responseJSON : dataObj;
@@ -389,6 +456,8 @@ ${b}	</tr>${b}
 
         }).prop('disabled', !$.support.fileInput)
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
+        applyIconsToFileNames();
     });
 
 </script>
