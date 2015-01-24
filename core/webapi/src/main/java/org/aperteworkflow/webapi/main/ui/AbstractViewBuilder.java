@@ -55,6 +55,7 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
     @Autowired
     protected IDictionaryFacade dictionaryFacade;
 
+
     protected AbstractViewBuilder() {
         SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
     }
