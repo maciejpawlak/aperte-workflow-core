@@ -127,7 +127,7 @@ public class IMAPMailAccountProperties
         return complaintType;
     }
 
-    public void setComplaintType(String complaintType) {
+    public void setProfileName(String complaintType) {
         this.complaintType = complaintType;
     }
 

@@ -118,10 +118,24 @@ textarea[readonly]:focus
 	}
 }
 
+
 @media (min-width: 962px) 
 {
+	
 	body
 	{
+
 		margin: 4px !important;
+
+		<!--[if IE]>
+		margin: 4px 16px 4px 4px !important;
+		<![endif]-->
+
 	}
+	*::-ms-backdrop, body
+	{
+		margin: 4px 22px 4px 4px !important;
+
+	}/* IE11 */
+	
 }

@@ -23,6 +23,7 @@ import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.model.BpmAttachment;
 import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.model.BpmNotification;
 import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.model.BpmNotificationConfig;
 import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.service.*;
+import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.sessions.IMAPPropertiesSessionProvider;
 import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.sessions.IMailSessionProvider;
 import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.settings.NotificationsSettingsProvider;
 import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.templates.IMailTemplateLoader;
@@ -83,6 +84,9 @@ public class BpmNotificationEngine implements IBpmNotificationService
     /** Data provider for standard e-mail template */
     @AutoInject
     private ITemplateDataProvider templateDataProvider;
+
+    @Autowired
+    private IMAPPropertiesSessionProvider imapPropertiesSessionProvider;
 
     @Autowired
     private ProcessToolRegistry registry;
@@ -588,9 +592,8 @@ public class BpmNotificationEngine implements IBpmNotificationService
 
 			fireNotificationSent(notification, message);
 
-            /** Wymagany refactor, nie odkomentowywac! */
-//            if(StringUtils.isNotEmpty(sentFolderName))
-//                saveEmailInSentFolder(mailSession, sentFolderName, message);
+            if(StringUtils.isNotEmpty(sentFolderName))
+                saveEmailInSentFolder(notification.getProfileName(), sentFolderName, message);
 
 			history.notificationSent(notification);
 
@@ -607,22 +610,16 @@ public class BpmNotificationEngine implements IBpmNotificationService
     }
 
     /** Save message in sent folder */
-    private void saveEmailInSentFolder(javax.mail.Session mailSession, String folderName, Message message) throws MessagingException {
-        Store store = mailSession.getStore("imaps");
-
-        Properties emailPrtoperties = mailSession.getProperties();
-
-        String secureHost = emailPrtoperties.getProperty("mail.smtp.host");
-        String securePort = emailPrtoperties.getProperty("mail.smtp.port");
-        String userName = emailPrtoperties.getProperty("mail.smtp.user");
-        String userPassword = emailPrtoperties.getProperty("mail.smtp.password");
-
-        store.connect(secureHost, userName,userPassword);
+    private void saveEmailInSentFolder(String profileName, String folderName, Message message) throws Exception
+    {
+        Store store = imapPropertiesSessionProvider.connect(profileName);
 
         Folder dfolder = getFolder(store, folderName);
         Message[] messages = new Message[1];
         messages[0]= message;
         dfolder.appendMessages(messages);
+
+        store.close();
     }
 
     private Folder getFolder(Store store, String folderName) throws MessagingException {
