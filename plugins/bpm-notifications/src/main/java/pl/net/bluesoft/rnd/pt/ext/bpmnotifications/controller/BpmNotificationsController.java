@@ -226,7 +226,7 @@ public class BpmNotificationsController implements IOsgiWebController {
 
 		return result;
 	}
-	
+
 	@ControllerMethod(action = "invalidateCache")
 	public GenericResultBean invalidateCache(final OsgiWebRequest invocation) {
 		GenericResultBean result = new GenericResultBean();
