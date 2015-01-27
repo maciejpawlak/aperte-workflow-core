@@ -1,5 +1,4 @@
 <#assign null = "null"/>
-<#assign documentsIconsUrl = settingsProvider.getSetting("documents.icons.url")!""/>
 <#assign isMailMode =((mode!"STANDARD")=="MAIL")>
 <#if attributesProvider.processInstance??>
     <#assign providerId = attributesProvider.processInstance.getId()!""/>
@@ -169,7 +168,7 @@ ${b}	</tr>${b}
 		if (!iconFileName){
 			return '';
 		} else {
-			return "${documentsIconsUrl?js_string}/" + iconFileName;
+			return iconsBaseUrl + '/' + iconFileName;
 		}
 	}
 

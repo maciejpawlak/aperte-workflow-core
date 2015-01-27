@@ -11,6 +11,7 @@
     var processListPortlet = '<portlet:resourceURL id="loadProcessesList"/>';
     var claimTaskFromQueuePortlet = '<portlet:resourceURL id="claimTaskFromQueue"/>';
     var portletNamespace = '&<portlet:namespace/>';
+    var iconsBaseUrl = '<c:url value="/images/documents_icons"/>';
 
     var dataTableLanguage =
     {
