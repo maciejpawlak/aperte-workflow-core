@@ -10,12 +10,16 @@ import pl.net.bluesoft.rnd.processtool.dict.DictionaryItem;
 import pl.net.bluesoft.rnd.processtool.dict.DictionaryItemExt;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author: mpawlak@bluesoft.net.pl
  */
 public class GlobalDictionaryFacade implements IDictionaryFacade
 {
+    private static Logger logger = Logger.getLogger(GlobalDictionaryFacade.class.getName());
+
     @Override
     public Collection<DictionaryItem> getAllDictionaryItems(String dictionaryName, Locale locale) {
         return getAllDictionaryItems(dictionaryName, locale, null);
@@ -45,23 +49,28 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
 
         for(ProcessDictionaryItem pdi : list)
         {
-            String desc = pdi.getDescription(locale);
-            DictionaryItem dictionaryItem = new DictionaryItem();
-            dictionaryItem.setKey(pdi.getKey());
-            dictionaryItem.setValue(pdi.getValueForDate(new Date()).getValue(locale));
-            dictionaryItem.setDescription(desc);
+            try {
+                String desc = pdi.getDescription(locale);
+                DictionaryItem dictionaryItem = new DictionaryItem();
+                dictionaryItem.setKey(pdi.getKey());
+                dictionaryItem.setValue(pdi.getValueForDate(new Date()).getValue(locale));
+                dictionaryItem.setDescription(desc);
 
-            for(ProcessDictionaryItemExtension extension: pdi.getValueForCurrentDate().getItemExtensions())
-            {
-                DictionaryItemExt dictionaryItemExt = new DictionaryItemExt();
-                dictionaryItemExt.setKey(extension.getName());
-                dictionaryItemExt.setValue(extension.getValue());
+                for(ProcessDictionaryItemExtension extension: pdi.getValueForCurrentDate().getItemExtensions())
+                {
+                    DictionaryItemExt dictionaryItemExt = new DictionaryItemExt();
+                    dictionaryItemExt.setKey(extension.getName());
+                    dictionaryItemExt.setValue(extension.getValue());
+                    dictionaryItem.getExtensions().add(dictionaryItemExt);
+                }
 
-                dictionaryItem.getExtensions().add(dictionaryItemExt);
+                if(checkForFilters(dictionaryItem, filters))
+                    dictionaryItems.add(dictionaryItem);
+
+            } catch (Exception e) {
+                logger.log(Level.SEVERE, e.getMessage());
+                continue;
             }
-
-            if(checkForFilters(dictionaryItem, filters))
-                dictionaryItems.add(dictionaryItem);
         }
 
         return dictionaryItems;

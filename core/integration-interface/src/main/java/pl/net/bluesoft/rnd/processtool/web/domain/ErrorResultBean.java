@@ -9,7 +9,7 @@ package pl.net.bluesoft.rnd.processtool.web.domain;
 public class ErrorResultBean
 {
 	private String source;
-	private String message;
+	private String message = "";
 	public String getSource() {
 		return source;
 	}
@@ -20,7 +20,7 @@ public class ErrorResultBean
 		return message;
 	}
 	public void setMessage(String message) {
-		this.message = message;
+		this.message = message != null ? message : "";
 	}
 
 

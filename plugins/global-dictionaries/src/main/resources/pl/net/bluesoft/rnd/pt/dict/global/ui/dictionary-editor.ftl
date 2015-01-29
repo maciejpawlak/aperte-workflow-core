@@ -269,6 +269,8 @@
             $(valueControl).on('change',function(){
                 currentItem.values[iRow].value = $( this ).val() ;
                 var lang = $('input:radio[name=languageSelector-'+iRow+']:checked').val();
+                if(lang == undefined)
+                    lang = 'default';
                 if (!currentItem.values[iRow].localizedValues[lang])
                     currentItem.values[iRow].localizedValues[lang] = {"languageCode":lang, "text":""};
                 currentItem.values[iRow].localizedValues[lang].text = $(this).val();
@@ -296,7 +298,7 @@
             var index = 0;
             $.each(languages, function(key, value) {
                 html += '<input class="input-hidden" type="radio" id="' + iId + '-' + index+ '" name="' + iId + '" value="' + this +'" ';
-                if ((!oValue.selectedLanguage && index==0) || oValue.selectedLanguage == this)
+                if (oValue.selectedLanguage == this)
                     html += 'checked';
                 html += '/>';
                 html += '<label for="' + iId+'-'+index + '"><img src="/html/themes/control_panel/images/language/' + languages[key] + '.png"/>';
@@ -314,6 +316,8 @@
         $(itemDescLangSelector).on('change',function(){
             var sId = 'languageSelector-itemDesc';
             var lang = $('input:radio[name='+sId+']:checked').val();
+            if(lang == undefined)
+                lang = 'default';
             currentItem.selectedLanguage = lang;
             var localizedDesc = currentItem.localizedDescriptions[lang];
             if (!localizedDesc) {
@@ -325,6 +329,8 @@
         $('#itemDesc').on('change',function(){
             currentItem.description = $(this).val();
             var lang = $('input:radio[name=languageSelector-itemDesc]:checked').val();
+            if(lang == undefined)
+                lang = 'default';
             if (!currentItem.localizedDescriptions[lang])
                 currentItem.localizedDescriptions[lang] = {"languageCode":lang, "text":""};
             currentItem.localizedDescriptions[lang].text = $(this).val();
