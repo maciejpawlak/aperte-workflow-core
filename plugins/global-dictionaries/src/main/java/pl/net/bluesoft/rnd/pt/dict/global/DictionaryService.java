@@ -69,6 +69,9 @@ public class DictionaryService  implements IOsgiWebController {
 
     private boolean isContainText(DictionaryItem item, String searchTerm)
     {
+        if(item == null || item.getValue() == null || item.getKey() == null)
+            return false;
+
         if(item.getValue().toLowerCase().contains(searchTerm) || item.getKey().contains(searchTerm))
             return true;
 
