@@ -8,8 +8,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DefaultJbpmRepository implements JbpmRepository {
+
+    private static final Logger logger = Logger.getLogger(DefaultJbpmRepository.class.getName());
 
     private static final String DEFAULT_BASE_PATH = ".." + File.separator + ".." + File.separator + "jbpm" + File.separator + "repository";
 
@@ -89,5 +93,7 @@ public class DefaultJbpmRepository implements JbpmRepository {
 		if (basePath != null) {
 			new File(basePath).mkdirs();
 		}
+
+        logger.log(Level.INFO, "[JBPM] Setting base path to "+basePath);
 	}
 }
