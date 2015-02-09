@@ -35,7 +35,7 @@ public class BpmTaskQuery {
 
 
     private static final String DEADLINE_SUBQUERY =
-            "(SELECT MIN(dueDate) FROM pt_process_deadline da WHERE da.process_instance_id = process.id AND da.taskname = i18ntext_.shortText) ";
+            "(SELECT value_ FROM pt_process_instance_s_attr WHERE (key_ = 'demandSugestedRealizationDate' AND process_instance_id = process.id AND value_!=''))";
 
     private static class QueryParameter {
         private final String key;
@@ -297,7 +297,7 @@ public class BpmTaskQuery {
         else {
             sb.append("process.*, task_.id as taskId, task_.actualowner_id as assignee, ");
             sb.append("CASE WHEN task_.actualowner_id IS NULL THEN  array(SELECT potowners.entity_id FROM PeopleAssignments_PotOwners potowners WHERE potowners.task_id = task_.id) END as groupId, ");
-            sb.append("i18ntext_.shortText as taskName, task_.createdOn as createdOn, task_.completedOn as completedOn, ");
+            sb.append("i18ntext_.shortText as taskName, (SELECT value_ FROM pt_process_instance_s_attr WHERE key_ = 'demandFilledDate' AND process_instance_id = process.id) as createdOn, task_.completedOn as completedOn, ");
             sb.append("task_.status as taskStatus, process.definition_id as definitionId, ");
             sb.append(DEADLINE_SUBQUERY);
             sb.append("AS taskDeadline, stepInfo_.message AS stepInfo");

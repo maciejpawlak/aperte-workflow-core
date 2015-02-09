@@ -15,6 +15,7 @@ public class BpmTaskQueryCondition implements IBpmTaskQueryCondition
     private static final String ASSIGNEE_NAME_COLUMN = "assignee";
     private static final String CREATED_DATE_COLUMN = "creationDate";
     private static final String TASK_CREATION_DATE = "assignDate";
+    private static final String TASK_DEADLINE_DATE = "deadline";
 
     @Override
     public String getJoinCondition(String sortColumnName) {
@@ -25,9 +26,11 @@ public class BpmTaskQueryCondition implements IBpmTaskQueryCondition
     public String getSortQuery(String columnName)
     {
         if(columnName.equals(TASK_CREATION_DATE))
-                return "task_.createdOn";
+                return "createdOn";
         else if(columnName.equals(CREATED_DATE_COLUMN))
-                return "process.createdate";
+                return "createdOn";
+        else if(columnName.equals(TASK_DEADLINE_DATE))
+                return "taskDeadline";
         else if(columnName.equals( PROCESS_CODE_COLUMN))
                 return "CASE WHEN process.externalKey is not null THEN process.externalKey ELSE process.internalid END";
         else if(columnName.equals( PROCESS_STEP_COLUMN))
