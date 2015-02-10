@@ -33,10 +33,7 @@
 					return;
 				}
 				this.showView(this.allViews[lastView], false);
-				if(this.allViews[lastView].viewId == 'process-panel-view')
-				{
-					queueViewManager.reloadCurrentQueue();
-				}
+				queueViewManager.reloadCurrentQueue();
 			}
 		}
 		
