@@ -5,6 +5,7 @@ import org.jsoup.nodes.Element;
 import pl.net.bluesoft.rnd.processtool.model.BpmTask;
 import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
 import pl.net.bluesoft.rnd.processtool.model.config.ProcessStateAction;
+import pl.net.bluesoft.rnd.processtool.plugins.TaskPermissionChecker;
 import pl.net.bluesoft.rnd.processtool.web.domain.IHtmlTemplateProvider;
 
 import java.util.List;
@@ -184,7 +185,16 @@ public class TaskViewBuilder extends AbstractViewBuilder<TaskViewBuilder> {
     }
 
     private boolean hasUserRightsToTask() {
-        if (task.getPotentialOwners().contains(user.getLogin()))
+		for (TaskPermissionChecker taskPermissionChecker : processToolRegistry.getGuiRegistry().getTaskPermissionCheckers()) {
+			Boolean hasPermission = taskPermissionChecker.hasPermission(user, userQueues, task);
+
+			if (hasPermission != null) {
+				return hasPermission;
+			}
+		}
+
+		// default permission checking
+		if (task.getPotentialOwners().contains(user.getLogin()))
             return true;
 
         for (String queueName : userQueues)

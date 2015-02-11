@@ -51,6 +51,8 @@ public class GuiRegistryImpl implements GuiRegistry {
 
 	private final Set<ButtonGenerator> buttonGenerators = new LinkedHashSet<ButtonGenerator>();
 
+	private final List<TaskPermissionChecker> taskPermissionCheckers = new ArrayList<TaskPermissionChecker>();
+
 	private String javaScriptContent = "";
 
 	@Autowired
@@ -285,7 +287,22 @@ public class GuiRegistryImpl implements GuiRegistry {
         return userViews;
     }
 
-    @Override
+	@Override
+	public void registerTaskPermissionChecker(TaskPermissionChecker permissionChecker) {
+		taskPermissionCheckers.add(permissionChecker);
+	}
+
+	@Override
+	public void unregisterTaskPermissionChecker(TaskPermissionChecker permissionChecker) {
+		taskPermissionCheckers.remove(permissionChecker);
+	}
+
+	@Override
+	public List<TaskPermissionChecker> getTaskPermissionCheckers() {
+		return taskPermissionCheckers;
+	}
+
+	@Override
     public void registerTasksListView(String viewName, AbstractTaskListView taskListView) {
         tasksListViews.put(viewName, taskListView);
 
