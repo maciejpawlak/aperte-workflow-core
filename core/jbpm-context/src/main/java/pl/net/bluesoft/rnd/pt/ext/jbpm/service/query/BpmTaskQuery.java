@@ -35,9 +35,13 @@ public class BpmTaskQuery {
 
 
     private static final String DEADLINE_SUBQUERY =
-            "(SELECT value_ FROM pt_process_instance_s_attr WHERE (key_ = 'demandSugestedRealizationDate' AND process_instance_id = process.id AND value_!=''))";
+            "CASE WHEN process.parent_id is not null THEN" +
+                    "(SELECT value_ FROM pt_process_instance_s_attr WHERE (key_ = 'demandSugestedRealizationDate' AND process_instance_id = process.parent_id AND value_!=''))" +
+                    "ELSE" +
+                    "(SELECT value_ FROM pt_process_instance_s_attr WHERE key_ = 'demandSugestedRealizationDate' AND process_instance_id = process.id AND value_!='') " +
+                    "END";
 
-    private static final String CREATION_DATE_SUBQUERY =
+    private static final String CREATION_DATE_SUBQUERY =mhr
             "CASE WHEN process.parent_id is not null THEN" +
                     "(SELECT value_ FROM pt_process_instance_s_attr WHERE (key_ = 'demandFilledDate' AND process_instance_id = process.parent_id AND value_!=''))" +
                     "ELSE" +
@@ -308,7 +312,7 @@ public class BpmTaskQuery {
             sb.append(" as createdOn, task_.completedOn as completedOn, ");
             sb.append("task_.status as taskStatus, process.definition_id as definitionId, ");
             sb.append(DEADLINE_SUBQUERY);
-            sb.append("AS taskDeadline, stepInfo_.message AS stepInfo");
+            sb.append(" AS taskDeadline, stepInfo_.message AS stepInfo");
         }
 
         String castTypeName = hibernateDialect.getCastTypeName(Types.VARCHAR);
