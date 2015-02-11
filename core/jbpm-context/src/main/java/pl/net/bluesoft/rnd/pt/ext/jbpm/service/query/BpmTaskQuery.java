@@ -41,7 +41,7 @@ public class BpmTaskQuery {
                     "(SELECT value_ FROM pt_process_instance_s_attr WHERE key_ = 'demandSugestedRealizationDate' AND process_instance_id = process.id AND value_!='') " +
                     "END";
 
-    private static final String CREATION_DATE_SUBQUERY =mhr
+    private static final String CREATION_DATE_SUBQUERY =
             "CASE WHEN process.parent_id is not null THEN" +
                     "(SELECT value_ FROM pt_process_instance_s_attr WHERE (key_ = 'demandFilledDate' AND process_instance_id = process.parent_id AND value_!=''))" +
                     "ELSE" +
