@@ -72,7 +72,8 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
                 dictionaryItem.setValue(pdi.getKey());
             }
             dictionaryItem.setDescription(desc);
-
+			dictionaryItem.setValidFrom(value.getValidFrom());
+			dictionaryItem.setValidTo(value.getValidTo());
 
             ProcessDictionaryItemValue valueForDate = pdi.getValueForDate(date);
             if (valueForDate == null || valueForDate instanceof ProcessDBDictionaryItem.EMPTY_VALUE) {
