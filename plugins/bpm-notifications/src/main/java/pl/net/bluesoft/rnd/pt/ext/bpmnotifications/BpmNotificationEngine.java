@@ -612,14 +612,20 @@ public class BpmNotificationEngine implements IBpmNotificationService
     /** Save message in sent folder */
     private void saveEmailInSentFolder(String profileName, String folderName, Message message) throws Exception
     {
-        Store store = imapPropertiesSessionProvider.connect(profileName);
+		try {
+			Store store = imapPropertiesSessionProvider.connect(profileName);
 
-        Folder dfolder = getFolder(store, folderName);
-        Message[] messages = new Message[1];
-        messages[0]= message;
-        dfolder.appendMessages(messages);
+			Folder dfolder = getFolder(store, folderName);
+			Message[] messages = new Message[1];
+			messages[0] = message;
+			dfolder.appendMessages(messages);
 
-        store.close();
+			store.close();
+		}
+		catch (Exception e) {
+			// Jak sie tego wyjatku nie obsluzy to wywyla ten sam mail w nieskonczonosc!
+			logger.log(Level.SEVERE, "Problem during daving email in Sent Folder " + e.getMessage(), e);
+		}
     }
 
     private Folder getFolder(Store store, String folderName) throws MessagingException {
