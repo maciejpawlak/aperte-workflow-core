@@ -43,7 +43,7 @@ public class LiferayUserConverter
         }
         setGroupRoles(ud, user);
 
-        Map<String, Serializable> customAttributes = user.getExpandoBridge().getAttributes(false);
+        Map<String, Serializable> customAttributes = user.getExpandoBridge().getAttributes();
         Map<String, Object> attributes = new HashMap<String, Object>();
 
         for(Map.Entry<String, Serializable> entry:  customAttributes.entrySet())
