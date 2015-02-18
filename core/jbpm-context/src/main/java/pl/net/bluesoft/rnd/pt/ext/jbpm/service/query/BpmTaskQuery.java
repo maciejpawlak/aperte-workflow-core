@@ -304,8 +304,9 @@ public class BpmTaskQuery {
         }
 
         String castTypeName = hibernateDialect.getCastTypeName(Types.VARCHAR);
-        sb.append(" FROM pt_process_instance process JOIN Task task_ ON CAST(task_.processinstanceid AS "+castTypeName+" ) = process.internalId");
-
+        sb.append(" FROM pt_process_instance process JOIN Task task_ ON CAST(task_.processinstanceid AS "+castTypeName+" ) = process.internalId ");
+        sb.append(" LEFT JOIN PeopleAssignments_PotOwners potowners on potowners.task_id = task_.id ");
+        sb.append(" LEFT JOIN pt_process_instance_owners powner on powner.process_id = process.id ");
 
         if (taskNames != null || queryType == QueryType.LIST || hasText(searchExpression)) {
             sb.append(" JOIN I18NText i18ntext_ ON i18ntext_.task_names_id = task_.id");
@@ -329,14 +330,14 @@ public class BpmTaskQuery {
 
         if (queues != null)
         {
-            sb.append(" AND EXISTS (SELECT 1 FROM PeopleAssignments_PotOwners potowners WHERE potowners.task_id = task_.id AND potowners.entity_id IN (:queues))");
+            sb.append(" AND potowners.entity_id IN (:queues) ");
 			sb.append(" AND task_.actualowner_id IS NULL");
 			sb.append(" AND task_.status NOT IN ('Completed')");
             queryParameters.add(new QueryParameter("queues", queues));
         }
 
         if (owners != null) {
-            sb.append(" AND EXISTS(SELECT 1 FROM pt_process_instance_owners powner WHERE powner.process_id = process.id AND owners IN (:owners))");
+            sb.append(" AND owners IN (:owners)");
             queryParameters.add(new QueryParameter("owners", owners));
         }
 
@@ -477,11 +478,11 @@ public class BpmTaskQuery {
     private static String getVirtualQueueCondition(QueueType virtualQueue) {
         switch (virtualQueue) {
             case ALL_TASKS:
-                return "(((EXISTS (SELECT 1 FROM PeopleAssignments_PotOwners potowners WHERE potowners.task_id = task_.id AND potowners.entity_id = :user) AND task_.status NOT IN ('Reserved')) OR task_.actualowner_id = :user) AND task_.status NOT IN ('Completed'))";
+                return "(((potowners.entity_id = :user AND task_.status NOT IN ('Reserved')) OR task_.actualowner_id = :user) AND task_.status NOT IN ('Completed'))";
             case MY_TASKS:
                 return "(task_.actualowner_id = :user AND task_.status NOT IN ('Completed'))";
             case OWN_IN_PROGRESS:
-                return "((process.creatorLogin = :user OR (EXISTS(SELECT 1 FROM pt_process_instance_owners powner WHERE powner.process_id = process.id AND owners IN (:user)))) AND task_.status NOT IN ('Completed') AND (task_.actualowner_id != :user OR task_.actualowner_id is null))";
+                return "((process.creatorLogin = :user OR (owners IN (:user))) AND task_.status NOT IN ('Completed') AND (task_.actualowner_id != :user OR task_.actualowner_id is null))";
             case OWN_FINISHED:
                 return "(process.creatorLogin = :user AND task_.actualowner_id = :user AND task_.status IN ('Completed'))";
             default:

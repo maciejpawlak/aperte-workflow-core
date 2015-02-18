@@ -14,7 +14,7 @@ import pl.net.bluesoft.util.lang.ExpiringCache;
 @Component
 public class AperteSettingsProvider implements ISettingsProvider
 {
-    private static final ExpiringCache<String, String> settings = new ExpiringCache<String, String>(60 * 1000);
+    private final ExpiringCache<String, String> settings = new ExpiringCache<String, String>(60 * 1000);
 
     @Autowired
     private ProcessToolRegistry processToolRegistry;
