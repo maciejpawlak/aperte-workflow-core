@@ -1,8 +1,6 @@
 package pl.net.bluesoft.rnd.processtool.plugins;
 
-import com.google.common.collect.Sets;
 import com.google.common.io.CharStreams;
-import org.apache.commons.collections.SetUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -18,11 +16,24 @@ import pl.net.bluesoft.rnd.processtool.web.controller.IOsgiWebController;
 import pl.net.bluesoft.rnd.processtool.web.domain.IHtmlTemplateProvider;
 import pl.net.bluesoft.rnd.processtool.web.domain.IWidgetScriptProvider;
 import pl.net.bluesoft.rnd.processtool.web.view.AbstractTaskListView;
-import pl.net.bluesoft.rnd.processtool.web.view.ITasksListViewBeanFactory;
 import pl.net.bluesoft.util.lang.Classes;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
@@ -52,6 +63,7 @@ public class GuiRegistryImpl implements GuiRegistry {
 	private final Set<ButtonGenerator> buttonGenerators = new LinkedHashSet<ButtonGenerator>();
 
 	private final List<TaskPermissionChecker> taskPermissionCheckers = new ArrayList<TaskPermissionChecker>();
+	private final List<ActionPermissionChecker> actionPermissionCheckers = new ArrayList<ActionPermissionChecker>();
 
 	private String javaScriptContent = "";
 
@@ -299,7 +311,22 @@ public class GuiRegistryImpl implements GuiRegistry {
 
 	@Override
 	public List<TaskPermissionChecker> getTaskPermissionCheckers() {
-		return taskPermissionCheckers;
+		return Collections.unmodifiableList(taskPermissionCheckers);
+	}
+
+	@Override
+	public void registerActionPermissionChecker(ActionPermissionChecker permissionChecker) {
+		actionPermissionCheckers.add(permissionChecker);
+	}
+
+	@Override
+	public void unregisterActionPermissionChecker(ActionPermissionChecker permissionChecker) {
+		actionPermissionCheckers.remove(permissionChecker);
+	}
+
+	@Override
+	public List<ActionPermissionChecker> getActionPermissionCheckers() {
+		return Collections.unmodifiableList(actionPermissionCheckers);
 	}
 
 	@Override
