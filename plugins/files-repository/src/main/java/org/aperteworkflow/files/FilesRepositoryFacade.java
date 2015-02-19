@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static pl.net.bluesoft.util.lang.Formats.nvl;
@@ -85,6 +86,7 @@ public class FilesRepositoryFacade implements IFilesRepositoryFacade {
         try {
             getFilesRepositoryStorageDAO().uploadFileToStorage(inputStream, filePath);
         } catch (IOException e) {
+            logger.log(Level.SEVERE, "Error during uploading file", e);
             throw new UploadFileException("Cannot write file to storage", e);
         }
         result = getFilesRepositoryItemDAO().addItem(filesConsumer, fileName, fileDescription, filePath, contentType, creatorLogin, sendWithMail, groupId, factory);

@@ -280,6 +280,34 @@
 	{
 		$('#alerts-list').empty();
 	}
+
+	function fullValidate()
+	{
+	    var errors = [];
+        $.each(widgets, function()
+        {
+            /* Validate technical correctness */
+            var errorMessages = this.validateDataCorrectness();
+            if(errorMessages)
+            {
+                $.each(errorMessages, function() {
+                    errors.push(this);
+                    addAlert(this);
+                });
+            }
+
+            /* Validate business correctness */
+            errorMessages = this.validate(actionName);
+            if(errorMessages)
+            {
+                $.each(errorMessages, function() {
+                    errors.push(this);
+                    addAlert(this);
+                });
+            }
+        });
+        return errors;
+	}
 	
 	/* Check for comment required field */
 	function performAction(button, actionName, skipSaving, commentNeeded, changeOwner, changeOwnerAttributeKey, taskId)
@@ -288,30 +316,7 @@
 		{
 			clearAlerts();
 			
-			var errors = [];
-			/* Validate html widgets */
-			$.each(widgets, function() 
-			{
-				/* Validate technical correctness */
-                var errorMessages = this.validateDataCorrectness();
-				if(errorMessages)
-				{
-					$.each(errorMessages, function() {
-						errors.push(this);
-						addAlert(this);
-					});
-				}
-
-                /* Validate business correctness */
-				errorMessages = this.validate(actionName);
-				if(errorMessages)
-				{
-					$.each(errorMessages, function() {
-						errors.push(this);
-						addAlert(this);
-					});
-				}
-			});
+			var errors = fullValidate();
 			
 			if(errors.length > 0)
 			{
