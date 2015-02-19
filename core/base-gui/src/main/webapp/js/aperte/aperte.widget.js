@@ -20,3 +20,31 @@
 		this.data = data;
 		this.widgetName = widgetName;
 	}
+	
+	function fullValidate(actionName) 
+	{
+	    var errors = [];
+        $.each(widgets, function()
+        {
+            /* Validate technical correctness */
+            var errorMessages = this.validateDataCorrectness();
+            if(errorMessages)
+            {
+                $.each(errorMessages, function() {
+                    errors.push(this);
+                    addAlert(this);
+                });
+            }
+
+            /* Validate business correctness */
+            errorMessages = this.validate(actionName);
+            if(errorMessages)
+            {
+                $.each(errorMessages, function() {
+                    errors.push(this);
+                    addAlert(this);
+                });
+            }
+        });
+        return errors;
+	}

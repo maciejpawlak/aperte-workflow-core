@@ -280,34 +280,6 @@
 	{
 		$('#alerts-list').empty();
 	}
-
-	function fullValidate()
-	{
-	    var errors = [];
-        $.each(widgets, function()
-        {
-            /* Validate technical correctness */
-            var errorMessages = this.validateDataCorrectness();
-            if(errorMessages)
-            {
-                $.each(errorMessages, function() {
-                    errors.push(this);
-                    addAlert(this);
-                });
-            }
-
-            /* Validate business correctness */
-            errorMessages = this.validate(actionName);
-            if(errorMessages)
-            {
-                $.each(errorMessages, function() {
-                    errors.push(this);
-                    addAlert(this);
-                });
-            }
-        });
-        return errors;
-	}
 	
 	/* Check for comment required field */
 	function performAction(button, actionName, skipSaving, commentNeeded, changeOwner, changeOwnerAttributeKey, taskId)
@@ -316,7 +288,7 @@
 		{
 			clearAlerts();
 			
-			var errors = fullValidate();
+			var errors = fullValidate(actionName);
 			
 			if(errors.length > 0)
 			{
