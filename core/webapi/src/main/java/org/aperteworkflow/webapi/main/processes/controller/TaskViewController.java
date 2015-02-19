@@ -1,5 +1,6 @@
 package org.aperteworkflow.webapi.main.processes.controller;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.aperteworkflow.webapi.main.AbstractProcessToolServletController;
 import org.aperteworkflow.webapi.main.processes.ActionPseudoTaskBean;
 import org.aperteworkflow.webapi.main.processes.TasksListViewBeanFactoryWrapper;
@@ -230,6 +231,7 @@ public class TaskViewController extends AbstractProcessToolServletController
                     builder.append(taskViewBuilder.build());
 
                 } catch (Exception ex) {
+                    builder.append(ExceptionUtils.getStackTrace(ex));
                     logger.log(Level.SEVERE, "Problem during task view generation. TaskId=" + taskId, ex);
                 }
                 long t6 = System.currentTimeMillis();

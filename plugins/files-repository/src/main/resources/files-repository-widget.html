@@ -51,7 +51,7 @@
 ${b}	<tr class="file-tr-l-${fileCreatorLogin}-l">${e}
 ${b}		<td class="fileId" style="display:none">${fileId}</td>${e}
 ${b}		<td class="fileName"><a href="#" class="fileNameDownloadHref ellips"><span class="js-file-icon" data-id="${fileId}"></span><span class="js-file-name" data-id="${fileId}">${fileName?html}</span></a></td>${e}
-${b}		<td class="fileDescription"><textarea class="form-control file-description-input" style="width:100%; height:100%" placeholder="Opis dokumentu">${(fileDescription!"")?html}</textarea></td>${e}
+${b}		<td class="fileDescription"><textarea class="form-control file-description-input" style="width:100%; height:100% line-height: 14px; padding-bottom: 0px;" placeholder="Opis dokumentu">${(fileDescription!"")?html}</textarea></td>${e}
 ${b}		<#if isMailMode>${e}
 ${b}			<td>${e}
 ${b}				<div class="checkbox">${e}
@@ -135,13 +135,18 @@ ${b}	</tr>${b}
 		'gif' : 'gif.png',
 		'jpg' : 'jpg.png',
 		'ods' : 'ods.png',
+		'odt' : 'odt.png',
+		'zip' : 'zip.png',
+		'rar' : 'rar.png',
+		'7z' : '7zip.png',
+		'msg' : 'msg.png',
 		'png' : 'png.png',
 		'doc' : 'doc.png',
-		'docx' : 'doc.png',
+		'docx' : 'docx.png',
 		'ppt' : 'ppt.png',
 		'pptx' : 'ppt.png',
 		'xls' : 'xls.png',
-		'xlsx' : 'xls.png',
+		'xlsx' : 'xlsx.png',
 		'' : 'default.png'
 	};
 	function getFileIcon(filename){

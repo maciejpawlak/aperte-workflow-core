@@ -26,6 +26,8 @@ import pl.net.bluesoft.rnd.processtool.web.domain.IHtmlTemplateProvider;
 import pl.net.bluesoft.rnd.util.i18n.I18NSource;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static pl.net.bluesoft.util.lang.Strings.hasText;
 
@@ -33,6 +35,8 @@ import static pl.net.bluesoft.util.lang.Strings.hasText;
  * Created by pkuciapski on 2014-04-28.
  */
 public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
+    protected static Logger logger = Logger.getLogger(AbstractViewBuilder.class.getName());
+
     protected List<? extends IStateWidget> widgets;
     protected I18NSource i18Source;
     protected UserData user;
@@ -69,7 +73,9 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
 
     protected abstract T getThis();
 
-    public StringBuilder build() throws Exception {
+    public StringBuilder build() throws Exception
+    {
+
         final StringBuilder stringBuilder = new StringBuilder(8 * 1024);
         scriptBuilder.append("<script type=\"text/javascript\">");
         final Document document = Jsoup.parse("");
@@ -303,7 +309,15 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
                 viewData.putAll(dataProvider.getData(getViewedObject(), baseViewData));
             }
 
-            String processedView = templateProvider.processTemplate(aliasName, viewData);
+            String processedView = "";
+            try {
+                processedView = templateProvider.processTemplate(aliasName, viewData);
+            }
+            catch(Throwable ex)
+            {
+                logger.log(Level.SEVERE, "Error with Widget ["+aliasName+"]", ex);
+                throw new RuntimeException(ex);
+            }
 
             Element divContentNode = parent.ownerDocument().createElement("div")
                     .append(processedView)
