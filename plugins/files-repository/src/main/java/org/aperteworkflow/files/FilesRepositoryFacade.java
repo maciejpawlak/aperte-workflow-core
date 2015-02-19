@@ -1,6 +1,5 @@
 package org.aperteworkflow.files;
 
-import org.apache.commons.io.FilenameUtils;
 import org.aperteworkflow.files.dao.FilesRepositoryItemDAO;
 import org.aperteworkflow.files.dao.FilesRepositoryItemDAOImpl;
 import org.aperteworkflow.files.dao.FilesRepositoryStorageDAO;
@@ -66,9 +65,15 @@ public class FilesRepositoryFacade implements IFilesRepositoryFacade {
         return configFactory.createFilesRepositoryStorageConfig();
     }
 
+    private Long getProcessInstanceRoot(Long processInstanceId){
+        ProcessInstanceDAO dao = getProcessInstanceDAO();
+        return dao.getProcessInstance(processInstanceId).getRootProcessInstance().getId();
+    }
+
     @Override
     public FilesRepositoryItem uploadFile(InputStream inputStream, String contentType, Long processInstanceId, String fileName, String fileDescription, String creatorLogin) throws UploadFileException {
         FilesRepositoryItem result;
+       processInstanceId= getProcessInstanceRoot(processInstanceId);
         String filePath = prepareFilePath(processInstanceId, fileName);
 
         try {
@@ -81,11 +86,13 @@ public class FilesRepositoryFacade implements IFilesRepositoryFacade {
     }
 
     private String prepareFilePath(Long processInstanceId, String fileName) {
+        processInstanceId= getProcessInstanceRoot(processInstanceId);
         return processInstanceId + File.separator +  System.currentTimeMillis() + "_" + fileName;
     }
 
     @Override
     public void deleteFile(Long processInstanceId, Long filesRepositoryItemId) throws DeleteFileException {
+        processInstanceId= getProcessInstanceRoot(processInstanceId);
         FilesRepositoryItem filesRepositoryItem = getFilesRepositoryItemDAO().getItemById(filesRepositoryItemId);
         if (filesRepositoryItem == null) {
             throw new DeleteFileException("File item with id=[" + filesRepositoryItemId + "] not found.");
@@ -103,6 +110,7 @@ public class FilesRepositoryFacade implements IFilesRepositoryFacade {
 
     @Override
     public FileItemContent downloadFile(Long processInstanceId, Long filesRepositoryItemId) throws DownloadFileException {
+        processInstanceId= getProcessInstanceRoot(processInstanceId);
         FilesRepositoryItem filesRepositoryItem = getFilesRepositoryItemDAO().getItemById(filesRepositoryItemId);
         if (filesRepositoryItem == null) {
             throw new DownloadFileException("File item with id=[" + filesRepositoryItemId + "] not found.");
@@ -122,11 +130,13 @@ public class FilesRepositoryFacade implements IFilesRepositoryFacade {
 
     @Override
     public Collection<FilesRepositoryItem> getFilesList(Long processInstanceId) {
+        processInstanceId= getProcessInstanceRoot(processInstanceId);
         return getFilesRepositoryItemDAO().getItemsFor(processInstanceId);
     }
 
     @Override
     public void updateDescription(Long processInstanceId, Long filesRepositoryItemId, String fileDescription) throws UpdateDescriptionException {
+        processInstanceId= getProcessInstanceRoot(processInstanceId);
         FilesRepositoryItem filesRepositoryItem = getFilesRepositoryItemDAO().getItemById(filesRepositoryItemId);
         if (filesRepositoryItem == null) {
             throw new UpdateDescriptionException("File item with id=[" + filesRepositoryItemId + "] not found.");
