@@ -5,6 +5,7 @@ import org.jsoup.nodes.Element;
 import pl.net.bluesoft.rnd.processtool.model.BpmTask;
 import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
 import pl.net.bluesoft.rnd.processtool.model.config.ProcessStateAction;
+import pl.net.bluesoft.rnd.processtool.plugins.ActionPermissionChecker;
 import pl.net.bluesoft.rnd.processtool.plugins.TaskPermissionChecker;
 import pl.net.bluesoft.rnd.processtool.web.domain.IHtmlTemplateProvider;
 
@@ -52,14 +53,27 @@ public class TaskViewBuilder extends AbstractViewBuilder<TaskViewBuilder> {
 
         /* Check if user, who is checking the task, is the assigned person */
         if (isUserAssignedToTask() || isSubstitutingUser()) {
-            for (ProcessStateAction action : actions)
-                processAction(action, specificActionButtons);
+            for (ProcessStateAction action : actions) {
+				if (hasPermissionToAction(action)) {
+					processAction(action, specificActionButtons);
+				}
+			}
         }
     }
 
-    protected boolean isSubstitutingUser() {
+	protected boolean isSubstitutingUser() {
         return ctx.getUserSubstitutionDAO().isSubstitutedBy(task.getAssignee(), user.getLogin());
     }
+
+	private boolean hasPermissionToAction(ProcessStateAction action) {
+		for (ActionPermissionChecker permissionChecker : processToolRegistry.getGuiRegistry().getActionPermissionCheckers()) {
+			Boolean result = permissionChecker.hasPermission(action.getBpmName(), task, user);
+			if (result != null && !result) {
+				return false;
+			}
+		}
+		return true;
+	}
 
     @Override
     protected void addSpecificHtmlWidgetData(final Map<String, Object> viewData, final IAttributesProvider viewedObject) {
