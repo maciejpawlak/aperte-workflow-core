@@ -272,7 +272,9 @@
 			alertsShown = true;
 		}
 		
-		$('#alerts-list').append('<li><h5>'+alertMessage+'</h5></li>');
+		if ($('#alerts-list h5:contains("'+alertMessage+'")').length === 0) {
+			$('#alerts-list').append('<li><h5>'+alertMessage+'</h5></li>');
+		}
 		
 	}
 	
