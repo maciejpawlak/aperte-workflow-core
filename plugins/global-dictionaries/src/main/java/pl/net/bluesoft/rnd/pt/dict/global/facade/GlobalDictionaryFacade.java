@@ -1,6 +1,5 @@
 package pl.net.bluesoft.rnd.pt.dict.global.facade;
 
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
 import pl.net.bluesoft.rnd.processtool.dict.DictionaryItem;
@@ -13,7 +12,13 @@ import pl.net.bluesoft.rnd.processtool.model.dict.ProcessDictionaryItemExtension
 import pl.net.bluesoft.rnd.processtool.model.dict.ProcessDictionaryItemValue;
 import pl.net.bluesoft.rnd.processtool.model.dict.db.ProcessDBDictionaryItem;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * @author: mpawlak@bluesoft.net.pl
@@ -42,18 +47,7 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
     {
         List<DictionaryItem> dictionaryItems = new LinkedList<DictionaryItem>();
 
-        ProcessToolContext ctx = ProcessToolContext.Util.getThreadProcessToolContext();
-        if (ctx==null)
-            throw new RuntimeException("There is no active context");
-
-        ProcessDictionaryRegistry processDictionaryRegistry = ctx.getProcessDictionaryRegistry();
-        if (processDictionaryRegistry==null)
-            throw new RuntimeException("There is no dictionary registry");
-
-        ProcessDictionary pd = processDictionaryRegistry.getDictionary(dictionaryName);
-        if (pd==null) {
-			throw new RuntimeException("No dictionary found with name " + dictionaryName);
-		}
+        ProcessDictionary pd = fetchDictionary(dictionaryName);
 
         String langCode = locale.getLanguage();
         List<ProcessDictionaryItem> list = pd.sortedItems(langCode);
@@ -106,6 +100,22 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
         return dictionaryItems;
     }
 
+    private ProcessDictionary fetchDictionary(String dictionaryName) {
+        ProcessToolContext ctx = ProcessToolContext.Util.getThreadProcessToolContext();
+        if (ctx==null)
+            throw new RuntimeException("There is no active context");
+
+        ProcessDictionaryRegistry processDictionaryRegistry = ctx.getProcessDictionaryRegistry();
+        if (processDictionaryRegistry==null)
+            throw new RuntimeException("There is no dictionary registry");
+
+        ProcessDictionary pd = processDictionaryRegistry.getDictionary(dictionaryName);
+        if (pd==null) {
+			throw new RuntimeException("No dictionary found with name " + dictionaryName);
+		}
+        return pd;
+    }
+
     @Override
     public DictionaryItem getDictionaryItem(String dictionaryName, String key, Locale locale)
     {
@@ -125,6 +135,56 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
                 return item;
 
         return null;
+    }
+
+    @Override
+    public Collection<DictionaryItem> getFlatDictionaryItemsList(String dictionaryName, Locale locale, String filter) {
+        List<DictionaryItem> dictionaryItems = new LinkedList<DictionaryItem>();
+
+        ProcessDictionary pd = fetchDictionary(dictionaryName);
+
+        String langCode = locale.getLanguage();
+        List<ProcessDictionaryItem> list = pd.sortedItems(langCode);
+
+        Collection<DictFilter> filters = parseFilters(filter);
+
+        for (ProcessDictionaryItem pdi : list)
+        {
+            for (ProcessDictionaryItemValue value : pdi.values()) {
+                String desc = pdi.getDescription(locale);
+                DictionaryItem dictionaryItem = new DictionaryItem();
+                dictionaryItem.setKey(pdi.getKey());
+
+                if (value != null)
+                    dictionaryItem.setValue(value.getValue(locale));
+                else {
+                    dictionaryItem.setValue(pdi.getKey());
+                }
+
+                dictionaryItem.setDescription(desc);
+                dictionaryItem.setValidFrom(value.getValidFrom());
+                dictionaryItem.setValidTo(value.getValidTo());
+
+                dictionaryItem.setValid(true);
+
+
+                for (ProcessDictionaryItemExtension extension : value.getItemExtensions()) {
+                    DictionaryItemExt dictionaryItemExt = new DictionaryItemExt();
+                    dictionaryItemExt.setKey(extension.getName());
+                    dictionaryItemExt.setValue(extension.getValue());
+
+                    dictionaryItem.getExtensions().add(dictionaryItemExt);
+                }
+
+
+                if(checkForFilters(dictionaryItem, filters) && dictionaryItem.getisValid()) {
+                    dictionaryItems.add(dictionaryItem);
+                }
+            }
+
+        }
+
+        return dictionaryItems;
     }
 
 

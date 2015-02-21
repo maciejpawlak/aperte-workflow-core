@@ -1,9 +1,9 @@
 package pl.net.bluesoft.rnd.processtool.dict;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Date;
 
 /**
  *
@@ -37,4 +37,6 @@ public interface IDictionaryFacade
     DictionaryItem getDictionaryItem(String dictionaryName, String key, Locale locale);
 
     DictionaryItem getDictionaryItemForDate(String dictionaryName, String key, Locale locale, Date date);
+
+    Collection<DictionaryItem> getFlatDictionaryItemsList(String dictionaryName, Locale locale, String filter);
 }
