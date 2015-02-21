@@ -24,10 +24,19 @@
 	function fullValidate(actionName) 
 	{
 	    var errors = [];
+		var validateAllEnabled = true;
+
+		$.each(widgets, function() {
+			if (this.isValidateAllEnabled && !this.isValidateAllEnabled(actionName)) {
+				validateAllEnabled = false;
+			}
+		});
+			
         $.each(widgets, function()
         {
             /* Validate technical correctness */
-            var errorMessages = this.validateDataCorrectness();
+			var errorMessages = validateAllEnabled ? this.validateDataCorrectness() :
+								this.partialValidate ? this.partialValidate(actionName) : [];
             if(errorMessages)
             {
                 $.each(errorMessages, function() {
@@ -37,7 +46,9 @@
             }
 
             /* Validate business correctness */
-            errorMessages = this.validate(actionName);
+
+			errorMessages = validateAllEnabled ? this.validate(actionName) :
+								this.partialValidate ? this.partialValidate(actionName) : [];
             if(errorMessages)
             {
                 $.each(errorMessages, function() {

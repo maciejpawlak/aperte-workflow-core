@@ -1,5 +1,6 @@
 package pl.net.bluesoft.rnd.pt.dict.global.facade;
 
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
 import pl.net.bluesoft.rnd.processtool.dict.DictionaryItem;
@@ -12,13 +13,8 @@ import pl.net.bluesoft.rnd.processtool.model.dict.ProcessDictionaryItemExtension
 import pl.net.bluesoft.rnd.processtool.model.dict.ProcessDictionaryItemValue;
 import pl.net.bluesoft.rnd.processtool.model.dict.db.ProcessDBDictionaryItem;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
+import java.text.Collator;
+import java.util.*;
 
 /**
  * @author: mpawlak@bluesoft.net.pl
@@ -93,7 +89,8 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
         }
 
         /** Sorting order given, sort items by key, value or extenstion key */
-        Comparator<DictionaryItem> comparator = createComparator(sortBy);
+        Comparator<DictionaryItem> comparator = createComparator(sortBy, locale);
+
         if(comparator != null)
             Collections.sort(dictionaryItems, comparator);
 
@@ -244,23 +241,26 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
         return filters;
     }
 
-    private Comparator<DictionaryItem> createComparator(final String sortBy)
+    private Comparator<DictionaryItem> createComparator(final String sortBy, final Locale locale)
     {
         if(StringUtils.isEmpty(sortBy))
             return null;
+
+        final Collator collator = Collator.getInstance(locale);
 
         if(sortBy.equals(KEY_FILTER))
             return new Comparator<DictionaryItem>() {
                 @Override
                 public int compare(DictionaryItem o1, DictionaryItem o2) {
-                    return o1.getKey().compareTo(o2.getKey());
+                    return collator.compare(o1.getKey(), o2.getKey());
                 }
             };
         else if(sortBy.equals(VALUE_FILTER))
+
             return new Comparator<DictionaryItem>() {
                 @Override
                 public int compare(DictionaryItem o1, DictionaryItem o2) {
-                    return o1.getValue().compareTo(o2.getValue());
+                    return collator.compare(o1.getValue(), o2.getValue());
                 }
             };
         else
@@ -277,7 +277,7 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
                     else if(o2Ext == null)
                         return 1;
                     else
-                        return o1Ext.getValue().compareTo(o2Ext.getValue());
+                        return collator.compare(o1Ext.getValue(), o2Ext.getValue());
                 }
             };
 
