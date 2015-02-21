@@ -64,3 +64,10 @@ label.error {
 	font-weight: normal !important;
 	font-size: 12px !important;
 	}
+
+<!--[if IE]>
+#assignedPersonInactiveCheckbox
+{
+    padding-top: 3px !important;
+}
+<![endif]-->

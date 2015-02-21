@@ -53,7 +53,8 @@
 	var reloadQueuesLoopTimer;
 
 	$(document).ready(function()
-	{	
+	{
+	    $.ajaxSetup({ cache: false });
 		windowManager.addView("outer-queues");
 		reloadQueuesLoopTimer = $.timer(function()
         	{
