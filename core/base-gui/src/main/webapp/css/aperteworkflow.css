@@ -9,6 +9,14 @@
 
 }
 
+select[disabled] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-indent: 0.01px;
+    text-overflow: '';
+	padding: 0px;
+}
+
 @media (max-width: 767px)
 {
 	body
