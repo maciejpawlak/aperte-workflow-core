@@ -101,7 +101,7 @@ public abstract class AbstractFilesController implements IOsgiWebController {
             logger.log(Level.SEVERE, "[FILES_REPOSITORY] Cannot get file from request", e);
             result.addError("Cannot get file from request", e.getMessage());
         }
-        return result;
+		return result;
     }
 
     protected abstract FilesRepositoryAttributeFactory getAttributesFactory();

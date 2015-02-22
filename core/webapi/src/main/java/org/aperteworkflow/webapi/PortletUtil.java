@@ -6,6 +6,7 @@ import pl.net.bluesoft.rnd.processtool.usersource.IPortalUserSource;
 
 import javax.portlet.ResourceRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,4 +50,19 @@ public class PortletUtil
 
         return mav;
     }
+
+	public static ModelAndView translate(String resultName, Object result, String controller, String action) {
+		ModelAndView mav = new ModelAndView();
+		MappingJacksonJsonViewEx v = new MappingJacksonJsonViewEx();
+		v.setBeanName(resultName);
+		v.setContentType("application/json");
+		if ("filescontroller".equals(controller) && "uploadFile".equals(action)){
+			v.setContentType("text/plain");
+		}
+
+		mav.setView(v);
+		mav.addObject(resultName, result);
+
+		return mav;
+	}
 }
