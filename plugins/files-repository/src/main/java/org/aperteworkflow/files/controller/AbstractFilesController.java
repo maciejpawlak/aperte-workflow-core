@@ -4,6 +4,7 @@ import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.aperteworkflow.files.IFilesRepositoryFacade;
 import org.aperteworkflow.files.dao.FilesRepositoryAttributeFactory;
 import org.aperteworkflow.files.exceptions.DeleteFileException;
@@ -27,6 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Level;
@@ -158,7 +161,7 @@ public abstract class AbstractFilesController implements IOsgiWebController {
         }
         HttpServletResponse response = invocation.getResponse();
         try {
-            sendInResponseOutputStream(response, content);
+            sendInResponseOutputStream(request, response, content);
         } catch (IOException e) {
             logger.log(Level.SEVERE, "[FILES_REPOSITORY] Cannot download requested file from repository for item id=[" + filesRepositoryItemId + "] and processInstanceId=[" + processInstanceId + "].", e);
             result.addError("Cannot download requested file from repository for item id=[" + filesRepositoryItemId + "] and processInstanceId=[" + processInstanceId + "].", e.getMessage());
@@ -201,14 +204,35 @@ public abstract class AbstractFilesController implements IOsgiWebController {
         return result;
     }
 
-    private void sendInResponseOutputStream(HttpServletResponse response,
+    private void sendInResponseOutputStream(HttpServletRequest request, HttpServletResponse response,
                                             FileItemContent content) throws IOException {
 
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + content.getName() + "\"");
-        response.setContentType(content.getContentType());
-        ServletOutputStream soutStream = response.getOutputStream();
-        IOUtils.write(content.getBytes(), soutStream);
-        IOUtils.closeQuietly(soutStream);
+        try {
+
+            String encoding = request.getCharacterEncoding();
+
+//            byte[] fileNameBytes = content.getName().getBytes(request.getCharacterEncoding());
+//            String dispositionFileName = "";
+//            for (byte b: fileNameBytes) dispositionFileName += (char)(b & 0xff);
+
+            String disposition = "attachment; filename=\"" + URLEncoder.encode(content.getName(), "UTF-8") + "\"";
+            response.setHeader("Content-disposition", disposition);
+            response.setContentType(content.getContentType());
+            response.setCharacterEncoding("UTF-8");
+            ServletOutputStream soutStream = response.getOutputStream();
+            IOUtils.write(content.getBytes(), soutStream);
+            IOUtils.closeQuietly(soutStream);
+
+        } catch(UnsupportedEncodingException e) {
+            logger.log(Level.SEVERE, "Download file error", e);
+        }
+//        //response.addHeader("Content-Disposition", "attachment; filename*=\"'UTF-8'" + URLEncoder.encode(content.getName(), "UTF-8") + "\"");
+//        response.setHeader("Content-Disposition", "attachment; filename*=\"UTF-8" + content.getName() + "\"");
+//        response.setCharacterEncoding("UTF-8");
+//        response.setContentType(content.getContentType());
+//        ServletOutputStream soutStream = response.getOutputStream();
+//        IOUtils.write(content.getBytes(), soutStream);
+//        IOUtils.closeQuietly(soutStream);
     }
 
     private Long getFilesRepositoryItemId(HttpServletRequest request) {
