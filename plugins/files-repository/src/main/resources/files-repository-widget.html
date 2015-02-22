@@ -376,7 +376,6 @@ ${b}	</tr>${b}
         var MAX_FILE_SIZE = 50000000;
 
         initTable("${viewMode}");
-        			console.log('fileupload init');
 
         $('#fileupload').fileupload({
         	forceIframeTransport: true,
@@ -391,11 +390,9 @@ ${b}	</tr>${b}
             }
         })
         .on('fileuploadadd', function (e, dataObj) {
-        			console.log('fileuploadadd');
                     dataObj.context = $('<div/>').appendTo('#fileupload');
                 })
         .on('fileuploadprocessalways', function (e, data) {
-                			console.log('fileuploadprocessalways');
 
             $('#file-error').text('');
             $('#file-error').hide();
@@ -404,12 +401,6 @@ ${b}	</tr>${b}
                     file = data.files[index],
                     node = $(data.context.children()[index]);
             if (file.error) {
-                            			console.log('file.error');
-
-//                node
-//                        .append('<br>')
-//                        .append($('<span class="text-danger"/>').text(file.error));
-//                alert(file.error);
                   $('#file-error').text(file.error);
                   $('#file-error').show();
             }
@@ -418,11 +409,9 @@ ${b}	</tr>${b}
                         .text('Upload')
                         .prop('disabled', !!data.files.error);
             }
-                            			console.log('fileuploadprocessalways finished');
 
         })
         .on('fileuploadprogressall', function (e, data) {
-                        			console.log('fileuploadprogressall');
 
             $('#progress').show();
             var progress = parseInt(data.loaded / data.total * 100, 10);
@@ -432,7 +421,6 @@ ${b}	</tr>${b}
             );
         })
         .on('fileuploaddone',function (e, dataObj) {
-                                			console.log('fileuploaddone');
 
             $('#progress').hide();
 
@@ -466,7 +454,6 @@ ${b}	</tr>${b}
             applyIconsToFileNames();
 
         }).on('fileuploadfail',function (e, dataObj) {
-                                			console.log('fileuploadfail');
 
             data = dataObj.jqXHR != null ? dataObj.jqXHR.responseJSON : dataObj;
 
