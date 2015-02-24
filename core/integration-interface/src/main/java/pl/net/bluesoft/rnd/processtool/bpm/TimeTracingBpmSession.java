@@ -321,7 +321,10 @@ public class TimeTracingBpmSession implements ProcessToolBpmSession {
 		long start = System.currentTimeMillis();
 		try {
 			return session.getProcessDiagram(task, i18NSource);
-		}
+		}catch (Exception ex){
+            LOGGER.severe(ex.getMessage());
+            return null;
+        }
 		finally {
 			LOGGER.info("[getProcessDiagram] t = " + (System.currentTimeMillis() - start));
 		}
