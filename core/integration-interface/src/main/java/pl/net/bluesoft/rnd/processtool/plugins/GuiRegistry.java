@@ -78,4 +78,12 @@ public interface GuiRegistry {
 
     /* Get all queues avaiable to user with given login */
     List<AbstractTaskListView> getTasksListViews(String currentUserLogin);
+
+	void registerTaskPermissionChecker(TaskPermissionChecker permissionChecker);
+	void unregisterTaskPermissionChecker(TaskPermissionChecker permissionChecker);
+	List<TaskPermissionChecker> getTaskPermissionCheckers();
+
+	void registerActionPermissionChecker(ActionPermissionChecker permissionChecker);
+	void unregisterActionPermissionChecker(ActionPermissionChecker permissionChecker);
+	List<ActionPermissionChecker> getActionPermissionCheckers();
 }

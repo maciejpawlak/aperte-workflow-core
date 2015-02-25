@@ -6,6 +6,8 @@ import pl.net.bluesoft.rnd.processtool.model.BpmTask;
 import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
 import pl.net.bluesoft.rnd.processtool.model.ProcessInstance;
 import pl.net.bluesoft.rnd.processtool.model.config.*;
+import pl.net.bluesoft.rnd.processtool.plugins.ActionPermissionChecker;
+import pl.net.bluesoft.rnd.processtool.plugins.TaskPermissionChecker;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.IWidgetDataProvider;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.ProcessHtmlWidget;
 import pl.net.bluesoft.rnd.processtool.web.domain.IHtmlTemplateProvider;
@@ -53,14 +55,27 @@ public class TaskViewBuilder extends AbstractViewBuilder<TaskViewBuilder> {
 
         /* Check if user, who is checking the task, is the assigned person */
         if (isUserAssignedToTask() || isSubstitutingUser()) {
-            for (ProcessStateAction action : actions)
-                processAction(action, specificActionButtons);
+            for (ProcessStateAction action : actions) {
+				if (hasPermissionToAction(action)) {
+					processAction(action, specificActionButtons);
+				}
+			}
         }
     }
 
     public boolean isSubstitutingUser() {
         return ctx.getUserSubstitutionDAO().isSubstitutedBy(task.getAssignee(), user.getLogin());
     }
+
+	private boolean hasPermissionToAction(ProcessStateAction action) {
+		for (ActionPermissionChecker permissionChecker : processToolRegistry.getGuiRegistry().getActionPermissionCheckers()) {
+			Boolean result = permissionChecker.hasPermission(action.getBpmName(), task, user);
+			if (result != null && !result) {
+				return false;
+			}
+		}
+		return true;
+	}
 
     @Override
     protected void addSpecificHtmlWidgetData(final Map<String, Object> viewData, final IAttributesProvider viewedObject) {
@@ -182,8 +197,25 @@ public class TaskViewBuilder extends AbstractViewBuilder<TaskViewBuilder> {
         return this;
     }
 
+    protected boolean hasUserPriviledgesToViewTask()
+    {
+        for (TaskPermissionChecker taskPermissionChecker : processToolRegistry.getGuiRegistry().getTaskPermissionCheckers()) {
+            Boolean hasPermission = taskPermissionChecker.hasPermission(user, userQueues, task);
+
+            if (hasPermission != null) {
+                return hasPermission;
+            }
+        }
+
+        return true;
+    }
+
     private boolean hasUserRightsToTask() {
-        if (task.getPotentialOwners().contains(user.getLogin()))
+		if(!hasUserPriviledgesToViewTask())
+            return false;
+
+		// default permission checking
+		if (task.getPotentialOwners().contains(user.getLogin()))
             return true;
 
         for (String queueName : userQueues)
