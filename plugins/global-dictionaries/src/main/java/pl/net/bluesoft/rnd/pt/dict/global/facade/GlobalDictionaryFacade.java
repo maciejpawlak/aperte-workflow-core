@@ -89,10 +89,12 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
         }
 
         /** Sorting order given, sort items by key, value or extenstion key */
-        Comparator<DictionaryItem> comparator = createComparator(sortBy, locale);
+        if(sortBy != null) {
+            Comparator<DictionaryItem> comparator = createComparator(sortBy, locale);
 
-        if(comparator != null)
-            Collections.sort(dictionaryItems, comparator);
+            if (comparator != null)
+                Collections.sort(dictionaryItems, comparator);
+        }
 
         return dictionaryItems;
     }
