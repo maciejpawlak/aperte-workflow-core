@@ -1,10 +1,17 @@
 package pl.net.bluesoft.rnd.pt.ext.jbpm.service;
 
 import org.apache.commons.io.FileUtils;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 import pl.net.bluesoft.rnd.processtool.BasicSettings;
+import pl.net.bluesoft.rnd.processtool.bpm.diagram.Node;
+import pl.net.bluesoft.rnd.processtool.bpm.diagram.ProcessDiagram;
+import pl.net.bluesoft.rnd.pt.ext.jbpm.ProcessDiagramParser;
 
-import java.io.File;
-import java.io.InputStream;
+
+import javax.xml.parsers.*;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -36,20 +43,20 @@ public class DefaultJbpmRepository implements JbpmRepository {
 
 	@Override
 	public List<byte[]> getAllResources(String type) {
+		List<byte[]> result;
 		try {
 			File base = new File(basePath);
 			Collection<File> files = FileUtils.listFiles(base, new String[] { type }, true);
-			List<byte[]> result = new ArrayList<byte[]>(files.size());
-
+			result = new ArrayList<byte[]>(files.size());
 			for (File file : files) {
 				result.add(FileUtils.readFileToByteArray(file));
 			}
+			checkForDuplicates(files);
 			return result;
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException(e.getMessage(),e);
 		}
-		return null;
 	}
 
 	@Override
@@ -79,6 +86,46 @@ public class DefaultJbpmRepository implements JbpmRepository {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void checkForDuplicates(Collection<File> files) throws Exception {
+		List<String> processIds = new ArrayList<String>();
+
+		for (File file : files){
+			processIds.add(getProcessIdFromFile(file));
+		}
+
+		for(int i = 0 ; i < processIds.size(); i++){
+			for(int j = i+1 ; j < processIds.size(); j++){
+				if(processIds.get(i).equals(processIds.get(j))){
+					throw new RuntimeException("duplicate process ID: "+processIds.get(i)+" in the path: "+ basePath);
+				}
+			}
+		}
+	}
+
+	private String getProcessIdFromFile(File file){
+
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder db = null;
+		String processId = null;
+		try {
+			db = dbf.newDocumentBuilder();
+			org.w3c.dom.Document document = db.parse(file);
+			NodeList nodeList = document.getElementsByTagName("process");
+			org.w3c.dom.Node processNode = nodeList.item(0);
+			org.w3c.dom.NamedNodeMap processAttributes = processNode.getAttributes();
+			org.w3c.dom.Node idAttribute = processAttributes.getNamedItem("id");
+			processId = idAttribute.getNodeValue();
+
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return processId;
 	}
 
 	private String getDeploymentId() {
