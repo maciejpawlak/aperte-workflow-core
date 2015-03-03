@@ -18,10 +18,7 @@ import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -152,7 +149,18 @@ public class FilesRepositoryFacade implements IFilesRepositoryFacade {
 
 	@Override
 	public Collection<? extends IFilesRepositoryItem> getFilesList(IAttributesProvider filesAttributeProvider, FileListFilter filter) {
-		Collection<? extends IFilesRepositoryItem> filesList = getFilesList(filesAttributeProvider);
+        List<IFilesRepositoryItem> filesList = new LinkedList<IFilesRepositoryItem>();
+
+        filesList.addAll(getFilesList(filesAttributeProvider));
+
+        Comparator<IFilesRepositoryItem> comparator = new Comparator<IFilesRepositoryItem>() {
+            @Override
+            public int compare(IFilesRepositoryItem o1, IFilesRepositoryItem o2) {
+                return o1.getCreateDate().compareTo(o2.getCreateDate());
+            }
+        };
+
+        Collections.sort(filesList, comparator);
 
 		if (filter == null || filter == FileListFilter.ALL) {
 			return filesList;
@@ -168,6 +176,8 @@ public class FilesRepositoryFacade implements IFilesRepositoryFacade {
 				result.add(item);
 			}
 		}
+
+
 		return result;
 	}
 

@@ -80,6 +80,21 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
         scriptBuilder.append("<script type=\"text/javascript\">");
         final Document document = Jsoup.parse("");
 
+        if(!hasUserPriviledgesToViewTask())
+        {
+            final Element widgetsNode = document.createElement("div")
+                    .attr("role", "alert")
+                    .attr("class", "alert alert-warning");
+
+            widgetsNode.text(i18Source.getMessage("task.noright.to.view"));
+
+            document.appendChild(widgetsNode);
+
+            stringBuilder.append(document.toString());
+
+            return stringBuilder;
+        }
+
         buildActionButtons(document);
 
         final Element widgetsNode = document.createElement("div")
@@ -117,6 +132,8 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
     }
 
     protected abstract IAttributesProvider getViewedObject();
+
+    protected abstract boolean hasUserPriviledgesToViewTask();
 
     protected void buildWidget(final WidgetHierarchyBean widgetHierarchyBean) {
         IStateWidget widget = widgetHierarchyBean.getWidget();

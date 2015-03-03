@@ -198,6 +198,19 @@ public class TaskViewBuilder extends AbstractViewBuilder<TaskViewBuilder> {
         return this;
     }
 
+    protected boolean hasUserPriviledgesToViewTask()
+    {
+        // default permission checking
+        if (task.getPotentialOwners().contains(user.getLogin()))
+            return true;
+
+        for (String queueName : userQueues)
+            if (task.getQueues().contains(queueName))
+                return true;
+
+        return false;
+    }
+
     private boolean hasUserRightsToTask() {
 		for (TaskPermissionChecker taskPermissionChecker : processToolRegistry.getGuiRegistry().getTaskPermissionCheckers()) {
 			Boolean hasPermission = taskPermissionChecker.hasPermission(user, userQueues, task);
