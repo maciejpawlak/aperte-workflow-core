@@ -208,7 +208,7 @@ public class TaskViewBuilder extends AbstractViewBuilder<TaskViewBuilder> {
             if (task.getQueues().contains(queueName))
                 return true;
 
-        return false;
+        return hasUserRightsToTask();
     }
 
     private boolean hasUserRightsToTask() {
