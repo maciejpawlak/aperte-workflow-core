@@ -75,7 +75,13 @@
 				this.currentQueue = this.defaultQueueId;
 				this.currentOwnerLogin = this.defaultOwnerLogin;
 			}
-			this.loadQueue(this.currentQueue, this.currentOwnerLogin);
+
+			var reloadFunctionName = 'reloadQueue_'+this.currentQueue;
+
+			if (typeof window[reloadFunctionName] === 'function'){
+                    window[reloadFunctionName]();
+            }
+
 		}
 		
 		this.addTableView = function(queueId, tableObject, viewName)
