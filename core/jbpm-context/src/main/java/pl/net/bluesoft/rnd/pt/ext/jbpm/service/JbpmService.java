@@ -39,6 +39,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static pl.net.bluesoft.rnd.processtool.ProcessToolContext.Util.getThreadProcessToolContext;
@@ -132,6 +133,10 @@ public class JbpmService implements ProcessEventListener, TaskEventListener {
             if (getRepository() != null) {
                 result = getRepository().addResource(ProcessResourceNames.DEFINITION, definitionStream);
             }
+            else
+            {
+                log.log(Level.SEVERE, "[JBPM] Error, there is no repository initilized!");
+            }
 
             // update session
             if (ksession != null) {
@@ -142,6 +147,10 @@ public class JbpmService implements ProcessEventListener, TaskEventListener {
                 knowledgeBaseSession.addKnowledgePackages(packages);
                 if (knowledgeBase!=null) knowledgeBase.addKnowledgePackages(packages);
             }
+        }
+        else
+        {
+            log.log(Level.SEVERE, "[JBPM] Resource is not valid!");
         }
 
         return result;

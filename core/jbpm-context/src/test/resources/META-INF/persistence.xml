@@ -52,6 +52,7 @@
             <property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.BTMTransactionManagerLookup" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
             <property name="hibernate.transaction.flush_before_completion" value="true"/>
+            <property name="transaction.factory_class" value="bitronix.tm.BitronixUserTransactionObjectFactory"/>
         </properties>
     </persistence-unit>
 
@@ -89,6 +90,7 @@
             <property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.BTMTransactionManagerLookup" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
             <property name="hibernate.transaction.flush_before_completion" value="true"/>
+            <property name="transaction.factory_class" value="bitronix.tm.BitronixUserTransactionObjectFactory"/>
         </properties>
     </persistence-unit>
 

@@ -12,6 +12,9 @@ public class NewProcessInstanceBean  extends AbstractResultBean
 {
 	private String taskId;
 	private String processStateConfigurationId;
+    private String processId;
+
+
 	public String getTaskId() {
 		return taskId;
 	}
@@ -24,7 +27,12 @@ public class NewProcessInstanceBean  extends AbstractResultBean
 	public void setProcessStateConfigurationId(String processStateConfigurationId) {
 		this.processStateConfigurationId = processStateConfigurationId;
 	}
-	
-	
 
+    public String getProcessId() {
+        return processId;
+    }
+
+    public void setProcessId(String processId) {
+        this.processId = processId;
+    }
 }

@@ -469,6 +469,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 
                         newProcessInstanceBO.setTaskId(task.getInternalTaskId());
                         newProcessInstanceBO.setProcessStateConfigurationId(task.getCurrentProcessStateConfiguration().getId().toString());
+                        newProcessInstanceBO.setProcessId(task.getInternalProcessId());
                     }
 
                     long t3 = System.currentTimeMillis();
