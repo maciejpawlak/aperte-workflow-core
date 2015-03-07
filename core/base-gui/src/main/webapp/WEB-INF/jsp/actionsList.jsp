@@ -498,7 +498,6 @@
 
 			reloadQueues();
 
-            console.log('test');
 			if(!data)
 			{
 				closeProcessView();
