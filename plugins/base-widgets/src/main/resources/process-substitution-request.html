@@ -33,7 +33,7 @@
                     <label name="tooltip" title="${messageSource.getMessage('substituting.date.from.tooltip')}" for="substituting-date-from-${widgetId}" class="col-sm-2 control-label required">${messageSource.getMessage("substituting.date.from.label")}</label>
                     <div  class="col-sm-4">
                         <div class="input-group input-group-sm  input-append date" id="substituting-date-from-datepicker-${widgetId}">
-                            <input type="text" class="form-control" value="${substitutingDateFrom}" data-placeholder="${messageSource.getMessage('substituting.user.datefrom.placeholder')}"  id="substituting-date-from-${widgetId}" <#if canEdit == "no">disabled</#if>>
+                            <input type="text" class="form-control" data-placeholder="${messageSource.getMessage('substituting.user.datefrom.placeholder')}"  id="substituting-date-from-${widgetId}" <#if canEdit == "no">disabled</#if>>
                             <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                         </div>
                     </div>
@@ -43,7 +43,7 @@
                     <label name="tooltip" title="${messageSource.getMessage('substituting.date.to.tooltip')}" for="substituting-date-to-${widgetId}" class="col-sm-2 control-label required">${messageSource.getMessage("substituting.date.to.label")}</label>
                     <div  class="col-sm-4">
                         <div class="input-group input-group-sm  input-append date" id="substituting-date-to-datepicker-${widgetId}">
-                            <input type="text" class="form-control" value="${substitutingDateTo}"  id="substituting-date-to-${widgetId}" <#if canEdit == "no">disabled</#if>>
+                            <input type="text" class="form-control"  id="substituting-date-to-${widgetId}" <#if canEdit == "no">disabled</#if>>
                             <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                         </div>
                     </div>
@@ -113,27 +113,25 @@
         }).select2('readonly', "${canEdit}" == "no");
         $("#substitute-user-${widgetId}").select2('val', '${substitutingUserLoginFullName}');
 
+        $("#substituting-date-from-datepicker-${widgetId}").datepicker({
+            format: "dd-mm-yyyy",
+            startDate: moment().format("DD-MM-YYYY"),
+            language: "pl",
+            minDate: 0,
+            autoclose:true,
+            todayHighlight : true
+        });
+        $("#substituting-date-from-datepicker-${widgetId}").datepicker('update', '${substitutingDateFrom}');
 
-        <#if canEdit != "no">
-            $("#substituting-date-from-datepicker-${widgetId}").datepicker({
-                format: "yyyy-mm-dd",
-                language: "pl",
-                minDate: 0,
-                autoclose:true,
-                todayHighlight : true
-            });
-        </#if>
-
-
-        <#if canEdit != "no">
-            $("#substituting-date-to-datepicker-${widgetId}").datepicker({
-                format: "yyyy-mm-dd",
-                language: "pl",
-                minDate: 0,
-                autoclose:true,
-                todayHighlight : true
-            });
-        </#if>
+        $("#substituting-date-to-datepicker-${widgetId}").datepicker({
+            format: "dd-mm-yyyy",
+            startDate: moment().format("DD-MM-YYYY"),
+            language: "pl",
+            minDate: 0,
+            autoclose:true,
+            todayHighlight : true
+        });
+        $("#substituting-date-to-datepicker-${widgetId}").datepicker('update', '${substitutingDateTo}');
 
 
     });

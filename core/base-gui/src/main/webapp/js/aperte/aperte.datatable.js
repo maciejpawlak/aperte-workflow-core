@@ -1,5 +1,6 @@
 	function AperteDataTable(tableId, columnDefs, sortingOrder, options)
 	{
+	    $.fn.dataTableExt.sErrMode = "throw";
 		this.tableId = tableId;
 		this.requestUrl = '';
 		this.columnDefs = columnDefs;
