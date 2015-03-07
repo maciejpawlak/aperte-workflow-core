@@ -501,8 +501,7 @@
 			if(!data)
 			{
 				closeProcessView();
-				queueViewManager.reloadCurrentQueue();
-				windowManager.showProcessList();
+				queueViewManager.loadCurrentQueue();
 
 				return;
 			}
@@ -514,8 +513,7 @@
 			else if(!data.nextTask)
 			{
 				closeProcessView();
-				queueViewManager.reloadCurrentQueue();
-				windowManager.showProcessList();
+				queueViewManager.loadCurrentQueue();
 
 				return;
 			}
@@ -528,8 +526,7 @@
 			else
 			{
 				closeProcessView();
-				queueViewManager.reloadCurrentQueue();
-				windowManager.showProcessList();
+				queueViewManager.loadCurrentQueue();
 			}
 		})
 		.fail(function(XMLHttpRequest, textStatus, errorThrown) { addAlert(errorThrown); })
