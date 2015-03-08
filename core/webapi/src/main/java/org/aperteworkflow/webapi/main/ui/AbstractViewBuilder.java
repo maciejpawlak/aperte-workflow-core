@@ -10,15 +10,14 @@ import pl.net.bluesoft.rnd.processtool.ISettingsProvider;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
 import pl.net.bluesoft.rnd.processtool.bpm.ProcessToolBpmSession;
 import pl.net.bluesoft.rnd.processtool.dict.IDictionaryFacade;
+import pl.net.bluesoft.rnd.processtool.model.BpmTask;
 import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
 import pl.net.bluesoft.rnd.processtool.model.ProcessInstance;
 import pl.net.bluesoft.rnd.processtool.model.UserData;
-import pl.net.bluesoft.rnd.processtool.model.config.IPermission;
-import pl.net.bluesoft.rnd.processtool.model.config.IStateWidget;
-import pl.net.bluesoft.rnd.processtool.model.config.IStateWidgetAttribute;
-import pl.net.bluesoft.rnd.processtool.model.config.ProcessStateConfiguration;
+import pl.net.bluesoft.rnd.processtool.model.config.*;
 import pl.net.bluesoft.rnd.processtool.plugins.ButtonGenerator;
 import pl.net.bluesoft.rnd.processtool.plugins.ProcessToolRegistry;
+import pl.net.bluesoft.rnd.processtool.plugins.QueueBean;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.IWidgetDataProvider;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.ProcessHtmlWidget;
 import pl.net.bluesoft.rnd.processtool.usersource.IUserSource;
@@ -36,6 +35,8 @@ import static pl.net.bluesoft.util.lang.Strings.hasText;
  */
 public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
     protected static Logger logger = Logger.getLogger(AbstractViewBuilder.class.getName());
+
+    public static final String CLAIM_ACTION_NAME = "claim";
 
     protected List<? extends IStateWidget> widgets;
     protected I18NSource i18Source;
@@ -406,6 +407,8 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
     }
 
     protected abstract void buildAdditionalData(Document document);
+
+    protected abstract Set<QueueBean> getQueueBeans();
 
     public T setWidgets(List<? extends IStateWidget> widgets) {
         this.widgets = widgets;
