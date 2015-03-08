@@ -62,7 +62,7 @@
 		if (extDotIndex <= -1){
 			return fileIcons['default'];
 		}
-		var ext = filename.substring(extDotIndex+1);
+		var ext = filename.substring(extDotIndex+1).toLowerCase();
 		var iconFile = fileIcons[ext];
 		if (typeof iconFile == 'undefined'){
 			return fileIcons['default'];

@@ -550,9 +550,9 @@
 	
 	function onCancelButton()
 	{
-		reloadQueues();
-		disableButtons(); 
-		queueViewManager.reloadCurrentQueue();
+		disableButtons();
+		closeProcessView();
+		queueViewManager.loadCurrentQueue();
 		
 		$(window).scrollTop(0);
 	}
