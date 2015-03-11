@@ -71,3 +71,7 @@ label.error {
     padding-top: 3px !important;
 }
 <![endif]-->
+
+[aria-hidden*=true] {
+	z-index: -9999 !important;
+}
