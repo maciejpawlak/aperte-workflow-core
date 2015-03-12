@@ -9,6 +9,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -62,28 +63,45 @@ public class SubstitutionsController implements IOsgiWebController {
 		UserData user = requestContext.getUser();
 
 		List<UserSubstitution> substitutionList;
+        Long subtitiutionsCount = 0l;
 
-		if (user.hasRole("Administrator"))
-			substitutionList = (List<UserSubstitution>) ctx
-					.getHibernateSession()
-					.createCriteria(UserSubstitution.class)
-					.addOrder(
-							sortingColumn.getSortedAsc() ? Order.asc(sortingColumn.getPropertyName()) : Order.desc(sortingColumn
-									.getPropertyName())).setMaxResults(dataTable.getPageLength()).setFirstResult(dataTable.getPageOffset())
-					.list();
+		if (user.hasRole("Administrator")) {
+            substitutionList = (List<UserSubstitution>) ctx
+                    .getHibernateSession()
+                    .createCriteria(UserSubstitution.class)
+                    .addOrder(
+                            sortingColumn.getSortedAsc() ? Order.asc(sortingColumn.getPropertyName()) : Order.desc(sortingColumn
+                                    .getPropertyName())).setMaxResults(dataTable.getPageLength()).setFirstResult(dataTable.getPageOffset())
+                    .list();
 
-		else
-			substitutionList = (List<UserSubstitution>) ctx
-					.getHibernateSession()
-					.createCriteria(UserSubstitution.class)
-					.add(Restrictions.or(Restrictions.eq("userLogin", user.getLogin()),
-							Restrictions.eq("userSubstituteLogin", user.getLogin())))
-					.addOrder(
-							sortingColumn.getSortedAsc() ? Order.asc(sortingColumn.getPropertyName()) : Order.desc(sortingColumn
-									.getPropertyName())).setMaxResults(dataTable.getPageLength()).setFirstResult(dataTable.getPageOffset())
-					.list();
+            subtitiutionsCount = (Long)ctx
+                    .getHibernateSession()
+                    .createCriteria(UserSubstitution.class)
+                    .setProjection(Projections.rowCount())
+                    .uniqueResult();
+        }
 
-		DataPagingBean<UserSubstitution> dataPagingBean = new DataPagingBean<UserSubstitution>(substitutionList, substitutionList.size(),
+		else {
+            substitutionList = (List<UserSubstitution>) ctx
+                    .getHibernateSession()
+                    .createCriteria(UserSubstitution.class)
+                    .add(Restrictions.or(Restrictions.eq("userLogin", user.getLogin()),
+                            Restrictions.eq("userSubstituteLogin", user.getLogin())))
+                    .addOrder(
+                            sortingColumn.getSortedAsc() ? Order.asc(sortingColumn.getPropertyName()) : Order.desc(sortingColumn
+                                    .getPropertyName())).setMaxResults(dataTable.getPageLength()).setFirstResult(dataTable.getPageOffset())
+                    .list();
+
+            subtitiutionsCount = (Long)ctx
+                    .getHibernateSession()
+                    .createCriteria(UserSubstitution.class)
+                    .add(Restrictions.or(Restrictions.eq("userLogin", user.getLogin()),
+                            Restrictions.eq("userSubstituteLogin", user.getLogin())))
+                    .setProjection(Projections.rowCount())
+                    .uniqueResult();
+        }
+
+		DataPagingBean<UserSubstitution> dataPagingBean = new DataPagingBean<UserSubstitution>(substitutionList, subtitiutionsCount.intValue(),
 				dataTable.getEcho());
 
 		return dataPagingBean;
@@ -99,9 +117,32 @@ public class SubstitutionsController implements IOsgiWebController {
 		IProcessToolRequestContext requestContext = invocation.getProcessToolRequestContext();
 		ProcessToolContext ctx = invocation.getProcessToolContext();
 
-		ctx.getUserSubstitutionDAO().deleteById(Long.parseLong(substitutionId));
+        if(!invocation.getProcessToolRequestContext().getUser().hasRole("Administrator")) {
 
-		return result;
+            UserSubstitution substitution = (UserSubstitution) ctx
+                    .getHibernateSession()
+                    .createCriteria(UserSubstitution.class)
+                    .add(Restrictions.or(Restrictions.eq("userLogin", invocation.getProcessToolRequestContext().getUser().getLogin()),
+                            Restrictions.eq("userSubstituteLogin", invocation.getProcessToolRequestContext().getUser().getLogin())))
+                    .add(Restrictions.eq("id", Long.parseLong(substitutionId)))
+                    .uniqueResult();
+
+            if (substitution == null) {
+                result.addError("SYSTEM", invocation.getProcessToolRequestContext().getMessageSource().getMessage("substitution.not.exists"));
+                return result;
+            }
+
+            ctx.getUserSubstitutionDAO().delete(substitution);
+
+
+        }
+        else
+        {
+            ctx.getUserSubstitutionDAO().deleteById(Long.parseLong(substitutionId));
+        }
+        return result;
+
+
 	}
 
 	@ControllerMethod(action = "addOrEditSubstitution")

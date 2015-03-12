@@ -106,7 +106,7 @@
 <!-- /.modal -->
 
 <div class="process-queue-name apw_highlight">
-	Aperte Workflow Substitution Manager
+	<spring:message code="substitution.manager.title" />
 	<div class="btn-group  pull-right">
         <c:if test="${isPermitted}">
 		<button class="btn btn-info" id="substitution-add-button"
@@ -165,6 +165,7 @@
 				substitutionId : id
 			}
 		}).done(function(resp) {
+			
 			dataTable.reloadTable(dispatcherPortlet);
 		});
 	}
@@ -344,14 +345,16 @@
 											"bSortable" : true,
 											"mData" : function(o) {
 											    out='';
-                                                <c:if test="${isPermitted}">
+
 												out += '<button class="btn btn-mini" onclick="editSubstitution('+o.id+','+o.dateFrom+','+o.dateTo+',\''+o.userLogin+'\',\''+o.userSubstituteLogin+'\')" data-toggle="modal" data-target="#NewSubstitutionModal">';
 												out += '<i class="glyphicon glyphicon-edit"></i></button>';
-                                                </c:if>
-                                                if('${aperteUser.login}'==o.userLogin || '${aperteUser.login}'==o.userSubstituteLogin){
+
+
+                                                if('${aperteUser.login}'==o.userLogin || '${aperteUser.login}'==o.userSubstituteLogin || '${isPermitted}' == 'true'){
                                                     out += '<button class="btn btn-danger btn-mini" onclick="removeSubstitution('+o.id+')">';
                                                     out += '<i class="glyphicon glyphicon-trash"></i></button>';
 												}
+
 												return out;
 											}
 										} ], [ [ 3, "desc" ] ]);

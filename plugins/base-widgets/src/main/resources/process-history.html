@@ -40,7 +40,7 @@
                                 <p class="list-group-item-text">
                                     <strong>${messageSource.getMessage("process.history.action.by")}: </strong>
 
-                                    ${actionUser.getRealName()} ( ${log.getUserLogin()} )
+                                    <#if actionUser != "">${actionUser.getRealName()}</#if> ( ${log.getUserLogin()} )
                                     <#if substitutionUserLogin != "">
                                         <#assign substitutionUser = userSource.getUserByLogin(substitutionUserLogin)!""/>
                                         ${messageSource.getMessage("process.history.subsituted.by")} :
