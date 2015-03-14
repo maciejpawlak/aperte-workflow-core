@@ -1,5 +1,7 @@
 package org.aperteworkflow.webapi.main.ui;
 
+import freemarker.template.utility.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import pl.net.bluesoft.rnd.processtool.model.BpmTask;
@@ -209,13 +211,18 @@ public class TaskViewBuilder extends AbstractViewBuilder<TaskViewBuilder> {
 
     protected boolean hasUserPriviledgesToViewTask()
     {
+
         // default permission checking
         if (task.getPotentialOwners().contains(user.getLogin()))
             return true;
 
-        for (String queueName : userQueues)
-            if (task.getQueues().contains(queueName))
-                return true;
+        if(StringUtils.isEmpty(task.getAssignee())) {
+            for (String queueName : userQueues)
+                if (task.getQueues().contains(queueName))
+                    return true;
+        }
+        else if(task.getAssignee().equals(user.getLogin()))
+            return true;
 
         return hasUserRightsToTask();
     }
