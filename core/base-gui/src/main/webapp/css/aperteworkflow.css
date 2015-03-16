@@ -984,8 +984,7 @@ input[disabled], select[disabled], textarea[disabled], input[readonly], select[r
 }
 
 input[type="text"],
-textarea, 
-button, button:hover
+textarea
 {
 	background-image:none;
 	background-color: white;
@@ -1494,4 +1493,40 @@ border-radius: 4px;
 
 .process-tasks-view{
 	overflow: auto;
+}
+
+input[type="submit"]:hover,
+input[type="button"]:hover,
+input[type="reset"]:hover,
+input[type="submit"]:focus,
+input[type="button"]:focus,
+input[type="reset"]:focus,
+button:hover,
+button:focus
+{
+    background-image:none !important;
+}
+
+body.blue
+{
+	overflow: hidden !important;
+	padding: 0px !important;
+}
+
+.actions-process-view
+{
+    margin-bottom: 45px;
+}
+
+.btn-group .btn+.btn, 
+.btn-group .btn+.btn-group, 
+.btn-group .btn-group+.btn, 
+.btn-group .btn-group+.btn-group
+{
+	margin-left:0px !important;
+}
+
+.dropdown-sub-button
+{
+    text-decoration: none;
 }

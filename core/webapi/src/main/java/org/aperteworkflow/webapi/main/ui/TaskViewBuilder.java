@@ -88,7 +88,139 @@ public class TaskViewBuilder extends AbstractViewBuilder<TaskViewBuilder> {
         return isUserAssignedToTask();
     }
 
-    private void processAction(ProcessStateAction action, Element parent) {
+    private void processMultiActionButton(ProcessStateAction action, Element parent)
+    {
+        String actionButtonId = "action-button-" + action.getBpmName();
+
+        String actionLabel = action.getLabel();
+        if (actionLabel == null)
+            actionLabel = "label";
+            //TODO make autohide
+        else if (actionLabel.equals("hide"))
+            return;
+
+        String actionType = action.getActionType();
+        if (actionType == null || actionType.isEmpty())
+            actionType = "primary";
+
+        String iconName = action.getAttributeValue(ProcessStateAction.ATTR_ICON_NAME);
+        if (iconName == null || iconName.isEmpty())
+            iconName = "arrow-right";
+
+
+
+        Element divButtonGroup = parent.ownerDocument().createElement("div")
+                .attr("class", "btn-group")
+                .attr("id", actionButtonId+"-group");
+
+        parent.appendChild(divButtonGroup);
+
+        String btnClass = "btn btn-" + actionType;
+        String styleName = action.getAttributeValue("styleName");
+
+        if (hasText(styleName)) {
+            btnClass += ' ' + styleName;
+        }
+
+        Element buttonNode = parent.ownerDocument().createElement("button")
+                .attr("class", btnClass)
+                .attr("disabled", "true")
+                .attr("type", "button")
+                .attr("id", actionButtonId);
+        divButtonGroup.appendChild(buttonNode);
+
+        Element dtopdownButtonNode = parent.ownerDocument().createElement("button")
+                .attr("class", btnClass+" dropdown-toggle")
+                .attr("disabled", "true")
+                .attr("data-toggle", "dropdown")
+                .attr("type", "button")
+                .attr("id", actionButtonId);
+
+        divButtonGroup.appendChild(dtopdownButtonNode);
+
+        Element spanCaretNode = parent.ownerDocument().createElement("span")
+                .attr("class", "caret");
+
+        dtopdownButtonNode.appendChild(spanCaretNode);
+
+        Element spanSrOnlyNode = parent.ownerDocument().createElement("span")
+                .attr("class", "sr-only")
+                .text("Toggle Dropdown");
+
+        dtopdownButtonNode.appendChild(spanSrOnlyNode);
+
+        Element ulNode = parent.ownerDocument().createElement("ul")
+                .attr("class", "dropdown-menu")
+                .attr("role", "menu");
+
+        divButtonGroup.appendChild(ulNode);
+
+        if(action.getCommentNeeded())
+        {
+            Element liNode = parent.ownerDocument().createElement("li");
+            ulNode.appendChild(liNode);
+            Element aNode = parent.ownerDocument().createElement("a")
+                    .attr("href", "#")
+                    .attr("class", "dropdown-sub-button")
+                    .attr("id", actionButtonId+"-comment")
+                    .appendText(i18Source.getMessage("action.with.comment"));
+
+            liNode.appendChild(aNode);
+
+            scriptBuilder
+                    .append("$('#")
+                    .append(actionButtonId+"-comment")
+                    .append("').click(function() { disableButtons(); performAction(this, '")
+                    .append(action.getBpmName())
+                    .append("', ")
+                    .append(action.getSkipSaving())
+                    .append(", ")
+                    .append("true")
+                    .append(", ")
+                    .append("false")
+                    .append(", '")
+                    .append(action.getChangeOwnerAttributeName())
+                    .append("', '")
+                    .append(task.getInternalTaskId())
+                    .append("');  });");
+        }
+
+
+        Element actionButtonIcon = parent.ownerDocument().createElement("span")
+                .attr("class", "glyphicon glyphicon-" + iconName);
+
+        buttonNode.appendChild(actionButtonIcon);
+
+        buttonNode.appendText(i18Source.getMessage(actionLabel));
+
+        scriptBuilder
+                .append("$('#")
+                .append(actionButtonId)
+                .append("').click(function() { disableButtons(); performAction(this, '")
+                .append(action.getBpmName())
+                .append("', ")
+                .append(action.getSkipSaving())
+                .append(", ")
+                .append("false")
+                .append(", ")
+                .append(action.getChangeOwner())
+                .append(", '")
+                .append(action.getChangeOwnerAttributeName())
+                .append("', '")
+                .append(task.getInternalTaskId())
+                .append("');  });");
+        scriptBuilder.append("$('#").append(actionButtonId+"-group").append("').tooltip({title: '").append(i18Source.getMessage(action.getDescription())).append("'});");
+
+    }
+
+    private void processAction(ProcessStateAction action, Element parent)
+    {
+        /** Create multiaction button */
+        if(action.getCommentNeeded())
+        {
+            processMultiActionButton(action, parent);
+            return;
+        }
 
         String actionButtonId = "action-button-" + action.getBpmName();
 

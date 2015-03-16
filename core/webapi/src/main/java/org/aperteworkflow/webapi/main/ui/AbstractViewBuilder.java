@@ -111,6 +111,7 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
 
             stringBuilder.append(document.toString());
             scriptBuilder.append("vaadinWidgetsCount = ").append(vaadinWidgetsCount).append(';');
+            scriptBuilder.append("$('.dropdown-toggle').dropdown();");
             scriptBuilder.append("</script>");
             stringBuilder.append(scriptBuilder);
 
