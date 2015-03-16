@@ -85,7 +85,7 @@
         <vaadin.version>6.8.10</vaadin.version>
 		<jackson.version>1.9.13</jackson.version>
         <hibernate.version>3.6.10.Final</hibernate.version>
-        <postgres.version>9.2-1002-jdbc4</postgres.version>
+        <postgres.version>9.3-1103-jdbc41</postgres.version>
         <junit.version>4.8.2</junit.version>
 		<gwt.version>2.5.0</gwt.version>
 		<gwt.plugin.version>2.5.0</gwt.plugin.version>
