@@ -149,6 +149,7 @@
     <header-portlet-javascript>/sa/js/jquery.fileupload-process.js</header-portlet-javascript>
     <header-portlet-javascript>/sa/js/jquery.fileupload-validate.js</header-portlet-javascript>
     <header-portlet-javascript>/sa/js/jquery.iframe-transport.js</header-portlet-javascript>
+    <header-portlet-javascript>/sa/js/aperte/aperte.datatable.js</header-portlet-javascript>
     <header-portlet-css>/sa/css/bootstrap.min.css</header-portlet-css>
     <header-portlet-css>/sa/css/bootstrap-theme.min.css</header-portlet-css>
     <header-portlet-css>/sa/css/aperteworkflow.css</header-portlet-css>

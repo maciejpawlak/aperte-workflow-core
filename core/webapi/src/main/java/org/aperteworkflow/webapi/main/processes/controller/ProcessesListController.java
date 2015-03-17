@@ -515,7 +515,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
         final IProcessToolRequestContext context = this.initilizeContext(request,getProcessToolRegistry().getProcessToolSessionFactory());
 
         if(!context.isUserAuthorized())
-            return new DataPagingBean<TasksListViewBean>(adminAlertBeanList, 0, dataTable.getEcho());
+            return new DataPagingBean<TasksListViewBean>(adminAlertBeanList, 0, dataTable.getDraw());
 
         final String sortCol = request.getParameter("iSortCol_0");
         final String sortDir = request.getParameter("sSortDir_0");
@@ -529,7 +529,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
         final Integer displayLength = Integer.parseInt(displayLengthString);
 
         final DataPagingBean<TasksListViewBean> pagingCollection = new DataPagingBean<TasksListViewBean>(
-                adminAlertBeanList, 100, dataTable.getEcho());
+                adminAlertBeanList, 100, dataTable.getDraw());
 
 		long t1 = System.currentTimeMillis();
 
@@ -582,9 +582,9 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
                 long t2 = System.currentTimeMillis();
 
                 int totalRecords = context.getBpmSession().getFilteredTasksCount(filter);
-                pagingCollection.setiTotalRecords(totalRecords);
-                pagingCollection.setiTotalDisplayRecords(totalRecords);
-                pagingCollection.setAaData(adminAlertBeanList);
+                pagingCollection.setRecordsTotal(totalRecords);
+                pagingCollection.setRecordsFiltered(totalRecords);
+                pagingCollection.setData(adminAlertBeanList);
 
                 long t3 = System.currentTimeMillis();
 
@@ -712,7 +712,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 		
 		if(isNull(queueType) || isNull(ownerLogin))
 		{
-			return new DataPagingBean<TasksListViewBean>(adminAlertBeanList, 0, dataTable.getEcho());
+			return new DataPagingBean<TasksListViewBean>(adminAlertBeanList, 0, dataTable.getDraw());
 		}
 
         Locale locale = request.getLocale();
@@ -720,19 +720,19 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 		final IProcessToolRequestContext context = this.initilizeContext(request,getProcessToolRegistry().getProcessToolSessionFactory());
 		
 		if(!context.isUserAuthorized())
-			return new DataPagingBean<TasksListViewBean>(adminAlertBeanList, 0, dataTable.getEcho());
+			return new DataPagingBean<TasksListViewBean>(adminAlertBeanList, 0, dataTable.getDraw());
 
 		final String searchString = request.getParameter("sSearch");
 
 		
 		final DataPagingBean<TasksListViewBean> pagingCollection = new DataPagingBean<TasksListViewBean>(
-				adminAlertBeanList, 100, dataTable.getEcho());
+				adminAlertBeanList, 100, dataTable.getDraw());
 
 		long t1 = System.currentTimeMillis();
 
         final AbstractTaskListView listView = getProcessToolRegistry().getGuiRegistry().getTasksListView(viewName);
         if(listView == null)
-            return new DataPagingBean<TasksListViewBean>(adminAlertBeanList, 0, dataTable.getEcho());
+            return new DataPagingBean<TasksListViewBean>(adminAlertBeanList, 0, dataTable.getDraw());
 
         getProcessToolRegistry().withProcessToolContext(new ProcessToolContextCallback() {
 
@@ -744,6 +744,8 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 
                 Map<String, Object> listViewParameters = new HashMap<String, Object>();
                 listViewParameters.put(AbstractTaskListView.PARAMETER_USER_LOGIN, ownerLogin);
+                listViewParameters.put(AbstractTaskListView.PARAMETER_USER, context.getUser());
+                listViewParameters.put(AbstractTaskListView.PARAMETER_QUEUE_ID, viewName);
 
                 ProcessInstanceFilter filter = listView.getProcessInstanceFilter(listViewParameters);
 
@@ -780,9 +782,9 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 
                 long t3 = System.currentTimeMillis();
                 int totalRecords = context.getBpmSession().getFilteredTasksCount(filter);
-                pagingCollection.setiTotalRecords(totalRecords);
-                pagingCollection.setiTotalDisplayRecords(totalRecords);
-                pagingCollection.setAaData(adminAlertBeanList);
+                pagingCollection.setRecordsTotal(totalRecords);
+                pagingCollection.setRecordsFiltered(totalRecords);
+                pagingCollection.setData(adminAlertBeanList);
 
                 long t4 = System.currentTimeMillis();
 

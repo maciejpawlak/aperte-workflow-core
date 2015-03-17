@@ -1,11 +1,14 @@
-	function AperteDataTable(tableId, columnDefs, sortingOrder)
+	function AperteDataTable(tableId, columnDefs, sortingOrder, options)
 	{
+	    $.fn.dataTableExt.sErrMode = "throw";
 		this.tableId = tableId;
 		this.requestUrl = '';
 		this.columnDefs = columnDefs;
 		this.sortingOrder = sortingOrder;
 		this.dataTable;
 		this.requestParameters = [];
+		this.clearOnStart = false;
+		this.tableElementsPlacement;
 
 		this.initialized = false;
 
@@ -18,6 +21,14 @@
 		{
 			this.requestParameters.push({ "name": name, "value": value });
 		}
+		
+
+		this.clearState = function()
+		{
+		    this.dataTable.state.clear();
+		    this.dataTable.page('first');
+		}
+
 
 		this.reloadTable = function(requestUrl)
 		{
@@ -31,10 +42,15 @@
 			{
 				this.createDataTable();
 				this.initialized = true;
+				if(this.clearOnStart) 
+				{
+					this.clearState();
+					this.dataTable.draw();
+				}
 			}
 			else
 			{
-				this.dataTable.fnReloadAjax(this.requestUrl);
+				this.dataTable.ajax.url(requestUrl).load(null, false);
 			}
 		}
 
@@ -54,49 +70,47 @@
 		{
 		}
 
-		this.createDataTable = function(tableElementsPlacement)
+		this.createDataTable = function()
 		{
-		    var sDom = (tableElementsPlacement !== undefined) ? tableElementsPlacement : 'R<"top"t><"bottom"plr>';
+		    var sDom = (this.tableElementsPlacement !== undefined) ? this.tableElementsPlacement : 'R<"top"t><"bottom"plr>';
 
-			this.dataTable = $('#'+this.tableId).dataTable({
-                "bLengthChange": true,
-                "bFilter": true,
-                "bProcessing": true,
-                "bServerSide": true,
-                "bInfo": true,
-                "aaSorting": sortingOrder,
-                "bSort": true,
-                "iDisplayLength": 10,
-                "sDom": sDom,
-                "sAjaxSource": this.requestUrl,
-                "fnServerData": function ( sSource, aoData, fnCallback ) {
+			var aperteDataTable = this;
 
-                    $.ajax( {
-                        "dataType": 'json',
-                        "type": "POST",
-                        "url": sSource,
-                        "data": aoData,
-                        "success": fnCallback
-                    } );
-                },
-                "fnServerParams": function ( aoData ) {
-                      aoData.push( this.requestParameters );
-                },
-                "aoColumns": this.columnDefs,
-                "oLanguage": dataTableLanguage
-            });
-			if(typeof windowManager != 'undefined')
-			{
-				if(windowManager.mobileMode == true)
-				{
-					this.enableMobileMode();
-				}
+			var definition = {
+				 serverSide: true,
+				 ordering: true,
+				 lengthChange: true,
+				 stateSave: true,
+				 dom: sDom,
+				 processing: true,
+				 order: sortingOrder,
+				ajax: {
+						 dataType: 'json',
+						 type: "POST",
+						 url: aperteDataTable.requestUrl,
+						"data": function ( d )
+						{
 
-				if(windowManager.tabletMode == true)
-				{
-					this.enableTabletMode();
+							$.each(aperteDataTable.requestParameters, function (index, parameter)
+							{
+								var key = parameter["name"];
+								var value = parameter["value"];
+								d[key] = value;
+							});
+						 },
+						dataSrc: "listData"
+					 },
+				columns: aperteDataTable.columnDefs,
+				language: dataTableLanguage
+			 };
+
+			if (options) {
+				for (var key in options) {
+					definition[key] = options[key];
 				}
 			}
+
+			this.dataTable = $('#'+this.tableId).DataTable(definition);
 		}
 
 		this.toggleColumnButton = function(columnName, active)

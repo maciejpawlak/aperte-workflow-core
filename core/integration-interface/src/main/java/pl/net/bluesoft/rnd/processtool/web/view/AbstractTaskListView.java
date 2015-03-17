@@ -19,6 +19,8 @@ public abstract class AbstractTaskListView implements Comparable<AbstractTaskLis
 
 
     public static final String PARAMETER_USER_LOGIN = "userLogin";
+    public static final String PARAMETER_USER = "user";
+    public static final String PARAMETER_QUEUE_ID = "queueId";
 
     private QueueTypes queueType;
     private IContentProvider contentProvider;

@@ -18,6 +18,9 @@
 	{
 		this.views = {};
 		
+		this.nonSelectedColor = '#5cb85c';
+		this.selectedColor = '#E0BC4A'
+		
 		this.defaultQueueId = '';
 		this.defaultOwnerLogin = '';
 		
@@ -31,12 +34,11 @@
 			this.currentQueue = queueId;
 			this.currentOwnerLogin = ownerLogin;
 			
-			
+			this.makeQueueSelected();
 			
 			windowManager.showLoadingScreen();
-			//windowManager.changeUrl('?queueId='+queueId);
 
-			var widgetJson = $.post('<portlet:resourceURL id="loadQueue"/>',
+			var widgetJson = $.get('<portlet:resourceURL id="loadQueue"/>',
 			{
 				"queueId": queueId,
 				"ownerLogin": ownerLogin
@@ -53,6 +55,29 @@
 			});
 		}
 		
+		this.makeQueueSelected = function()
+		{
+			$.each($('.badge-queue-link'), function(index, item) { 
+				$(item).css({"background-color" : queueViewManager.nonSelectedColor});
+			});
+			
+			var selectedLinkId = "queue-counter-"+this.currentQueue+'-'+this.currentOwnerLogin;
+			
+			
+			$('#'+selectedLinkId).css({"background-color" : queueViewManager.selectedColor});
+		}
+		
+		this.loadCurrentQueue = function()
+		{
+			if(this.currentQueue == '')
+			{
+				this.currentQueue = this.defaultQueueId;
+				this.currentOwnerLogin = this.defaultOwnerLogin;
+			}
+			
+			this.loadQueue(this.currentQueue, this.currentOwnerLogin);
+		}
+		
 		this.reloadCurrentQueue = function()
 		{
 			if(this.currentQueue == '')
@@ -60,7 +85,13 @@
 				this.currentQueue = this.defaultQueueId;
 				this.currentOwnerLogin = this.defaultOwnerLogin;
 			}
-			this.loadQueue(this.currentQueue, this.currentOwnerLogin);
+
+			var reloadFunctionName = 'reloadQueue_'+this.currentQueue;
+
+			if (typeof window[reloadFunctionName] === 'function'){
+                    window[reloadFunctionName]();
+            }
+
 		}
 		
 		this.addTableView = function(queueId, tableObject, viewName)
@@ -142,7 +173,7 @@
         $(button).prop('disabled', true);
         windowManager.showLoadingScreen();
 
-        var bpmJson = $.post(claimTaskFromQueuePortlet,
+        var bpmJson = $.getJSON(claimTaskFromQueuePortlet,
         {
             "queueName": queueName,
             "taskId": taskId,

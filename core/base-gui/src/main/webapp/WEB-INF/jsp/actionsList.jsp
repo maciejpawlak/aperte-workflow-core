@@ -201,7 +201,7 @@
 		{
 			"taskId": taskId,
 			"widgetData": JsonWidgetData
-		})
+		}, null, 'json')
 		.done(function(data)
 		{
 			if(data.errors != null)
@@ -442,10 +442,9 @@
 			
 			if(!data)
 			{
-			    closeProcessView();
-				queueViewManager.reloadCurrentQueue();
-				windowManager.showProcessList();
-				
+				closeProcessView();
+				queueViewManager.loadCurrentQueue();
+
 				return;
 			}
 			else if(data.errors.length > 0)
@@ -456,9 +455,8 @@
 			else if(!data.nextTask)
 			{
 				closeProcessView();
-				queueViewManager.reloadCurrentQueue();
-				windowManager.showProcessList();
-				
+				queueViewManager.loadCurrentQueue();
+
 				return;
 			}
 
@@ -470,8 +468,7 @@
 			else
 			{
 				closeProcessView();
-				queueViewManager.reloadCurrentQueue();
-				windowManager.showProcessList();
+				queueViewManager.loadCurrentQueue();
 			}
 		})
 		.fail(function() { addAlerts(data.errors); })
@@ -495,9 +492,11 @@
 	
 	function onCancelButton()
 	{
-		reloadQueues();
-		disableButtons(); 
-		windowManager.previousView();
+		disableButtons();
+		closeProcessView();
+		queueViewManager.loadCurrentQueue();
+		
+		$(window).scrollTop(0);
 	}
 	
 	function closeProcessView()
@@ -506,6 +505,8 @@
 		$('#actions-list').empty();
 		
 		windowManager.showProcessList();
+		
+		$(window).scrollTop(0);
 	}
 
 

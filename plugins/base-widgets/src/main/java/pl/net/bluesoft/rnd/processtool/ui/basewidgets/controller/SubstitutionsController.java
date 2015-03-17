@@ -102,7 +102,7 @@ public class SubstitutionsController implements IOsgiWebController {
         }
 
 		DataPagingBean<UserSubstitution> dataPagingBean = new DataPagingBean<UserSubstitution>(substitutionList, subtitiutionsCount.intValue(),
-				dataTable.getEcho());
+				dataTable.getDraw());
 
 		return dataPagingBean;
 	}

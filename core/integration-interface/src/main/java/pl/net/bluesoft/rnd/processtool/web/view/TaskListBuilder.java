@@ -54,6 +54,7 @@ public class TaskListBuilder
 
         viewData.put(IHtmlTemplateProvider.USER_PARAMTER, user);
         viewData.put(IHtmlTemplateProvider.USER_SOURCE_PARAMTER, userSource);
+        viewData.put(IHtmlTemplateProvider.QUEUE_ID_PARAMTER, queueId);
         viewData.put(IHtmlTemplateProvider.MESSAGE_SOURCE_PARAMETER, i18Source);
         viewData.put(IHtmlTemplateProvider.DICTIONARIES_FACADE, dictionaryFacade);
         viewData.put(IHtmlTemplateProvider.SETTINGS_PROVIDER, settingsProvider);
