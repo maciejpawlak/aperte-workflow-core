@@ -1244,7 +1244,16 @@ public class ProcessToolJbpmSession extends AbstractProcessToolSession implement
 			newProcessInstance.addOwner(creator);
 
 			newProcessInstance.setSimpleAttribute("creator", creator);
-			newProcessInstance.setSimpleAttribute("creatorName", userSource.getUserByLogin(creator).getRealName());
+
+            UserData creatorUserData = userSource.getUserByLogin(creator);
+            if(creatorUserData == null) {
+                log.log(Level.SEVERE, "There is no user in Liferay with login="+creator);
+                newProcessInstance.setSimpleAttribute("creatorName", creator);
+            }
+            else {
+                newProcessInstance.setSimpleAttribute("creatorName", creatorUserData.getRealName());
+            }
+
 			newProcessInstance.setSimpleAttribute("source", source);
 
             if (initialParams != null) {
