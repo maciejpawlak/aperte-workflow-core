@@ -99,6 +99,9 @@ public class JQueryDataTableUtil
             Boolean columnSortale = getBooleanValue(paramters, "columns["+index+"][orderable]");
             column.setSortable(columnSortale);
 
+            String searchString = getStringValue(paramters, "columns[" + index + "][search][value]");
+            column.setSearchString(searchString);
+
             column.setIndex(index);
 
             jQueryDataTable.getColumns().add(column);

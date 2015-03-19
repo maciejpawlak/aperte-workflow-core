@@ -764,6 +764,10 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 
                 }
 
+                for(JQueryDataTableColumn column: dataTable.getColumns())
+                    if(column.getPropertyName().equals("code"))
+                        filter.setExpression(column.getSearchString());
+
                 long t1 = System.currentTimeMillis();
 
                 Collection<BpmTask> tasks = context.getBpmSession().findFilteredTasks(filter, dataTable.getPageOffset(), dataTable.getPageLength());
