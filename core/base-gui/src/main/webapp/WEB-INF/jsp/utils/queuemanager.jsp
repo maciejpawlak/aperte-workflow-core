@@ -86,7 +86,7 @@
 				this.currentOwnerLogin = this.defaultOwnerLogin;
 			}
 
-			var reloadFunctionName = 'reloadQueue_'+this.currentQueue;
+			var reloadFunctionName = 'reloadQueue_'+this.currentQueue+'_'+this.currentOwnerLogin;
 
 			if (typeof window[reloadFunctionName] === 'function'){
                     window[reloadFunctionName]();

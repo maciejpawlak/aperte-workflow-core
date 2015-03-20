@@ -271,6 +271,8 @@
 	{
 		$('#alerts-list').empty();
 	}
+
+
 	
 	<!-- Check for comment required field -->
 	function performAction(button, actionName, skipSaving, commentNeeded, changeOwner, changeOwnerAttributeKey, taskId)

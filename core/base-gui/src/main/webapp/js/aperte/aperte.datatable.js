@@ -21,7 +21,7 @@
 		{
 			this.requestParameters.push({ "name": name, "value": value });
 		}
-		
+
 
 		this.clearState = function()
 		{
@@ -42,7 +42,7 @@
 			{
 				this.createDataTable();
 				this.initialized = true;
-				if(this.clearOnStart) 
+				if(this.clearOnStart)
 				{
 					this.clearState();
 					this.dataTable.draw();
