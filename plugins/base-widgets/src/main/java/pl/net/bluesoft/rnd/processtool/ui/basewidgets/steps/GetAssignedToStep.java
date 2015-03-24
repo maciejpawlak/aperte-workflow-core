@@ -1,16 +1,18 @@
 package pl.net.bluesoft.rnd.processtool.ui.basewidgets.steps;
 
 
+import org.apache.commons.lang3.StringUtils;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
 import pl.net.bluesoft.rnd.processtool.bpm.ProcessToolBpmSession;
 import pl.net.bluesoft.rnd.processtool.model.BpmStep;
 import pl.net.bluesoft.rnd.processtool.model.BpmTask;
 import pl.net.bluesoft.rnd.processtool.model.ProcessInstance;
+import pl.net.bluesoft.rnd.processtool.model.ProcessInstanceLog;
 import pl.net.bluesoft.rnd.processtool.steps.ProcessToolProcessStep;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.annotations.AliasName;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.annotations.AutoWiredProperty;
 
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 import static pl.net.bluesoft.rnd.processtool.plugins.ProcessToolRegistry.Util.getRegistry;
@@ -50,14 +52,39 @@ public class GetAssignedToStep implements ProcessToolProcessStep {
 
         BpmTask task = bpmSession.getLastHistoryTaskByName(Long.parseLong(pi.getInternalId()), stepName);
 
-        if(task == null)
-            if(Boolean.parseBoolean(required))
-                throw new RuntimeException("No task with given step name: "+stepName);
+        if(task == null) {
+            String controllerName = getControllerFromLogs(pi);
+
+            if (Boolean.parseBoolean(required) && StringUtils.isEmpty(controllerName))
+                throw new RuntimeException("No task with given step name: " + stepName);
             else
-                pi.setSimpleAttribute(attributeKey, "");
+                pi.setSimpleAttribute(attributeKey, controllerName);
+        }
         else
             pi.setSimpleAttribute(attributeKey, task.getAssignee());
 
     	return STATUS_OK;
+    }
+
+    private String getControllerFromLogs(ProcessInstance pi)
+    {
+        List<ProcessInstanceLog> logs = new ArrayList<ProcessInstanceLog>(pi.getProcessLogs());
+        Collections.sort(logs, new Comparator<ProcessInstanceLog>() {
+            @Override
+            public int compare(ProcessInstanceLog o1, ProcessInstanceLog o2) {
+                return o1.getEntryDate().compareTo(o2.getEntryDate());
+            }
+        });
+        for(ProcessInstanceLog log: pi.getProcessLogs())
+        {
+            if(StringUtils.isEmpty(log.getLogValue()))
+                continue;
+
+            if(log.getLogValue().equals("analyst_controller_acceptance_reject") ||
+                log.getLogValue().equals("analyst_controller_acceptance_accept"))
+                return log.getUserLogin();
+        }
+
+        return null;
     }
 }

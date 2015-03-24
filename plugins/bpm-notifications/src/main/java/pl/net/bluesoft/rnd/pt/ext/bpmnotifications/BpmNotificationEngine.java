@@ -23,6 +23,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
@@ -735,6 +736,10 @@ public class BpmNotificationEngine implements IBpmNotificationService
 	{
     	String body = processTemplate(notificationData.getTemplateData().getTemplateName(), notificationData.getTemplateData());
     	String topic = processTemplate(notificationData.getTemplateData().getTemplateName() + SUBJECT_TEMPLATE_SUFFIX, notificationData.getTemplateData());
+        if(StringUtils.isNotEmpty(topic) && topic.length() > 254)
+        {
+            topic = StringUtils.abbreviate(topic, 254);
+        }
     	String sender = findTemplate(notificationData.getTemplateData().getTemplateName() + SENDER_TEMPLATE_SUFFIX);
     	
         if (body == null || topic == null || sender == null) {
