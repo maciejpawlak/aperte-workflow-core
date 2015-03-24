@@ -4,7 +4,13 @@ import pl.net.bluesoft.rnd.processtool.BasicSettings;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
 import pl.net.bluesoft.rnd.processtool.bpm.ProcessToolBpmConstants;
 import pl.net.bluesoft.rnd.processtool.model.BpmTask;
+import pl.net.bluesoft.rnd.processtool.model.ProcessInstance;
+import pl.net.bluesoft.rnd.processtool.model.UserData;
+import pl.net.bluesoft.rnd.processtool.model.processdata.ProcessComment;
+import pl.net.bluesoft.rnd.processtool.usersource.IUserSource;
 import pl.net.bluesoft.util.lang.Strings;
+
+import java.util.Date;
 
 import static pl.net.bluesoft.util.lang.Strings.withEnding;
 
@@ -19,4 +25,42 @@ public class TaskUtil {
         String url = Strings.hasLength(activityPortletUrl) ? withEnding(activityPortletUrl, "/") : null;
         return url != null ? Strings.withRequestParameter(url, ProcessToolBpmConstants.REQUEST_PARAMETER_TASK_ID, task.getInternalTaskId()) : "";
 	}
+
+    public static void saveComment(BpmTask task, UserData user, IUserSource userSource, String comment) {
+
+            UserData actionPerformer = user;
+            String taskOwner = task.getAssignee();
+
+            String authorLogin = actionPerformer.getLogin();
+            String authorFullName = actionPerformer.getRealName();
+
+            ProcessComment processComment = new ProcessComment();
+            processComment.setCreateTime(new Date());
+            processComment.setProcessState(task.getTaskName());
+            processComment.setBody(comment);
+            processComment.setAuthorLogin(authorLogin);
+            processComment.setAuthorFullName(authorFullName);
+
+		     /* Action performed by task owner*/
+            if(taskOwner.equals(authorLogin))
+            {
+                processComment.setAuthorLogin(authorLogin);
+                processComment.setAuthorFullName(authorFullName);
+            }
+		    /* Action performed by substituting user */
+            else
+            {
+                UserData owner = userSource.getUserByLogin(taskOwner);
+                processComment.setAuthorLogin(owner.getLogin());
+                processComment.setAuthorFullName(owner.getRealName());
+                processComment.setSubstituteLogin(authorLogin);
+                processComment.setSubstituteFullName(authorFullName);
+
+            }
+
+            ProcessInstance pi = task.getProcessInstance().getRootProcessInstance();
+
+            pi.addComment(processComment);
+            pi.setSimpleAttribute("commentAdded", "true");
+    }
 }

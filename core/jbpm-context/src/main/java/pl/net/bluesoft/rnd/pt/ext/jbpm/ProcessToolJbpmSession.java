@@ -1577,7 +1577,8 @@ public class ProcessToolJbpmSession extends AbstractProcessToolSession implement
 		return task.getInternalTaskId();
 	}
 
-	private static ProcessInstance getByInternalId(String internalId) {
+	private static ProcessInstance getByInternalId(String internalId)
+    {
 		return getContext().getProcessInstanceDAO().getProcessInstanceByInternalId(internalId);
 	}
 

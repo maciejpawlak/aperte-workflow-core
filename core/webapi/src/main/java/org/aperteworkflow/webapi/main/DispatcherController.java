@@ -8,6 +8,7 @@ import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
 import pl.net.bluesoft.rnd.processtool.ReturningProcessToolContextCallback;
 import pl.net.bluesoft.rnd.processtool.web.controller.ControllerMethod;
 import pl.net.bluesoft.rnd.processtool.web.controller.IOsgiWebController;
+import pl.net.bluesoft.rnd.processtool.web.controller.NoTransactionOsgiWebRequest;
 import pl.net.bluesoft.rnd.processtool.web.controller.OsgiWebRequest;
 import pl.net.bluesoft.rnd.processtool.web.domain.GenericResultBean;
 import pl.net.bluesoft.rnd.processtool.web.domain.IProcessToolRequestContext;
@@ -58,7 +59,7 @@ public class DispatcherController extends AbstractProcessToolServletController
         }
 
         /* Find controller method by ControllerMethod annotation */
-        final Method controllerMethod = findAnnotatedMethod(servletController, actionName);
+        final OsgiControllerMethod controllerMethod = findAnnotatedMethod(servletController, actionName);
 
         if(controllerMethod == null)
         {
@@ -66,38 +67,73 @@ public class DispatcherController extends AbstractProcessToolServletController
             return resultBean;
         }
 
-        return getProcessToolRegistry().withProcessToolContext(new ReturningProcessToolContextCallback<Object>() {
-            @Override
-            public Object processWithContext(ProcessToolContext ctx)
-            {
-                OsgiWebRequest controllerInvocation = new OsgiWebRequest();
-                controllerInvocation.setProcessToolRequestContext(context);
-                controllerInvocation.setRequest(request);
-                controllerInvocation.setResponse(response);
-                controllerInvocation.setProcessToolContext(ctx);
-                try {
-                    Object result = controllerMethod.invoke(servletController, controllerInvocation);
-                    return result;
+        /** Start transaction automatically */
+        if(controllerMethod.getControllerMethod().transactionEnabled())
+        {
+            return getProcessToolRegistry().withProcessToolContext(new ReturningProcessToolContextCallback<Object>() {
+                @Override
+                public Object processWithContext(ProcessToolContext ctx)
+                {
+                    OsgiWebRequest controllerInvocation = new OsgiWebRequest();
+                    controllerInvocation.setProcessToolRequestContext(context);
+                    controllerInvocation.setRequest(request);
+                    controllerInvocation.setResponse(response);
+                    controllerInvocation.setProcessToolContext(ctx);
+                    try {
+                        Object result = controllerMethod.getJavaMethod().invoke(servletController, controllerInvocation);
+                        return result;
 
+                    }
+                    catch (IllegalAccessException e)
+                    {
+                        resultBean.addError(SYSTEM_SOURCE, e.getMessage());
+                        logger.log(Level.SEVERE, "Problem during plugin request processing in dispatcher ["+controllerName+"]", e);
+                        return resultBean;
+                    }
+                    catch (InvocationTargetException e)
+                    {
+                        resultBean.addError(SYSTEM_SOURCE, e.getMessage());
+                        logger.log(Level.SEVERE, "Problem during plugin request processing in dispatcher ["+controllerName+"]", e);
+                        return resultBean;
+                    }
                 }
-                catch (IllegalAccessException e)
-                {
-                    resultBean.addError(SYSTEM_SOURCE, e.getMessage());
-                    logger.log(Level.SEVERE, "Problem during plugin request processing in dispatcher ["+controllerName+"]", e);
-                    return resultBean;
-                }
-                catch (InvocationTargetException e)
-                {
-                    resultBean.addError(SYSTEM_SOURCE, e.getMessage());
-                    logger.log(Level.SEVERE, "Problem during plugin request processing in dispatcher ["+controllerName+"]", e);
-                    return resultBean;
-                }
+            });
+        }
+        else
+        {
+            NoTransactionOsgiWebRequest noTransactionOsgiWebRequest = new NoTransactionOsgiWebRequest();
+            noTransactionOsgiWebRequest.setProcessToolRequestContext(context);
+            noTransactionOsgiWebRequest.setRequest(request);
+            noTransactionOsgiWebRequest.setResponse(response);
+
+            try {
+                Object result = controllerMethod.getJavaMethod().invoke(servletController, noTransactionOsgiWebRequest);
+                return result;
+
             }
-        });
+            catch (IllegalAccessException e)
+            {
+                resultBean.addError(SYSTEM_SOURCE, e.getMessage());
+                logger.log(Level.SEVERE, "Problem during plugin request processing in dispatcher ["+controllerName+"]", e);
+                return resultBean;
+            }
+            catch (InvocationTargetException e)
+            {
+                resultBean.addError(SYSTEM_SOURCE, e.getMessage());
+                logger.log(Level.SEVERE, "Problem during plugin request processing in dispatcher ["+controllerName+"]", e);
+                return resultBean;
+            }
+        }
+
+
+
+
+
     }
 
+
     /** Find controller method by ControllerMethod annotation */
-    private Method findAnnotatedMethod(IOsgiWebController servletController, String actionName)
+    private OsgiControllerMethod findAnnotatedMethod(IOsgiWebController servletController, String actionName)
     {
 
         for(Method method: servletController.getClass().getMethods())
@@ -109,11 +145,36 @@ public class DispatcherController extends AbstractProcessToolServletController
             if(!controllerMethodAnnotation.action().equals(actionName))
                 continue;
 
-            return method;
+            OsgiControllerMethod osgiControllerMethod = new OsgiControllerMethod();
+            osgiControllerMethod.setControllerMethod(controllerMethodAnnotation);
+            osgiControllerMethod.setJavaMethod(method);
+
+            return osgiControllerMethod;
         }
 
         return null;
     }
 
 
+    private class OsgiControllerMethod
+    {
+        private ControllerMethod controllerMethod;
+        private Method javaMethod;
+
+        public ControllerMethod getControllerMethod() {
+            return controllerMethod;
+        }
+
+        public void setControllerMethod(ControllerMethod controllerMethod) {
+            this.controllerMethod = controllerMethod;
+        }
+
+        public Method getJavaMethod() {
+            return javaMethod;
+        }
+
+        public void setJavaMethod(Method javaMethod) {
+            this.javaMethod = javaMethod;
+        }
+    }
 }

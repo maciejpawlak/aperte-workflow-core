@@ -27,7 +27,10 @@ import org.jbpm.task.identity.UserGroupCallbackManager;
 import org.jbpm.task.service.ContentData;
 import org.jbpm.task.service.local.LocalTaskService;
 import org.jbpm.task.utils.OnErrorAction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import pl.net.bluesoft.rnd.processtool.IProcessToolSettings;
+import pl.net.bluesoft.rnd.processtool.ISettingsProvider;
 import pl.net.bluesoft.rnd.pt.ext.jbpm.JbpmStepAction;
 import pl.net.bluesoft.rnd.pt.ext.jbpm.ProcessResourceNames;
 import pl.net.bluesoft.rnd.pt.ext.jbpm.service.query.TaskQuery;
@@ -72,6 +75,9 @@ public class JbpmService implements ProcessEventListener, TaskEventListener {
     private KnowledgeBase knowledgeBase;
 
     private static JbpmService instance;
+
+    @Autowired
+    private ISettingsProvider settingsProvider;
 
     public static JbpmService getInstance() {
         if (instance == null) {
@@ -222,14 +228,15 @@ public class JbpmService implements ProcessEventListener, TaskEventListener {
     private StatefulKnowledgeSession getSession() {
         if (ksession == null) {
             synchronized(JbpmService.class) {
+                SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
                 if (ksession == null) {
-                    String ksessionIdStr = getThreadProcessToolContext().getSetting(KSESSION_ID);
+                    String ksessionIdStr = settingsProvider.getSetting(KSESSION_ID);
                     int ksessionId = hasText(ksessionIdStr) ? Integer.parseInt(ksessionIdStr) : -1;
 
                     loadSession(ksessionId);
 
                     if (ksessionId <= 0) {
-                        getThreadProcessToolContext().setSetting(KSESSION_ID, String.valueOf(ksession.getId()));
+                        settingsProvider.setSetting(KSESSION_ID, String.valueOf(ksession.getId()));
                     }
                 }
             }

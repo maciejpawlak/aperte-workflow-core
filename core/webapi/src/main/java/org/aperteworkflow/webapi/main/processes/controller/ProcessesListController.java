@@ -1,5 +1,6 @@
 package org.aperteworkflow.webapi.main.processes.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.aperteworkflow.ui.help.datatable.JQueryDataTable;
 import org.aperteworkflow.ui.help.datatable.JQueryDataTableColumn;
 import org.aperteworkflow.ui.help.datatable.JQueryDataTableUtil;
@@ -38,6 +39,7 @@ import pl.net.bluesoft.rnd.processtool.web.domain.ErrorResultBean;
 import pl.net.bluesoft.rnd.processtool.web.domain.GenericResultBean;
 import pl.net.bluesoft.rnd.processtool.web.domain.IProcessToolRequestContext;
 import pl.net.bluesoft.rnd.processtool.web.view.*;
+import pl.net.bluesoft.rnd.util.TaskUtil;
 import pl.net.bluesoft.rnd.util.i18n.I18NSource;
 
 import javax.servlet.ServletException;
@@ -156,7 +158,8 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
                              task.getProcessInstance().setSimpleAttribute(changeOwnerAttributeKey, changeOwnerAttributeValue);
                         }
 
-	                    saveComment(task);
+                        if(StringUtils.isNotEmpty(comment))
+                            TaskUtil.saveComment(task, context.getUser(), getUserSource(), comment);
 
                         List<BpmTask> newTasks = getBpmSession(context, task.getAssignee()).performAction(actionName, task, false);
 
@@ -209,45 +212,6 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
                     }
                 }
 
-	            private void saveComment(BpmTask task) {
-		            if(comment != null && !comment.isEmpty())
-		            {
-		                UserData actionPerformer = context.getUser();
-		                String taskOwner = task.getAssignee();
-
-		                String authorLogin = actionPerformer.getLogin();
-		                String authorFullName = actionPerformer.getRealName();
-
-		                ProcessComment processComment = new ProcessComment();
-		                processComment.setCreateTime(new Date());
-		                processComment.setProcessState(task.getTaskName());
-		                processComment.setBody(comment);
-		                processComment.setAuthorLogin(authorLogin);
-		                processComment.setAuthorFullName(authorFullName);
-
-		                /* Action performed by task owner*/
-		                if(taskOwner.equals(authorLogin))
-		                {
-		                    processComment.setAuthorLogin(authorLogin);
-		                    processComment.setAuthorFullName(authorFullName);
-		                }
-		                /* Action performed by substituting user */
-		                else
-		                {
-		                    UserData owner = getUserSource().getUserByLogin(taskOwner);
-		                    processComment.setAuthorLogin(owner.getLogin());
-		                    processComment.setAuthorFullName(owner.getRealName());
-		                    processComment.setSubstituteLogin(authorLogin);
-		                    processComment.setSubstituteFullName(authorFullName);
-
-		                }
-
-		                ProcessInstance pi = task.getProcessInstance().getRootProcessInstance();
-
-		                pi.addComment(processComment);
-		                pi.setSimpleAttribute("commentAdded", "true");
-		            }
-	            }
             }, ExecutionType.TRANSACTION_SYNCH);
 		
 		    resultBean.setNextTask(bpmTaskBean);

@@ -10,35 +10,9 @@ import javax.servlet.http.HttpServletResponse;
  * @author: "mpawlak@bluesoft.net.pl"
  * @author: "pwysocki@bluesoft.net.pl"
  */
-public class OsgiWebRequest {
-    private HttpServletRequest request;
-    private HttpServletResponse response;
+public class OsgiWebRequest extends NoTransactionOsgiWebRequest {
+
     private ProcessToolContext processToolContext;
-    private IProcessToolRequestContext processToolRequestContext;
-
-    public HttpServletRequest getRequest() {
-        return request;
-    }
-
-    public void setRequest(HttpServletRequest request) {
-        this.request = request;
-    }
-
-    public IProcessToolRequestContext getProcessToolRequestContext() {
-        return processToolRequestContext;
-    }
-
-    public void setProcessToolRequestContext(IProcessToolRequestContext processToolRequestContext) {
-        this.processToolRequestContext = processToolRequestContext;
-    }
-
-    public HttpServletResponse getResponse() {
-        return response;
-    }
-
-    public void setResponse(HttpServletResponse response) {
-        this.response = response;
-    }
 
     public ProcessToolContext getProcessToolContext() {
         return processToolContext;

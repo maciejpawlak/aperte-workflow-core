@@ -133,6 +133,21 @@ public class DataRegistryImpl implements DataRegistry {
     }
 
     @Override
+    public UserTransaction beginTransaction()
+    {
+
+        try {
+
+            return  (UserTransaction) new InitialContext().lookup("java:comp/UserTransaction");
+        }
+        catch (Exception e) {
+            //it should work on jboss regardless. But it does not..
+            logger.warning("java:comp/UserTransaction not found, looking for UserTransaction");
+            throw new RuntimeException("Cannot start user transaction", e);
+        }
+    }
+
+    @Override
     public ProcessToolContextFactory getProcessToolContextFactory() {
         return processToolContextFactory;
     }

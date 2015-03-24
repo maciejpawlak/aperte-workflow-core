@@ -10,6 +10,8 @@ import pl.net.bluesoft.rnd.processtool.dao.*;
 import pl.net.bluesoft.rnd.processtool.expressions.ExpressionEvaluators;
 import pl.net.bluesoft.rnd.processtool.model.IAttribute;
 import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
+
+import javax.transaction.UserTransaction;
 import java.sql.Connection;
 import java.util.Collection;
 import java.util.List;
@@ -38,6 +40,8 @@ public interface DataRegistry {
 	boolean isJta();
 
 	SessionFactory getSessionFactory();
+
+    UserTransaction beginTransaction();
 
 	ProcessToolContextFactory getProcessToolContextFactory();
 

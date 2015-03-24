@@ -1,5 +1,6 @@
 package pl.net.bluesoft.rnd.pt.ext.jbpm;
 
+import bitronix.tm.TransactionManagerServices;
 import org.hibernate.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -437,7 +438,8 @@ public class ProcessToolContextFactoryImpl implements ProcessToolContextFactory
 		}
 	}
 
-    private UserTransaction getUserTransaction() throws NamingException {
+    private UserTransaction getUserTransaction() throws NamingException
+    {
         UserTransaction ut;
         try {
             ut = (UserTransaction) new InitialContext().lookup("java:comp/UserTransaction");
