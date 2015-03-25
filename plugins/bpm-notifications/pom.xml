@@ -79,7 +79,9 @@
                             pl.net.bluesoft.rnd.pt.ext.bpmnotifications.sessions,
                             pl.net.bluesoft.rnd.pt.ext.bpmnotifications.model,
                             pl.net.bluesoft.rnd.pt.ext.bpmnotifications.addons,
-                            pl.net.bluesoft.rnd.pt.ext.bpmnotifications.facade
+                            pl.net.bluesoft.rnd.pt.ext.bpmnotifications.facade,
+                            pl.net.bluesoft.rnd.pt.ext.bpmnotifications.config,
+                            pl.net.bluesoft.rnd.pt.ext.bpmnotifications.controller
                         </Export-Package>
                         <Import-Package>
                             org.aperteworkflow.bpmnotifications.addons.impl;resolution:=optional,
@@ -139,6 +141,10 @@
                             pl.net.bluesoft.rnd.pt.ext.bpmnotifications.model.BpmNotificationConfig,
                             pl.net.bluesoft.rnd.pt.ext.bpmnotifications.model.BpmNotificationMailProperties
                         </ProcessTool-Model-Enhancement>
+                        <ProcessTool-Controller>
+                            pl.net.bluesoft.rnd.pt.ext.bpmnotifications.controller.SettingsController,
+                            pl.net.bluesoft.rnd.pt.ext.bpmnotifications.controller.BpmNotificationsController
+                        </ProcessTool-Controller>
                         <ProcessTool-I18N-Property>messages</ProcessTool-I18N-Property>
                     </instructions>
                 </configuration>

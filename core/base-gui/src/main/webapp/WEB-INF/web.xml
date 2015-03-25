@@ -409,33 +409,10 @@
 		<servlet-name>VaadinWidgetServlet</servlet-name>
 		<url-pattern>/widget/*</url-pattern>
 	 </servlet-mapping>
-	 
-	 <servlet>
-		<servlet-name>VaadinApplicationServlet</servlet-name>
-		<servlet-class>
-			pl.net.bluesoft.rnd.processtool.application.activity.ResponsiveUIApplicationServlet
-		</servlet-class>
-		<init-param>
-		  <param-name>application</param-name>
-		  <param-value>pl.net.bluesoft.rnd.processtool.application.activity.ActivityStandAloneApplication</param-value>
-		</init-param>
-		<init-param>
-            <description>Application widgetset</description>
-            <param-name>widgetset</param-name>
-            <param-value>pl.net.bluesoft.rnd.widgetset.PortalDefaultWidgetSet</param-value>
-        </init-param>
-		<load-on-startup>1</load-on-startup>
-	  </servlet>
-	  
-	 <servlet-mapping>
-		<servlet-name>VaadinApplicationServlet</servlet-name>
-		<url-pattern>/standalone/*</url-pattern>
-	 </servlet-mapping>
-	 <servlet-mapping>
-        <servlet-name>VaadinApplicationServlet</servlet-name>
+    <servlet-mapping>
+        <servlet-name>VaadinWidgetServlet</servlet-name>
         <url-pattern>/VAADIN/*</url-pattern>
     </servlet-mapping>
-
 	<servlet>
 		<servlet-name>GenerateTokenServlet</servlet-name>
 		<servlet-class>org.aperteworkflow.gui.auth.GenerateTokenServlet

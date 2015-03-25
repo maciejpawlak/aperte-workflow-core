@@ -29,10 +29,9 @@ public class AperteSettingsProvider implements ISettingsProvider
     {
         return settings.get(key, new ExpiringCache.NewValueCallback<String, String>() {
             @Override
-            public String getNewValue(final String setting)
-            {
+            public String getNewValue(final String setting) {
                 ProcessToolContext ctx = ProcessToolContext.Util.getThreadProcessToolContext();
-                if(ctx != null)
+                if (ctx != null)
                     return ctx.getSetting(setting);
                 else
                     return processToolRegistry.withProcessToolContext(new ReturningProcessToolContextCallback<String>() {
@@ -60,6 +59,11 @@ public class AperteSettingsProvider implements ISettingsProvider
                     ctx.setSetting(settingKey, value);
                 }
             });
+    }
+
+    @Override
+    public void invalidateCache() {
+        settings.clear();
     }
 
 }

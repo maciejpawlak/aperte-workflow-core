@@ -34,6 +34,8 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static pl.net.bluesoft.rnd.processtool.plugins.osgi.OSGiBundleHelper.getBundleResourceString;
+
 /**
  * @author tlipski@bluesoft.net.pl
  */
@@ -79,8 +81,13 @@ public class Activator implements BundleActivator, EventListener<BpmEvent>
 		/* Register scheduler for notifications sending */
 		schedulerActivator.scheduleNotificationsSend(engine);
 
-		getViewRegistry(processToolRegistry).registerGenericPortletViewRenderer("admin", BpmAdminPortletRender.INSTANCE);
-		getViewRegistry(processToolRegistry).registerGenericPortletViewRenderer("user", BpmAdminPortletRender.INSTANCE);
+        String path = "/pl/net/bluesoft/rnd/pt/ext/bpmnotifications/html/file.html";
+        String html = getBundleResourceString(context.getBundle(), path);
+
+        BpmAdminPortletRender.init(html);
+
+        processToolRegistry.getGuiRegistry().registerGenericPortletViewRenderer("admin", BpmAdminPortletRender.INSTANCE);
+        processToolRegistry.getGuiRegistry().registerGenericPortletViewRenderer("user", BpmAdminPortletRender.INSTANCE);
 		
 	}
 	
@@ -119,14 +126,13 @@ public class Activator implements BundleActivator, EventListener<BpmEvent>
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		ProcessToolRegistry registry = getRegistry(context);
-        registry.getBundleRegistry().removeRegisteredService(IBpmNotificationService.class);
-		registry.getEventBusManager().unsubscribe(BpmEvent.class, this);
-		registry.getEventBusManager().unsubscribe(MailEvent.class, mailEventListener);
+        processToolRegistry.getBundleRegistry().removeRegisteredService(IBpmNotificationService.class);
+        processToolRegistry.getEventBusManager().unsubscribe(BpmEvent.class, this);
+        processToolRegistry.getEventBusManager().unsubscribe(MailEvent.class, mailEventListener);
 		mailEventListener = null;
 
-		getViewRegistry(registry).unregisterGenericPortletViewRenderer("admin", BpmAdminPortletRender.INSTANCE);
-		getViewRegistry(registry).unregisterGenericPortletViewRenderer("user", BpmAdminPortletRender.INSTANCE);
+        processToolRegistry.getGuiRegistry().unregisterGenericPortletViewRenderer("admin", BpmAdminPortletRender.INSTANCE);
+        processToolRegistry.getGuiRegistry().unregisterGenericPortletViewRenderer("user", BpmAdminPortletRender.INSTANCE);
 	}
 
 	private ProcessToolRegistry getRegistry(BundleContext context) {
@@ -153,8 +159,5 @@ public class Activator implements BundleActivator, EventListener<BpmEvent>
                     e.getUserLogin(), processStarted, processEnded, enteringStep);
         }
 	}
-	
-	private IViewRegistry getViewRegistry(ProcessToolRegistry registry) {
-		return registry.getRegisteredService(IViewRegistry.class);
-	}
+
 }

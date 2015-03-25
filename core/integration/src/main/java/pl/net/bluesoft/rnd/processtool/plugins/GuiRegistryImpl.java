@@ -1,8 +1,7 @@
 package pl.net.bluesoft.rnd.processtool.plugins;
 
-import com.google.common.collect.Sets;
 import com.google.common.io.CharStreams;
-import org.apache.commons.collections.SetUtils;
+import org.aperteworkflow.ui.view.GenericPortletViewRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -18,25 +17,10 @@ import pl.net.bluesoft.rnd.processtool.web.controller.IOsgiWebController;
 import pl.net.bluesoft.rnd.processtool.web.domain.IHtmlTemplateProvider;
 import pl.net.bluesoft.rnd.processtool.web.domain.IWidgetScriptProvider;
 import pl.net.bluesoft.rnd.processtool.web.view.AbstractTaskListView;
-import pl.net.bluesoft.rnd.processtool.web.view.ITasksListViewBeanFactory;
 import pl.net.bluesoft.util.lang.Classes;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
@@ -67,6 +51,8 @@ public class GuiRegistryImpl implements GuiRegistry {
 
 	private final List<TaskPermissionChecker> taskPermissionCheckers = new ArrayList<TaskPermissionChecker>();
 	private final List<ActionPermissionChecker> actionPermissionCheckers = new ArrayList<ActionPermissionChecker>();
+
+    private final Map<String, Set<GenericPortletViewRenderer>> genericPortletViewRenderers = new HashMap<String, Set<GenericPortletViewRenderer>>();
 
 	private String javaScriptContent = "";
 
@@ -158,7 +144,8 @@ public class GuiRegistryImpl implements GuiRegistry {
 		return (ProcessToolProcessStep)beanFactory.createBean(clazz, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
 	}
 
-	@Override
+
+    @Override
 	public synchronized void registerJavaScript(String fileName,IWidgetScriptProvider scriptProvider)
 	{
 		widgetScriptProviders.put(fileName, scriptProvider);
@@ -412,4 +399,26 @@ public class GuiRegistryImpl implements GuiRegistry {
 			throw new RuntimeException("No class nicknamed by: " + name);
 		}
 	}
+
+    @Override
+    public synchronized Collection<GenericPortletViewRenderer> getGenericPortletViews(String portletKey) {
+        return genericPortletViewRenderers.containsKey(portletKey)
+                ? genericPortletViewRenderers.get(portletKey)
+                : Collections.<GenericPortletViewRenderer>emptyList();
+    }
+
+    @Override
+    public synchronized void registerGenericPortletViewRenderer(String portletKey, GenericPortletViewRenderer renderer) {
+        if (!genericPortletViewRenderers.containsKey(portletKey)) {
+            genericPortletViewRenderers.put(portletKey, new HashSet<GenericPortletViewRenderer>());
+        }
+        genericPortletViewRenderers.get(portletKey).add(renderer);
+    }
+
+    @Override
+    public synchronized void unregisterGenericPortletViewRenderer(String portletKey, GenericPortletViewRenderer renderer) {
+        if (genericPortletViewRenderers.containsKey(portletKey)) {
+            genericPortletViewRenderers.get(portletKey).remove(renderer);
+        }
+    }
 }

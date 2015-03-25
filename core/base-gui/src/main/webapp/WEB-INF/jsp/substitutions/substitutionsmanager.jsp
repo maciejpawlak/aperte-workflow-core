@@ -8,7 +8,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@include file="../utils/globals.jsp"%>
-<%@include file="../utils/apertedatatable.jsp"%>
 <%@include file="../actionsList.jsp"%>
 
 <c:set var="isPermitted" value="false" />
@@ -147,14 +146,14 @@
 		$("#SubstitutingDateToPicker").datepicker("setDate", new Date(new Date($.format.date(dateTo,'yyyy-MM-dd')).setHours(0)));
 		$("#SubstitutionId").val(id);
 	}
-	
+
 	function onSubmitNewSubstitution(e)
 	{
 		e.preventDefault();
-		
+
 		$("#SubstitutionForm").submit();
 	}
-	
+
 	function removeSubstitution(id) {
 		$.ajax({
 			url : dispatcherPortlet,
@@ -165,31 +164,31 @@
 				substitutionId : id
 			}
 		}).done(function(resp) {
-			
+
 			dataTable.reloadTable(dispatcherPortlet);
 		});
 	}
 
 	function validateSubstitution() {
 		clearAlerts();
-		
+
 		isValid=true;
 
 		if ($("#SubstitutingDateFrom").val() == "") {
 			addAlert('<spring:message code="substitution.alert.required.dateFrom" />');
 			isValid=false;
 		}
-		
+
 		if ($("#SubstitutingDateTo").val() == "") {
 			addAlert('<spring:message code="substitution.alert.required.dateTo" />');
 			isValid=false;
 		}
-		
+
 		if ($("#UserLogin").val() == "") {
 			addAlert('<spring:message code="substitution.alert.required.UserLogin" />');
 			isValid=false;
 		}
-		
+
 		if ($("#UserSubstituteLogin").val() == "") {
 			addAlert('<spring:message code="substitution.alert.required.UserSubstituteLogin" />');
 			isValid=false;
@@ -203,14 +202,14 @@
 
 		return isValid;
 	}
-	
+
 	function onCancel(e)
 	{
 		e.preventDefault();
-		
+
 		resetSubstitutionForm();
 	}
-	
+
 	function resetSubstitutionForm()
 	{
 		$("#SubstitutionForm")[0].reset();
@@ -240,7 +239,7 @@
 			dataTable.reloadTable(dispatcherPortlet)
 		});
 	}
-	
+
 	var usersSelector =
 	{
 		 ajax: {
@@ -291,7 +290,7 @@
              }
          }
 	}
-	
+
 
 	$(document)
 			.ready(
