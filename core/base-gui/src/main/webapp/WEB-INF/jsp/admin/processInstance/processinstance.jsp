@@ -7,38 +7,38 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@include file="../../utils/globals.jsp" %>
+<div class="process-instances-body" style="background: white; min-width:1400px;">
+    <div class="process-queue-name apw_highlight">
+        Aperte Workflow Process Instances
+    </div>
 
-<div class="process-queue-name apw_highlight">
-    Aperte Workflow Process Instances
-</div>
+    <div id="filter-criteria-input">
+        <h1><spring:message code="processinstances.console.title" /></h1>
+        <div class="form-group input-group-sm">
+            <h3><spring:message code="processinstances.search.prompt"/></h3>
+            <input type="text" id="search_field" class="col-sm-10" style="width:100%"><br>
+            <input type="checkbox" id="only_active" checked><spring:message code="processinstances.search.onlyActive"/></input>
+        </div>
+    </div>
 
-<div id="filter-criteria-input">
-    <h1><spring:message code="processinstances.console.title" /></h1>
-    <div class="form-group input-group-sm">
-        <h3><spring:message code="processinstances.search.prompt"/></h3>
-        <input type="text" id="search_field" class="col-sm-10" style="width:100%"><br>
-        <input type="checkbox" id="only_active" checked><spring:message code="processinstances.search.onlyActive"/></input>
+    <div class="process-tasks-view" id="foundProcessInstances" style="z-index: 1">
+        <table id="processInstanceTable" class="process-table table table-striped" border="1">
+            <thead>
+                    <th style="width:7%;"><spring:message code="processinstances.console.processInternalId.title"/></th>
+                    <th style="width:18%;"><spring:message code="processinstances.console.definitionsColumn.title"/></th>
+                    <th style="width:10%;"><spring:message code="processinstances.console.externalKey.title"/></th>
+                    <th style="width:5%;"><spring:message code="processinstances.console.history.createdby"/></th>
+                    <th style="width:10%;"><spring:message code="processinstances.console.history.on"/></th>
+                    <th style="width:15%;"><spring:message code="processinstances.console.taskName.title"/></th>
+                    <th style="width:13%;"><spring:message code="processinstances.console.entry.owner"/></th>
+                    <th style="width:7%;"><spring:message code="processinstances.console.entry.state"/></th>
+                    <th style="width:15%;"><spring:message code="processinstances.console.entry.available-actions"/></th>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
     </div>
 </div>
-
-<div class="process-tasks-view" id="foundProcessInstances" style="z-index: 1">
-    <table id="processInstanceTable" class="process-table table table-striped" border="1">
-        <thead>
-                <th style="width:7%;"><spring:message code="processinstances.console.processInternalId.title"/></th>
-                <th style="width:18%;"><spring:message code="processinstances.console.definitionsColumn.title"/></th>
-                <th style="width:10%;"><spring:message code="processinstances.console.externalKey.title"/></th>
-                <th style="width:5%;"><spring:message code="processinstances.console.history.createdby"/></th>
-                <th style="width:10%;"><spring:message code="processinstances.console.history.on"/></th>
-                <th style="width:15%;"><spring:message code="processinstances.console.taskName.title"/></th>
-                <th style="width:13%;"><spring:message code="processinstances.console.entry.owner"/></th>
-                <th style="width:7%;"><spring:message code="processinstances.console.entry.state"/></th>
-                <th style="width:15%;"><spring:message code="processinstances.console.entry.available-actions"/></th>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-</div>
-
 <!-- User Changing Modal -->
 <div class="modal fade" id="changeUserModal" tabindex="-1" role="dialog" aria-labelledby="categoryModalLabel" aria-hidden="true">
     <div class="modal-dialog">
