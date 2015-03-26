@@ -12,7 +12,9 @@ import org.aperteworkflow.files.exceptions.UpdateDescriptionException;
 import org.aperteworkflow.files.model.FileItemContent;
 import org.aperteworkflow.files.model.FilesRepositoryItem;
 import org.aperteworkflow.files.model.FilesRepositoryItemDTO;
+import org.aperteworkflow.files.model.IFilesRepositoryItem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import pl.net.bluesoft.rnd.processtool.model.UserData;
 import pl.net.bluesoft.rnd.processtool.usersource.IPortalUserSource;
 import pl.net.bluesoft.rnd.processtool.web.controller.ControllerMethod;
@@ -41,7 +43,7 @@ public class FilesController implements IOsgiWebController {
     private static final String PROCESS_INSTANCE_ID_REQ_PARAM_NAME = "processInstanceId";
     private static final String FILES_REPOSITORY_ITEM_ID_REQ_PARAM_NAME = "filesRepositoryItemId";
 
-    @Autowired
+    @Autowired(required = false)
     protected IFilesRepositoryFacade filesRepoFacade;
 
     @Autowired
@@ -49,6 +51,9 @@ public class FilesController implements IOsgiWebController {
 
     @ControllerMethod(action = "uploadFile")
     public GenericResultBean uploadFile(final OsgiWebRequest invocation) {
+        if(filesRepoFacade == null)
+            SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+
         GenericResultBean result = new GenericResultBean();
 
         HttpServletRequest request = invocation.getRequest();
@@ -72,8 +77,8 @@ public class FilesController implements IOsgiWebController {
                         String fileDescription = null;
                         String creatorLogin = getCreatorLogin(request);
                         if (processInstanceId != null && fileName != null && fileName.length() > 0 && fileInputStream != null && creatorLogin != null && creatorLogin.length() > 0) {
-                            FilesRepositoryItem frItem = filesRepoFacade.uploadFile(fileInputStream, contentType, processInstanceId, fileName, fileDescription, creatorLogin);
-                            result.setData(new FilesRepositoryItemDTO(frItem));
+                            IFilesRepositoryItem frItem = filesRepoFacade.uploadFile(fileInputStream, contentType, processInstanceId, fileName, fileDescription, creatorLogin);
+                            result.setData(new FilesRepositoryItemDTO(frItem, processInstanceId));
                         } else {
                             logger.log(Level.WARNING, "[FILES_REPOSITORY] Not all parameters provided when calling filescontroller.uploadFile. All of [processInstanceId, fileName, fileInputStream, creatorLogin] are required.");
                         }
@@ -93,13 +98,17 @@ public class FilesController implements IOsgiWebController {
 
     @ControllerMethod(action = "getFilesList")
     public GenericResultBean getFilesList(final OsgiWebRequest invocation) {
+
+        if(filesRepoFacade == null)
+            SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+
         GenericResultBean result = new GenericResultBean();
         HttpServletRequest request = invocation.getRequest();
         Long processInstanceId = getProcessInstanceId(request);
-        Collection<FilesRepositoryItem> fileRepoItems = filesRepoFacade.getFilesList(processInstanceId);
+        Collection<IFilesRepositoryItem> fileRepoItems = filesRepoFacade.getFilesList(processInstanceId);
         Collection<FilesRepositoryItemDTO> filesRepoItemsDTO = new ArrayList<FilesRepositoryItemDTO>();
-        for (FilesRepositoryItem frItem : fileRepoItems) {
-            filesRepoItemsDTO.add(new FilesRepositoryItemDTO(frItem));
+        for (IFilesRepositoryItem frItem : fileRepoItems) {
+            filesRepoItemsDTO.add(new FilesRepositoryItemDTO(frItem, processInstanceId));
         }
         result.setData(filesRepoItemsDTO);
         return result;
@@ -110,13 +119,13 @@ public class FilesController implements IOsgiWebController {
         GenericResultBean result = new GenericResultBean();
         HttpServletRequest request = invocation.getRequest();
         Long processInstanceId = getProcessInstanceId(request);
-        Long filesRepositoryItemId = getFilesRepositoryItemId(request);
+        String filesRepositoryItemId = getFilesRepositoryItemId(request);
         try {
             filesRepoFacade.deleteFile(processInstanceId, filesRepositoryItemId);
-            Collection<FilesRepositoryItem> fileRepoItems = filesRepoFacade.getFilesList(processInstanceId);
+            Collection<IFilesRepositoryItem> fileRepoItems = filesRepoFacade.getFilesList(processInstanceId);
             Collection<FilesRepositoryItemDTO> filesRepoItemsDTO = new ArrayList<FilesRepositoryItemDTO>();
-            for (FilesRepositoryItem frItem : fileRepoItems) {
-                filesRepoItemsDTO.add(new FilesRepositoryItemDTO(frItem));
+            for (IFilesRepositoryItem frItem : fileRepoItems) {
+                filesRepoItemsDTO.add(new FilesRepositoryItemDTO(frItem, processInstanceId));
             }
             result.setData(filesRepoItemsDTO);
         } catch (DeleteFileException e) {
@@ -128,10 +137,13 @@ public class FilesController implements IOsgiWebController {
 
     @ControllerMethod(action = "downloadFile")
     public GenericResultBean downloadFile(final OsgiWebRequest invocation) {
+        if(filesRepoFacade == null)
+            SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+
         GenericResultBean result = new GenericResultBean();
         HttpServletRequest request = invocation.getRequest();
         Long processInstanceId = getProcessInstanceId(request);
-        Long filesRepositoryItemId = getFilesRepositoryItemId(request);
+        String filesRepositoryItemId = getFilesRepositoryItemId(request);
         FileItemContent content = null;
         try {
             content = filesRepoFacade.downloadFile(processInstanceId, filesRepositoryItemId);
@@ -153,10 +165,13 @@ public class FilesController implements IOsgiWebController {
 
     @ControllerMethod(action = "updateDescription")
     public GenericResultBean updateDescription(final OsgiWebRequest invocation) {
+        if(filesRepoFacade == null)
+            SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+
         GenericResultBean result = new GenericResultBean();
         HttpServletRequest request = invocation.getRequest();
         Long processInstanceId = getProcessInstanceId(request);
-        Long filesRepositoryItemId = getFilesRepositoryItemId(request);
+        String filesRepositoryItemId = getFilesRepositoryItemId(request);
         String fileDescription = getFileRepositoryItemDescription(request);
         try {
             filesRepoFacade.updateDescription(processInstanceId, filesRepositoryItemId, fileDescription);
@@ -178,9 +193,8 @@ public class FilesController implements IOsgiWebController {
         IOUtils.closeQuietly(soutStream);
     }
 
-    private Long getFilesRepositoryItemId(HttpServletRequest request) {
-        String filesRepositoryItemIdStr = request.getParameter(FILES_REPOSITORY_ITEM_ID_REQ_PARAM_NAME);
-        Long filesRepositoryItemId = filesRepositoryItemIdStr != null ? Long.valueOf(filesRepositoryItemIdStr) : null;
+    private String getFilesRepositoryItemId(HttpServletRequest request) {
+        String filesRepositoryItemId = request.getParameter(FILES_REPOSITORY_ITEM_ID_REQ_PARAM_NAME);
         if (filesRepositoryItemId == null) {
             throw new RuntimeException("FilesRepositoryItem ID not provided in request!");
         }

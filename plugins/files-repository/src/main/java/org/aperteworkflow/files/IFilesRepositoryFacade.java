@@ -6,6 +6,7 @@ import org.aperteworkflow.files.exceptions.UpdateDescriptionException;
 import org.aperteworkflow.files.exceptions.UploadFileException;
 import org.aperteworkflow.files.model.FileItemContent;
 import org.aperteworkflow.files.model.FilesRepositoryItem;
+import org.aperteworkflow.files.model.IFilesRepositoryItem;
 
 import java.io.File;
 import java.io.InputStream;
@@ -16,13 +17,13 @@ import java.util.Collection;
  * @author pwysocki@bluesoft.net.pl
  */
 public interface IFilesRepositoryFacade {
-    FilesRepositoryItem uploadFile(InputStream inputStream, String contentType, Long processInstanceId, String fileName, String fileDescription, String creatorLogin) throws UploadFileException;
+    IFilesRepositoryItem uploadFile(InputStream inputStream, String contentType, Long processInstanceId, String fileName, String fileDescription, String creatorLogin) throws UploadFileException;
 
-    void deleteFile(Long processInstanceId, Long filesRepositoryItemId) throws DeleteFileException;
+    void deleteFile(Long processInstanceId, String filesRepositoryItemId) throws DeleteFileException;
 
-    FileItemContent downloadFile(Long processInstanceId, Long fileId) throws DownloadFileException;
+    FileItemContent downloadFile(Long processInstanceId, String fileId) throws DownloadFileException;
 
-    Collection<FilesRepositoryItem> getFilesList(Long processInstanceId);
+    Collection<IFilesRepositoryItem> getFilesList(Long processInstanceId);
 
-    void updateDescription(Long processInstanceId, Long filesRepositoryItemId, String fileDescription) throws UpdateDescriptionException;
+    void updateDescription(Long processInstanceId, String filesRepositoryItemId, String fileDescription) throws UpdateDescriptionException;
 }

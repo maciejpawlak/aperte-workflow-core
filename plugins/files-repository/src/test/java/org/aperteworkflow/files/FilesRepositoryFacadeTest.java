@@ -104,10 +104,10 @@ public class FilesRepositoryFacadeTest {
         item1.setDescription("Description of ExampleFile.txt");
         item1.setContentType("text/plain");
         InputStream inputStream = IOUtils.toInputStream("File content");
-        Long newItemId = filesRepoFacade.uploadFile(inputStream, item1.getContentType(), item1.getProcessInstance().getId(), item1.getName(), item1.getDescription(), CREATOR_LOGIN).getId();
+        String newItemId = filesRepoFacade.uploadFile(inputStream, item1.getContentType(), item1.getProcessInstance().getId(), item1.getName(), item1.getDescription(), CREATOR_LOGIN).getItemId();
         IOUtils.closeQuietly(inputStream);
 
-        FilesRepositoryItem newItem = frItemDAO.getItemById(newItemId);
+        FilesRepositoryItem newItem = frItemDAO.getItemById(Long.parseLong(newItemId));
         FileItemContent content = frStorageDAO.loadFileFromStorage(newItem.getRelativePath());
 
         Assert.assertArrayEquals("Old and new item properties doesn't equals", new String[]{item1.getName(), item1.getDescription()}

@@ -1,12 +1,14 @@
 package org.aperteworkflow.cmis.widget;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.List;
 
 import org.apache.chemistry.opencmis.commons.data.CmisExtensionElement;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Document content stream 
@@ -26,6 +28,12 @@ public class DocumentContentStream implements ContentStream {
 		this.MIMEType = MIMEType;
 		this.filename = filename;
 	}
+
+    public DocumentContentStream(InputStream inputStream, String MIMEType, String filename) throws IOException {
+        this.bytes = IOUtils.toByteArray(inputStream);
+        this.MIMEType = MIMEType;
+        this.filename = filename;
+    }
 
 	@Override
 	public long getLength() {
