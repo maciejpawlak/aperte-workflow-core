@@ -15,7 +15,7 @@
     <modules>
         <module>base-widgets</module>
         <module>bpm-notifications</module>
-        <module>cmis-widget</module>
+        <!--<module>cmis-widget</module>-->
         <!--<module>doclist-widget</module>-->
         <!--<module>drools-step</module>-->
         <!--<module>context-help-provider</module>-->

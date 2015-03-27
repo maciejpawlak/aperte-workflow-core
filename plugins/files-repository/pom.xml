@@ -111,9 +111,9 @@
                     <ProcessTool-Model-Enhancement>
                         org.aperteworkflow.files.model.FilesRepositoryItem
                     </ProcessTool-Model-Enhancement>
-                    <!--<ProcessTool-Spring-Beans>-->
-                        <!--org.aperteworkflow.files.FilesRepositoryFacade-->
-                    <!--</ProcessTool-Spring-Beans>-->
+                    <ProcessTool-Spring-Beans>
+                        org.aperteworkflow.files.FilesRepositoryFacade
+                    </ProcessTool-Spring-Beans>
                 </instructions>
             </configuration>
         </plugin>
