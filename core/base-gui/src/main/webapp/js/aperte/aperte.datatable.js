@@ -111,6 +111,10 @@
 			}
 
 			this.dataTable = $('#'+this.tableId).DataTable(definition);
+			this.dataTable
+                .columns()
+                .search( '' )
+				.draw();
 		}
 
 		this.toggleColumnButton = function(columnName, active)
@@ -131,7 +135,7 @@
 		    });
 		}
 	}
-
+	
     function debounce(func, wait, immediate) {
         var timeout;
         return function() {
