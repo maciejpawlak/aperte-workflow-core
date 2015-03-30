@@ -89,6 +89,7 @@
         <junit.version>4.8.2</junit.version>
 		<gwt.version>2.5.0</gwt.version>
 		<gwt.plugin.version>2.5.0</gwt.plugin.version>
+        <freemarker.version>2.3.22</freemarker.version>
         <tomcat.version>7.0.42</tomcat.version>
         <servlet.api.version>3.0</servlet.api.version>
         <portlet.api.version>2.0</portlet.api.version>

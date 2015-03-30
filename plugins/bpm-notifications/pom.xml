@@ -39,7 +39,8 @@
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
-            <version>2.3.19</version>
+            <version>${freemarker.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.aperteworkflow</groupId>
@@ -109,6 +110,8 @@
 							pl.net.bluesoft.rnd.util.i18n.impl,
                             javassist.util.proxy,org.hibernate.proxy,
                             org.osgi.framework,
+                            freemarker.cache;version="2.3.22",
+                            freemarker.template;version="2.3.22",
                             org.springframework.jdbc,
                             org.springframework.jdbc.datasource,
                             org.hibernate.exception,
