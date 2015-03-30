@@ -3,10 +3,20 @@
 
 <script type="text/javascript">
 	var dispatcherPortlet = '<@portlet.resourceURL id="dispatcher"/>';
-
+    var portletNamespace = '&<portlet:namespace/>';
+     var dataTableLanguage = {
+                          "emptyTable": "<@spring.message 'datatable.empty' />",
+                          "infoEmpty": "<@spring.message 'datatable.empty' />",
+                          "processing": "<@spring.message 'datatable.processing' />",
+                          "lengthMenu": "<@spring.message 'datatable.records' />",
+                          "infoFiltered": "",
+                          "paginate": {
+                              "first": "<@spring.message 'datatable.paginate.firstpage' />",
+                              "next": "<@spring.message 'datatable.paginate.next' />",
+                              "previous": "<@spring.message 'datatable.paginate.previous' />"
+                          }
+      };
 </script>
-
-<#include "apertedatatable.ftl"/>
 
 <style type="text/css">
     #fixedElement.stick {
