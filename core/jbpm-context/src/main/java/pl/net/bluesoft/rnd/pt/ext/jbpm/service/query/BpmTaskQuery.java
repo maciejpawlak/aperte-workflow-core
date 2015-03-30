@@ -480,7 +480,7 @@ public class BpmTaskQuery {
             case ALL_TASKS:
                 return "(((potowners.entity_id = :user AND task_.status NOT IN ('Reserved')) OR task_.actualowner_id = :user) AND task_.status NOT IN ('Completed'))";
             case MY_TASKS:
-                return "(task_.actualowner_id = :user AND task_.status NOT IN ('Completed'))";
+                return "(((potowners.entity_id = :user AND task_.status NOT IN ('Reserved')) OR task_.actualowner_id = :user) AND task_.status NOT IN ('Completed'))";
             case OWN_IN_PROGRESS:
                 return "((process.creatorLogin = :user OR (owners IN (:user))) AND task_.status NOT IN ('Completed') AND (task_.actualowner_id != :user OR task_.actualowner_id is null))";
             case OWN_FINISHED:
