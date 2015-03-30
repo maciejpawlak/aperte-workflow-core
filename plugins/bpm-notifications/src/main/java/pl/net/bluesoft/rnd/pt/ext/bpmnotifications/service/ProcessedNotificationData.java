@@ -12,11 +12,14 @@ public class ProcessedNotificationData extends NotificationData
 	private String subject;
 	private String sender;
 	private boolean sendAsHtml;
+	private String sentFolderName;
 	
 	public ProcessedNotificationData()
 	{
 		this.sendAsHtml = true;
 	}
+
+
 	
 	public ProcessedNotificationData(NotificationData notificationData) 
 	{
@@ -69,5 +72,15 @@ public class ProcessedNotificationData extends NotificationData
 	public ProcessedNotificationData setSendAsHtml(boolean sendAsHtml) {
 		this.sendAsHtml = sendAsHtml;
 		return this;
+	}
+
+	public String getSentFolderName() {
+		return sentFolderName;
+	}
+
+	public ProcessedNotificationData setSentFolderName(String sentFolderName) {
+		this.sentFolderName = sentFolderName;
+		return this;
+
 	}
 }

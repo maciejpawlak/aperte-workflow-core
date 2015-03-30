@@ -280,12 +280,14 @@
 		$("#saveButton").on('click',function() {
 		    currentItem.key = $("#itemKey").val();
 		    currentItem.description = $("#itemDesc").val();
-            var widgetJson = $.getJSON(dispatcherPortlet, {
+
+            var widgetJson = $.post(dispatcherPortlet,
+            {
                 "controller": "dictionaryeditorcontroller",
                 "action": "saveDictionaryItem",
                 "item": JSON.stringify(currentItem, null, 2),
                 "dictId": currentDict
-            })
+            }, function(){}, 'json')
             .done(function(data) {
                 //<!-- Errors handling -->
                 clearAlerts();
@@ -299,7 +301,8 @@
 			    $("#itemsEdit").hide();
 			    refreshTable();
 			    $("#itemsList").fadeIn(300);
-            });
+            })
+
 		});
 
     });

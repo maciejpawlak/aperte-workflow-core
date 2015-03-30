@@ -123,7 +123,7 @@ public class PortletViewController extends AbstractMainController<ModelAndView>
         } else {
             HttpServletResponse httpServletResponse = getHttpServletResponse(response);
             return PortletUtil.translate(PORTLET_JSON_RESULT_ROOT_NAME,
-                    mainDispatcher.invokeExternalController(controller, action, originalHttpServletRequest, httpServletResponse));
+                    mainDispatcher.invokeExternalController(controller, action, originalHttpServletRequest, httpServletResponse), controller, action);
         }
     }
 

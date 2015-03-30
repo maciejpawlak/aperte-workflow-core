@@ -34,12 +34,29 @@
 <#assign updateDescriptionAreYouSure = messageSource.getMessage("widget.file.repository.results.table.updateDescription.areYouSure")/>
 <#assign updateDescriptionSuccess = messageSource.getMessage("widget.file.repository.results.table.updateDescription.success")/>
 
+<style type="text/css">
+    .red{
+        color: red;
+    }
+    .ellips{
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .fileNameDownloadHref
+    {
+        height:18px;
+    }
+</style>
+
 <!-- Important: macros fileTableTr fileTableTrJs should not be formated due to javascript processor lack of new lines handling -->
 <#macro fileTableTr fileId fileName fileDescription fileCreateDate fileCreatorLogin fileSendWithMail b="" e="">
 ${b}	<tr class="file-tr-l-${fileCreatorLogin}-l">${e}
 ${b}		<td class="fileId" style="display:none">${fileId}</td>${e}
-${b}		<td class="fileName"><a href="#" class="fileNameDownloadHref">${fileName?html}</a></td>${e}
-${b}		<td class="fileDescription"><textarea class="form-control file-description-input" style="width:100%; height:100%" placeholder="Opis dokumentu">${(fileDescription!"")?html}</textarea></td>${e}
+${b}		<td class="fileName"><a href="#" class="fileNameDownloadHref ellips"><span class="js-file-icon" data-id="${fileId}"></span><span class="js-file-name" data-id="${fileId}">${fileName?html}</span></a></td>${e}
+${b}		<td class="fileDescription"><input type="text" class="form-control file-description-input" style="font-size: 12px; width:100%; height:100%; line-height: 10px; padding: 4px 0px 0px 0px;" placeholder="Opis dokumentu" value="${(fileDescription!"")?html}"/></td>${e}
 ${b}		<#if isMailMode>${e}
 ${b}			<td>${e}
 ${b}				<div class="checkbox">${e}
@@ -52,7 +69,7 @@ ${b}			<button class="btn btn-xs downloadFileBtn" style="margin-right: 10px;" al
 ${b}				<span class="glyphicon glyphicon-floppy-save"/>${e}
 ${b}			</button>${e}
 ${b}			<button class="btn btn-xs deleteFileBtn" style="margin-right: 10px;" alt="Usuń plik">${e}
-${b}				<span class="glyphicon glyphicon-remove"/>${e}
+${b}				<span class="glyphicon glyphicon-trash red"/>${e}
 ${b}			</button>${e}
 ${b}		</td>${e}
 ${b}	</tr>${b}
@@ -62,14 +79,14 @@ ${b}	</tr>${b}
 <div class="panel panel-default">
 	<div class="panel-body">
 		<style type="text/css">
-			#files-table {table-layout: fixed;}
+			#files-table {table-layout: fixed; width: 100%}
 			#files-table td {
-				word-wrap:break-word;
 				background-color: transparent;
+                padding: 0px;
 			}
 		</style>
 
-		<div class="form-group col-md-6" >
+		<div class="form-group col-md-12" >
 			<table cellpadding="0" cellspacing="0" border="0" id="files-table" class="table table-hover table-bordered narrow-rows" style="border-collapse:collapse;">
 				<colgroup>
 					<col>
@@ -116,6 +133,15 @@ ${b}	</tr>${b}
 </div>
 
 <script>
+	function applyIconsToFileNames(){
+        $('.js-file-name').each(function(){
+            var fileId = this.getAttribute('data-id');
+            var fileName = $(this).text();
+            var iconHtml = getFileIconHtml(fileName);
+            $('.js-file-icon[data-id='+fileId+']').html(iconHtml+' ');
+        });
+	}
+
     function downloadURL(url) {
         var hiddenIFrameID = 'hiddenDownloader',
                 iframe = document.getElementById(hiddenIFrameID);
@@ -293,6 +319,7 @@ ${b}	</tr>${b}
         initTable("${viewMode}");
 
         $('#fileupload').fileupload({
+        	forceIframeTransport: true,
             url: urlUploadFile,
             dropZone: null,
             pasteZone: null,
@@ -307,6 +334,7 @@ ${b}	</tr>${b}
                     dataObj.context = $('<div/>').appendTo('#fileupload');
                 })
         .on('fileuploadprocessalways', function (e, data) {
+
             $('#file-error').text('');
             $('#file-error').hide();
 
@@ -314,10 +342,6 @@ ${b}	</tr>${b}
                     file = data.files[index],
                     node = $(data.context.children()[index]);
             if (file.error) {
-//                node
-//                        .append('<br>')
-//                        .append($('<span class="text-danger"/>').text(file.error));
-//                alert(file.error);
                   $('#file-error').text(file.error);
                   $('#file-error').show();
             }
@@ -326,8 +350,10 @@ ${b}	</tr>${b}
                         .text('Upload')
                         .prop('disabled', !!data.files.error);
             }
+
         })
         .on('fileuploadprogressall', function (e, data) {
+
             $('#progress').show();
             var progress = parseInt(data.loaded / data.total * 100, 10);
             $('#progress .progress-bar').css(
@@ -336,6 +362,7 @@ ${b}	</tr>${b}
             );
         })
         .on('fileuploaddone',function (e, dataObj) {
+
             $('#progress').hide();
 
             data = dataObj.jqXHR != null ? dataObj.jqXHR.responseJSON : dataObj;
@@ -365,6 +392,8 @@ ${b}	</tr>${b}
 
             initTable("${viewMode}");
 
+            applyIconsToFileNames();
+
         }).on('fileuploadfail',function (e, dataObj) {
 
             data = dataObj.jqXHR != null ? dataObj.jqXHR.responseJSON : dataObj;
@@ -378,6 +407,8 @@ ${b}	</tr>${b}
 
         }).prop('disabled', !$.support.fileInput)
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
+        applyIconsToFileNames();
     });
 
 </script>

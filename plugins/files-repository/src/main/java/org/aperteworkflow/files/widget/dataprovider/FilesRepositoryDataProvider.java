@@ -1,12 +1,14 @@
 package org.aperteworkflow.files.widget.dataprovider;
 
 import org.aperteworkflow.files.IFilesRepositoryFacade;
+import org.aperteworkflow.files.model.IFilesRepositoryItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
 import pl.net.bluesoft.rnd.processtool.model.ProcessInstance;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.IWidgetDataProvider;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +36,8 @@ public class FilesRepositoryDataProvider implements IWidgetDataProvider {
         ProcessInstance processInstance = provider.getProcessInstance();
 
 		FileListFilter filter = getFilter(baseViewData);
+
+
 
         if (processInstance != null) {
 			data.put(PROCESS_INSTANCE_FILES_PARAMETER, filesRepoFacade.getFilesList(processInstance, filter));

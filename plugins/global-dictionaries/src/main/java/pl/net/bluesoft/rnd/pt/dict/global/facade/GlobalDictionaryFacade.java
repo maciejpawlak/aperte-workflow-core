@@ -13,6 +13,7 @@ import pl.net.bluesoft.rnd.processtool.model.dict.ProcessDictionaryItemExtension
 import pl.net.bluesoft.rnd.processtool.model.dict.ProcessDictionaryItemValue;
 import pl.net.bluesoft.rnd.processtool.model.dict.db.ProcessDBDictionaryItem;
 
+import java.text.Collator;
 import java.util.*;
 
 /**
@@ -42,18 +43,7 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
     {
         List<DictionaryItem> dictionaryItems = new LinkedList<DictionaryItem>();
 
-        ProcessToolContext ctx = ProcessToolContext.Util.getThreadProcessToolContext();
-        if (ctx==null)
-            throw new RuntimeException("There is no active context");
-
-        ProcessDictionaryRegistry processDictionaryRegistry = ctx.getProcessDictionaryRegistry();
-        if (processDictionaryRegistry==null)
-            throw new RuntimeException("There is no dictionary registry");
-
-        ProcessDictionary pd = processDictionaryRegistry.getDictionary(dictionaryName);
-        if (pd==null) {
-			throw new RuntimeException("No dictionary found with name " + dictionaryName);
-		}
+        ProcessDictionary pd = fetchDictionary(dictionaryName);
 
         String langCode = locale.getLanguage();
         List<ProcessDictionaryItem> list = pd.sortedItems(langCode);
@@ -72,7 +62,8 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
                 dictionaryItem.setValue(pdi.getKey());
             }
             dictionaryItem.setDescription(desc);
-
+			dictionaryItem.setValidFrom(value.getValidFrom());
+			dictionaryItem.setValidTo(value.getValidTo());
 
             ProcessDictionaryItemValue valueForDate = pdi.getValueForDate(date);
             if (valueForDate == null || valueForDate instanceof ProcessDBDictionaryItem.EMPTY_VALUE) {
@@ -98,11 +89,30 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
         }
 
         /** Sorting order given, sort items by key, value or extenstion key */
-        Comparator<DictionaryItem> comparator = createComparator(sortBy);
-        if(comparator != null)
-            Collections.sort(dictionaryItems, comparator);
+        if(sortBy != null) {
+            Comparator<DictionaryItem> comparator = createComparator(sortBy, locale);
+
+            if (comparator != null)
+                Collections.sort(dictionaryItems, comparator);
+        }
 
         return dictionaryItems;
+    }
+
+    private ProcessDictionary fetchDictionary(String dictionaryName) {
+        ProcessToolContext ctx = ProcessToolContext.Util.getThreadProcessToolContext();
+        if (ctx==null)
+            throw new RuntimeException("There is no active context");
+
+        ProcessDictionaryRegistry processDictionaryRegistry = ctx.getProcessDictionaryRegistry();
+        if (processDictionaryRegistry==null)
+            throw new RuntimeException("There is no dictionary registry");
+
+        ProcessDictionary pd = processDictionaryRegistry.getDictionary(dictionaryName);
+        if (pd==null) {
+			throw new RuntimeException("No dictionary found with name " + dictionaryName);
+		}
+        return pd;
     }
 
     @Override
@@ -114,6 +124,66 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
                 return item;
 
         return null;
+    }
+
+    @Override
+    public DictionaryItem getDictionaryItemForDate(String dictionaryName, String key, Locale locale, Date date) {
+        Collection<DictionaryItem> items = getAllDictionaryItems(dictionaryName, locale, null, date);
+        for(DictionaryItem item: items)
+            if(item.getKey().equals(key))
+                return item;
+
+        return null;
+    }
+
+    @Override
+    public Collection<DictionaryItem> getFlatDictionaryItemsList(String dictionaryName, Locale locale, String filter) {
+        List<DictionaryItem> dictionaryItems = new LinkedList<DictionaryItem>();
+
+        ProcessDictionary pd = fetchDictionary(dictionaryName);
+
+        String langCode = locale.getLanguage();
+        List<ProcessDictionaryItem> list = pd.sortedItems(langCode);
+
+        Collection<DictFilter> filters = parseFilters(filter);
+
+        for (ProcessDictionaryItem pdi : list)
+        {
+            for (ProcessDictionaryItemValue value : pdi.values()) {
+                String desc = pdi.getDescription(locale);
+                DictionaryItem dictionaryItem = new DictionaryItem();
+                dictionaryItem.setKey(pdi.getKey());
+
+                if (value != null)
+                    dictionaryItem.setValue(value.getValue(locale));
+                else {
+                    dictionaryItem.setValue(pdi.getKey());
+                }
+
+                dictionaryItem.setDescription(desc);
+                dictionaryItem.setValidFrom(value.getValidFrom());
+                dictionaryItem.setValidTo(value.getValidTo());
+
+                dictionaryItem.setValid(true);
+
+
+                for (ProcessDictionaryItemExtension extension : value.getItemExtensions()) {
+                    DictionaryItemExt dictionaryItemExt = new DictionaryItemExt();
+                    dictionaryItemExt.setKey(extension.getName());
+                    dictionaryItemExt.setValue(extension.getValue());
+
+                    dictionaryItem.getExtensions().add(dictionaryItemExt);
+                }
+
+
+                if(checkForFilters(dictionaryItem, filters) && dictionaryItem.getisValid()) {
+                    dictionaryItems.add(dictionaryItem);
+                }
+            }
+
+        }
+
+        return dictionaryItems;
     }
 
 
@@ -173,23 +243,26 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
         return filters;
     }
 
-    private Comparator<DictionaryItem> createComparator(final String sortBy)
+    private Comparator<DictionaryItem> createComparator(final String sortBy, final Locale locale)
     {
         if(StringUtils.isEmpty(sortBy))
             return null;
+
+        final Collator collator = Collator.getInstance(locale);
 
         if(sortBy.equals(KEY_FILTER))
             return new Comparator<DictionaryItem>() {
                 @Override
                 public int compare(DictionaryItem o1, DictionaryItem o2) {
-                    return o1.getKey().compareTo(o2.getKey());
+                    return collator.compare(o1.getKey(), o2.getKey());
                 }
             };
         else if(sortBy.equals(VALUE_FILTER))
+
             return new Comparator<DictionaryItem>() {
                 @Override
                 public int compare(DictionaryItem o1, DictionaryItem o2) {
-                    return o1.getValue().compareTo(o2.getValue());
+                    return collator.compare(o1.getValue(), o2.getValue());
                 }
             };
         else
@@ -206,7 +279,7 @@ public class GlobalDictionaryFacade implements IDictionaryFacade
                     else if(o2Ext == null)
                         return 1;
                     else
-                        return o1Ext.getValue().compareTo(o2Ext.getValue());
+                        return collator.compare(o1Ext.getValue(), o2Ext.getValue());
                 }
             };
 

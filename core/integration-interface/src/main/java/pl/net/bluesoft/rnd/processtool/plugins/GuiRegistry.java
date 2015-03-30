@@ -8,7 +8,6 @@ import pl.net.bluesoft.rnd.processtool.ui.widgets.ProcessToolWidget;
 import pl.net.bluesoft.rnd.processtool.web.controller.IOsgiWebController;
 import pl.net.bluesoft.rnd.processtool.web.domain.IWidgetScriptProvider;
 import pl.net.bluesoft.rnd.processtool.web.view.AbstractTaskListView;
-import pl.net.bluesoft.rnd.processtool.web.view.ITasksListViewBeanFactory;
 
 import java.util.Collection;
 import java.util.List;
@@ -85,4 +84,12 @@ public interface GuiRegistry {
 
     /* Get all queues avaiable to user with given login */
     List<AbstractTaskListView> getTasksListViews(String currentUserLogin);
+
+	void registerTaskPermissionChecker(TaskPermissionChecker permissionChecker);
+	void unregisterTaskPermissionChecker(TaskPermissionChecker permissionChecker);
+	List<TaskPermissionChecker> getTaskPermissionCheckers();
+
+	void registerActionPermissionChecker(ActionPermissionChecker permissionChecker);
+	void unregisterActionPermissionChecker(ActionPermissionChecker permissionChecker);
+	List<ActionPermissionChecker> getActionPermissionCheckers();
 }

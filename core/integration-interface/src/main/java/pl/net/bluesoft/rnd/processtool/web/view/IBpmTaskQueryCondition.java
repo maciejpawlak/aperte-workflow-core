@@ -7,9 +7,13 @@ import java.util.List;
  */
 public interface IBpmTaskQueryCondition
 {
-    String getJoinCondition(String sortColumnName);
+    String getSortJoinCondition(String sortColumnName);
+
+    String getJoin();
 
     String getSortQuery(String columnName);
 
     String getSearchCondition();
+
+    String getWhereCondition();
 }

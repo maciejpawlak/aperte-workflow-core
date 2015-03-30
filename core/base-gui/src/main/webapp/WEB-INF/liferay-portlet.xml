@@ -17,6 +17,7 @@
         <header-portlet-javascript>/sa/js/jquery.timer.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.dataTables.bootstrap.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.dateFormat-1.0.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/moment-with-locales.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/select2.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/select2_locale_pl.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/colReorder.js</header-portlet-javascript>
@@ -29,6 +30,7 @@
         <header-portlet-javascript>/sa/js/jquery.fileupload-process.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.fileupload-validate.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.iframe-transport.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/jquery.autosize.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/dataTables.fixedHeader.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/aperte/aperte.datatable.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/history.min.js</header-portlet-javascript>
@@ -61,6 +63,7 @@
         <header-portlet-javascript>/sa/js/jquery.timer.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.dataTables.bootstrap.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.dateFormat-1.0.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/moment-with-locales.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/select2.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/select2_locale_pl.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/colReorder.js</header-portlet-javascript>
@@ -105,6 +108,7 @@
         <header-portlet-javascript>/sa/js/jquery.timer.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.dataTables.bootstrap.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.dateFormat-1.0.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/moment-with-locales.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/select2.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/select2_locale_pl.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/colReorder.js</header-portlet-javascript>
@@ -121,6 +125,7 @@
         <header-portlet-javascript>/sa/js/aperte/aperte.datatable.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/history.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/aperte/aperte.widget.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/jquery.autosize.min.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/bootstrap-wysiwyg.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/external/jquery.hotkeys.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/external/google-code-prettify/prettify.js</header-portlet-javascript>
@@ -160,6 +165,7 @@
         <header-portlet-javascript>/sa/js/jquery.timer.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.dataTables.bootstrap.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.dateFormat-1.0.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/moment-with-locales.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/select2.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/select2_locale_pl.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/colReorder.js</header-portlet-javascript>
@@ -172,6 +178,7 @@
         <header-portlet-javascript>/sa/js/jquery.fileupload-process.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.fileupload-validate.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.iframe-transport.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/jquery.autosize.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/dataTables.fixedHeader.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/aperte/aperte.datatable.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/history.min.js</header-portlet-javascript>
@@ -209,6 +216,7 @@
 		<header-portlet-javascript>/sa/js/jquery.timer.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/jquery.dataTables.bootstrap.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/jquery.dateFormat-1.0.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/moment-with-locales.min.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/select2.min.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/select2_locale_pl.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/colReorder.js</header-portlet-javascript>
@@ -221,6 +229,7 @@
 		<header-portlet-javascript>/sa/js/jquery.fileupload-process.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/jquery.fileupload-validate.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/jquery.iframe-transport.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/jquery.autosize.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/dataTables.fixedHeader.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/aperte/aperte.datatable.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/history.min.js</header-portlet-javascript>
@@ -253,6 +262,7 @@
 		<header-portlet-javascript>/sa/js/jquery.timer.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/jquery.dataTables.bootstrap.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/jquery.dateFormat-1.0.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/moment-with-locales.min.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/select2.min.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/select2_locale_pl.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/colReorder.js</header-portlet-javascript>
@@ -264,6 +274,7 @@
 		<header-portlet-javascript>/sa/js/jquery.fileupload.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/jquery.fileupload-process.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/jquery.fileupload-validate.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/jquery.autosize.min.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/jquery.iframe-transport.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/dataTables.fixedHeader.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/aperte/aperte.datatable.js</header-portlet-javascript>
@@ -306,6 +317,7 @@
         <header-portlet-javascript>/sa/js/jquery.timer.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.dataTables.bootstrap.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.dateFormat-1.0.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/moment-with-locales.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/select2.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/select2_locale_pl.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/colReorder.js</header-portlet-javascript>
@@ -345,6 +357,7 @@
         <header-portlet-javascript>/sa/js/jquery.timer.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.dataTables.bootstrap.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.dateFormat-1.0.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/moment-with-locales.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/select2.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/select2_locale_pl.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/colReorder.js</header-portlet-javascript>
@@ -386,12 +399,14 @@
 		<header-portlet-javascript>/sa/js/jquery.timer.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/jquery.dataTables.bootstrap.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/jquery.dateFormat-1.0.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/moment-with-locales.min.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/select2.min.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/select2_locale_pl.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/colReorder.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/jquery-plugins.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/jquery.json-2.4.min.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/bootstrap-datepicker.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/jquery.autosize.min.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/locales/bootstrap-datepicker.pl.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/jquery-ui-1.10.4.custom.min.js</header-portlet-javascript>
 		<header-portlet-css>/sa/css/bootstrap.min.css</header-portlet-css>

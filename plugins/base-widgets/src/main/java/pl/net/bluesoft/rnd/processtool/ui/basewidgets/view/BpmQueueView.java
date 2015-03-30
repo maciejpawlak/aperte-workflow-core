@@ -35,12 +35,9 @@ public class BpmQueueView extends AbstractTaskListView
         processInstanceFilter.setFilterOwnerLogin(queueId);
         processInstanceFilter.addQueue(queueId);
         processInstanceFilter.setViewName(GuiRegistry.STANDARD_PROCESS_QUEUE_ID);
+        processInstanceFilter.getAdditionalParameters().putAll(parameters);
+        processInstanceFilter.setBpmTaskQueryCondition(new BpmTaskQueryCondition());
         return processInstanceFilter;
     }
 
-    @Override
-    public IBpmTaskQueryCondition getBpmTaskQueryCondition() {
-
-        return new BpmTaskQueryCondition();
-    }
 }

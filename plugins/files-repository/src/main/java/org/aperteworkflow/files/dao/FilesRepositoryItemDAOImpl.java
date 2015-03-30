@@ -24,12 +24,14 @@ public class FilesRepositoryItemDAOImpl extends SimpleHibernateBean<IFilesReposi
     }
 
     @Override
-    public FilesRepositoryItem addItem(IAttributesConsumer consumer, String name, String description, String relativePath, String contentType, String creatorLogin, FilesRepositoryAttributeFactory factory) {
-        return addItem(consumer, name, description, relativePath, contentType, creatorLogin, false, factory);
+    public FilesRepositoryItem addItem(IAttributesConsumer consumer, String name, String description, String relativePath,
+                                       String contentType, String creatorLogin, FilesRepositoryAttributeFactory factory) {
+        return addItem(consumer, name, description, relativePath, contentType, creatorLogin, false, null, factory);
     }
 
     @Override
-    public FilesRepositoryItem addItem(IAttributesConsumer consumer, String name, String description, String relativePath, String contentType, String creatorLogin, Boolean sendAsEmail, FilesRepositoryAttributeFactory factory) {
+    public FilesRepositoryItem addItem(IAttributesConsumer consumer, String name, String description, String relativePath,
+                                       String contentType, String creatorLogin, Boolean sendAsEmail, String groupId, FilesRepositoryAttributeFactory factory) {
         FilesRepositoryItem item = new FilesRepositoryItem();
         item.setName(name);
         item.setDescription(description);
@@ -40,6 +42,7 @@ public class FilesRepositoryItemDAOImpl extends SimpleHibernateBean<IFilesReposi
 		if (sendAsEmail != null) {
 			item.setSendWithMail(sendAsEmail);
 		}
+        item.setGroupId(groupId);
         IFilesRepositoryAttribute attribute = (IFilesRepositoryAttribute) consumer.getAttribute(FilesRepositoryAttributes.FILES.value());
         if (attribute == null) {
             attribute = factory.create();

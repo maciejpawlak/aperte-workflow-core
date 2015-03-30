@@ -30,6 +30,7 @@ public class MailTemplateProvider implements IMailTemplateLoader
 {
     private static final String SUBJECT_TEMPLATE_SUFFIX = "_subject";
     private static final String SENDER_TEMPLATE_SUFFIX = "_sender";
+	private static final String SENTFOLDERNAME_TEMPLATE_SUFFIX = "_sentfolderName";
     
     private Logger logger = Logger.getLogger(MailTemplateProvider.class.getName());
     
@@ -59,6 +60,7 @@ public class MailTemplateProvider implements IMailTemplateLoader
             templateCache.put(t.getTemplateName() + SUBJECT_TEMPLATE_SUFFIX, t.getSubjectTemplate() != null
                     ? t.getSubjectTemplate().replaceAll("\\\\u", "\\u") : "");
             templateCache.put(t.getTemplateName() + SENDER_TEMPLATE_SUFFIX, t.getSender());
+			templateCache.put(t.getTemplateName() + SENTFOLDERNAME_TEMPLATE_SUFFIX, t.getSentFolderName());
         }
         
         freemarkerConfiguration = new Configuration();
@@ -99,7 +101,12 @@ public class MailTemplateProvider implements IMailTemplateLoader
             throw new ProcessToolTemplateErrorException(e);
         }
     }
-    
+
+	@Override
+	public String getTemplateSentFolderName(String templateName) {
+		return templateCache.get(templateName + SENTFOLDERNAME_TEMPLATE_SUFFIX);
+	}
+
 	public BpmNotificationTemplate getBpmNotificationTemplate(String templateName)
 	{
 		return templateMap.get(templateName);

@@ -10,15 +10,14 @@ import pl.net.bluesoft.rnd.processtool.ISettingsProvider;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
 import pl.net.bluesoft.rnd.processtool.bpm.ProcessToolBpmSession;
 import pl.net.bluesoft.rnd.processtool.dict.IDictionaryFacade;
+import pl.net.bluesoft.rnd.processtool.model.BpmTask;
 import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
 import pl.net.bluesoft.rnd.processtool.model.ProcessInstance;
 import pl.net.bluesoft.rnd.processtool.model.UserData;
-import pl.net.bluesoft.rnd.processtool.model.config.IPermission;
-import pl.net.bluesoft.rnd.processtool.model.config.IStateWidget;
-import pl.net.bluesoft.rnd.processtool.model.config.IStateWidgetAttribute;
-import pl.net.bluesoft.rnd.processtool.model.config.ProcessStateConfiguration;
+import pl.net.bluesoft.rnd.processtool.model.config.*;
 import pl.net.bluesoft.rnd.processtool.plugins.ButtonGenerator;
 import pl.net.bluesoft.rnd.processtool.plugins.ProcessToolRegistry;
+import pl.net.bluesoft.rnd.processtool.plugins.QueueBean;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.IWidgetDataProvider;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.ProcessHtmlWidget;
 import pl.net.bluesoft.rnd.processtool.usersource.IUserSource;
@@ -26,6 +25,8 @@ import pl.net.bluesoft.rnd.processtool.web.domain.IHtmlTemplateProvider;
 import pl.net.bluesoft.rnd.util.i18n.I18NSource;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static pl.net.bluesoft.util.lang.Strings.hasText;
 
@@ -33,6 +34,10 @@ import static pl.net.bluesoft.util.lang.Strings.hasText;
  * Created by pkuciapski on 2014-04-28.
  */
 public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
+    protected static Logger logger = Logger.getLogger(AbstractViewBuilder.class.getName());
+
+    public static final String CLAIM_ACTION_NAME = "claim";
+
     protected List<? extends IStateWidget> widgets;
     protected I18NSource i18Source;
     protected UserData user;
@@ -55,6 +60,7 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
     @Autowired
     protected IDictionaryFacade dictionaryFacade;
 
+
     protected AbstractViewBuilder() {
         SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
     }
@@ -68,10 +74,27 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
 
     protected abstract T getThis();
 
-    public StringBuilder build() throws Exception {
+    public StringBuilder build() throws Exception
+    {
+
         final StringBuilder stringBuilder = new StringBuilder(8 * 1024);
         scriptBuilder.append("<script type=\"text/javascript\">");
         final Document document = Jsoup.parse("");
+
+        if(!hasUserPriviledgesToViewTask())
+        {
+            final Element widgetsNode = document.createElement("div")
+                    .attr("role", "alert")
+                    .attr("class", "alert alert-warning");
+
+            widgetsNode.text(i18Source.getMessage("task.noright.to.view"));
+
+            document.appendChild(widgetsNode);
+
+            stringBuilder.append(document.toString());
+
+            return stringBuilder;
+        }
 
         buildActionButtons(document);
 
@@ -110,6 +133,8 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
     }
 
     protected abstract IAttributesProvider getViewedObject();
+
+    protected abstract boolean hasUserPriviledgesToViewTask();
 
     protected void buildWidget(final WidgetHierarchyBean widgetHierarchyBean) {
         IStateWidget widget = widgetHierarchyBean.getWidget();
@@ -302,7 +327,15 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
                 viewData.putAll(dataProvider.getData(getViewedObject(), baseViewData));
             }
 
-            String processedView = templateProvider.processTemplate(aliasName, viewData);
+            String processedView = "";
+            try {
+                processedView = templateProvider.processTemplate(aliasName, viewData);
+            }
+            catch(Throwable ex)
+            {
+                logger.log(Level.SEVERE, "Error with Widget ["+aliasName+"]", ex);
+                throw new RuntimeException(ex);
+            }
 
             Element divContentNode = parent.ownerDocument().createElement("div")
                     .append(processedView)
@@ -374,6 +407,8 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
     }
 
     protected abstract void buildAdditionalData(Document document);
+
+    protected abstract Set<QueueBean> getQueueBeans();
 
     public T setWidgets(List<? extends IStateWidget> widgets) {
         this.widgets = widgets;

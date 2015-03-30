@@ -23,6 +23,9 @@ public interface IFilesRepositoryFacade {
 	IFilesRepositoryItem uploadFile(InputStream inputStream, String contentType, IAttributesConsumer filesAttributeConsumer,
 									String fileName, String fileDescription, String creatorLogin, FilesRepositoryAttributeFactory factory,
 									Boolean sendWithMail) throws UploadFileException;
+	IFilesRepositoryItem uploadFile(InputStream inputStream, String contentType, IAttributesConsumer filesAttributeConsumer,
+									String fileName, String fileDescription, String creatorLogin, FilesRepositoryAttributeFactory factory,
+									Boolean sendWithMail, String groupId) throws UploadFileException;
 
     void deleteFile(IAttributesProvider filesAttributeProvider, Long filesRepositoryItemId) throws DeleteFileException;
 

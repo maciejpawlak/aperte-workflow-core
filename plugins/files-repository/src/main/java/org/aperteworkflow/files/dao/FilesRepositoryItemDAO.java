@@ -11,9 +11,11 @@ import java.util.Collection;
  * @author pwysocki@bluesoft.net.pl
  */
 public interface FilesRepositoryItemDAO {
-    FilesRepositoryItem addItem(IAttributesConsumer consumer, String name, String description, String relativePath, String contentType, String creatorLogin, FilesRepositoryAttributeFactory factory);
+    FilesRepositoryItem addItem(IAttributesConsumer consumer, String name, String description, String relativePath,
+                                String contentType, String creatorLogin, FilesRepositoryAttributeFactory factory);
 
-    FilesRepositoryItem addItem(IAttributesConsumer consumer, String name, String description, String relativePath, String contentType, String creatorLogin, Boolean sendAsEmail, FilesRepositoryAttributeFactory factory);
+    FilesRepositoryItem addItem(IAttributesConsumer consumer, String name, String description, String relativePath,
+                                String contentType, String creatorLogin, Boolean sendAsEmail, String groupId, FilesRepositoryAttributeFactory factory);
     Collection<FilesRepositoryItem> getItemsFor(IAttributesProvider provider);
 
     void deleteById(IAttributesProvider provider, Long itemId);

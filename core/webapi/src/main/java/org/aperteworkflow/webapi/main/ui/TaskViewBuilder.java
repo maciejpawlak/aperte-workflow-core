@@ -1,14 +1,23 @@
 package org.aperteworkflow.webapi.main.ui;
 
+import freemarker.template.utility.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import pl.net.bluesoft.rnd.processtool.model.BpmTask;
 import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
+import pl.net.bluesoft.rnd.processtool.model.config.ProcessQueueConfig;
+import pl.net.bluesoft.rnd.processtool.model.config.ProcessQueueRight;
 import pl.net.bluesoft.rnd.processtool.model.config.ProcessStateAction;
+import pl.net.bluesoft.rnd.processtool.plugins.ActionPermissionChecker;
+import pl.net.bluesoft.rnd.processtool.plugins.QueueBean;
+import pl.net.bluesoft.rnd.processtool.plugins.TaskPermissionChecker;
 import pl.net.bluesoft.rnd.processtool.web.domain.IHtmlTemplateProvider;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static pl.net.bluesoft.util.lang.Strings.hasText;
 
@@ -33,6 +42,7 @@ public class TaskViewBuilder extends AbstractViewBuilder<TaskViewBuilder> {
         addVersionNumber(document);
     }
 
+
     private void addVersionNumber(Document document) {
         Element versionNumber = document.createElement("div")
                 .attr("id", "versionList")
@@ -44,21 +54,37 @@ public class TaskViewBuilder extends AbstractViewBuilder<TaskViewBuilder> {
 
     @Override
     protected void buildSpecificActionButtons(final Element specificActionButtons) {
+
         /* Check if task is from queue */
-        if (isTaskHasNoOwner() && hasUserRightsToTask()) {
-            addClaimActionButton(specificActionButtons);
+        if (isTaskHasNoOwner())
+        {
+            if(hasPermissionToAction("claim"))
+                addClaimActionButton(specificActionButtons);
         }
 
         /* Check if user, who is checking the task, is the assigned person */
-        if (isUserAssignedToTask() || isSubstitutingUser()) {
-            for (ProcessStateAction action : actions)
-                processAction(action, specificActionButtons);
+        else if (isUserAssignedToTask() || isSubstitutingUser()) {
+            for (ProcessStateAction action : actions) {
+				if (hasPermissionToAction(action.getBpmName())) {
+					processAction(action, specificActionButtons);
+				}
+			}
         }
     }
 
-    protected boolean isSubstitutingUser() {
+	protected boolean isSubstitutingUser() {
         return ctx.getUserSubstitutionDAO().isSubstitutedBy(task.getAssignee(), user.getLogin());
     }
+
+	private boolean hasPermissionToAction(String actionName) {
+		for (ActionPermissionChecker permissionChecker : processToolRegistry.getGuiRegistry().getActionPermissionCheckers()) {
+			Boolean result = permissionChecker.hasPermission(actionName, task, getQueueBeans(), user);
+			if (result != null && !result) {
+				return false;
+			}
+		}
+		return true;
+	}
 
     @Override
     protected void addSpecificHtmlWidgetData(final Map<String, Object> viewData, final IAttributesProvider viewedObject) {
@@ -183,8 +209,35 @@ public class TaskViewBuilder extends AbstractViewBuilder<TaskViewBuilder> {
         return this;
     }
 
-    private boolean hasUserRightsToTask() {
+    protected boolean hasUserPriviledgesToViewTask()
+    {
+
+        // default permission checking
         if (task.getPotentialOwners().contains(user.getLogin()))
+            return true;
+
+        if(StringUtils.isEmpty(task.getAssignee())) {
+            for (String queueName : userQueues)
+                if (task.getQueues().contains(queueName))
+                    return true;
+        }
+        else if(task.getAssignee().equals(user.getLogin()))
+            return true;
+
+        return hasUserRightsToTask();
+    }
+
+    private boolean hasUserRightsToTask() {
+		for (TaskPermissionChecker taskPermissionChecker : processToolRegistry.getGuiRegistry().getTaskPermissionCheckers()) {
+			Boolean hasPermission = taskPermissionChecker.hasPermission(user, getQueueBeans(), task);
+
+			if (hasPermission != null) {
+				return hasPermission;
+			}
+		}
+
+		// default permission checking
+		if (task.getPotentialOwners().contains(user.getLogin()))
             return true;
 
         for (String queueName : userQueues)
@@ -193,6 +246,26 @@ public class TaskViewBuilder extends AbstractViewBuilder<TaskViewBuilder> {
 
         return false;
     }
+
+    protected Set<QueueBean> getQueueBeans()
+    {
+        Set<QueueBean> queueBeans = new HashSet<QueueBean>();
+        for(ProcessQueueConfig queueConfig: ctx.getProcessDefinitionDAO().getQueueConfigs())
+            for(String taskQueueName: task.getQueues())
+                if(queueConfig.getName().equals(taskQueueName))
+                {
+                    QueueBean queueBean = new QueueBean()
+                            .setQueueName(taskQueueName);
+
+                    for(ProcessQueueRight queueRight: queueConfig.getRights())
+                        queueBean.addRole(queueRight.getRoleName());
+
+                    queueBeans.add(queueBean);
+                }
+
+        return queueBeans;
+    }
+
 
     private boolean isTaskHasNoOwner() {
         return task.getAssignee() == null || task.getAssignee().isEmpty();

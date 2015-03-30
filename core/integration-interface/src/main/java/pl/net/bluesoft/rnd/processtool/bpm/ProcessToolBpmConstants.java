@@ -26,7 +26,7 @@ public interface ProcessToolBpmConstants {
 	String TEXT_MODE = "textMode";
 
 	/** Default interval for queue refresh */
-	Integer DEFAULT_QUEUE_INTERVAL = 30000;
+	Integer DEFAULT_QUEUE_INTERVAL = 60000;
 
 	UserData SYSTEM_USER = new UserDataBean("system");
 	UserData ADMIN_USER = new UserDataBean("admin", "System", "");

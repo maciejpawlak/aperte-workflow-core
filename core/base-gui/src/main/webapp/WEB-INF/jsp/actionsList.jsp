@@ -162,12 +162,12 @@
 	    var state = 'OK';
 		clearAlerts();
 		windowManager.showSavingScreen();
-		
+
 		var errors = [];
-		<!-- Validate html widgets -->
+		/* Validate html widgets */
 		$.each(widgets, function() 
 		{
-			var errorMessages = this.validate();
+			var errorMessages = this.validateDataCorrectness();
 			if(!errorMessages)
 			{
 
@@ -181,7 +181,7 @@
 				});
 			}
 	    });
-		
+
 		if(errors.length > 0)
 		{
 			enableButtons();
@@ -191,8 +191,7 @@
 		}
 		
 		var widgetData = [];
-		
-		$.each(widgets, function() 
+		$.each(widgets, function()
 		{
 			var widgetDataBean = new WidgetDataBean(this.widgetId, this.name, this.getData());
 			widgetData.push(widgetDataBean);
@@ -204,7 +203,7 @@
 		{
 			"taskId": taskId,
 			"widgetData": JsonWidgetData
-		},'json')
+		}, null, 'json')
 		.done(function(data)
 		{
 			if(data.errors != null)
@@ -273,7 +272,9 @@
 			alertsShown = true;
 		}
 		
-		$('#alerts-list').append('<li><h5>'+alertMessage+'</h5></li>');
+		if ($('#alerts-list h5:contains("'+alertMessage+'")').length === 0) {
+			$('#alerts-list').append('<li><h5>'+alertMessage+'</h5></li>');
+		}
 		
 	}
 	
@@ -282,9 +283,21 @@
 		$('#alerts-list').empty();
 	}
 	
-	<!-- Check for comment required field -->
+	/* Check for comment required field */
 	function performAction(button, actionName, skipSaving, commentNeeded, changeOwner, changeOwnerAttributeKey, taskId)
 	{
+		if(skipSaving != true)
+		{
+			clearAlerts();
+			
+			var errors = fullValidate(actionName);
+			
+			if(errors.length > 0)
+			{
+				enableButtons();
+				return;
+			}
+		}
 		if(commentNeeded == true)
 		{
 
@@ -379,25 +392,36 @@
 		if(skipSaving != true)
 		{
 			clearAlerts();
-			
+
 			var errors = [];
-			<!-- Validate html widgets -->
-			$.each(widgets, function() 
+
+			var validateAllEnabled = true;
+
+			$.each(widgets, function() {
+				if (this.isValidateAllEnabled && !this.isValidateAllEnabled(actionName)) {
+					validateAllEnabled = false;
+				}
+			});
+
+			/* Validate html widgets */
+			$.each(widgets, function()
 			{
-				var errorMessages = this.validate(actionName);
+				var errorMessages = validateAllEnabled ? this.validate(actionName) :
+								this.partialValidate ? this.partialValidate(actionName) : [];
+
 				$.each(errorMessages, function() {
 					errors.push(this);
 					addAlert(this);
 				});
 			});
-			
+
 			if(errors.length > 0)
 			{
 				enableButtons();
 				return;
 			}
-			
-			$.each(widgets, function() 
+
+			$.each(widgets, function()
 			{
 				var widgetDataBean = new WidgetDataBean(this.widgetId, this.name, this.getData());
 				widgetData.push(widgetDataBean);
@@ -458,10 +482,10 @@
 			"changeOwnerAttributeKey": args.changeOwnerAttributeKey,
 			"changeOwnerAttributeValue": args.changeOwnerAttributeValue,
 			"widgetData": JsonWidgetData
-		},'json')
+		}, null, 'json')
 		.done(function(data)
 		{
-			//<!-- Errors handling -->
+			/* Errors handling */
 			windowManager.clearErrors();
 
 			var errors = [];
@@ -477,8 +501,7 @@
 			if(!data)
 			{
 				closeProcessView();
-				queueViewManager.reloadCurrentQueue();
-				windowManager.showProcessList();
+				queueViewManager.loadCurrentQueue();
 
 				return;
 			}
@@ -490,8 +513,7 @@
 			else if(!data.nextTask)
 			{
 				closeProcessView();
-				queueViewManager.reloadCurrentQueue();
-				windowManager.showProcessList();
+				queueViewManager.loadCurrentQueue();
 
 				return;
 			}
@@ -504,17 +526,19 @@
 			else
 			{
 				closeProcessView();
-				queueViewManager.reloadCurrentQueue();
-				windowManager.showProcessList();
+				queueViewManager.loadCurrentQueue();
 			}
 		})
-		.fail(function() { addAlerts(data.errors); })
+		.fail(function(XMLHttpRequest, textStatus, errorThrown) { addAlert(errorThrown); })
 		.always(function(data)
 		{
 			if(data != null)
 			{
 				enableButtons();
 			}
+			tempChangeOwner = null;
+			tempChangeOwnerAttrKey = null;
+			tempCommentNeeded = null;
 		});
 	}
 	
@@ -526,9 +550,9 @@
 	
 	function onCancelButton()
 	{
-		reloadQueues();
-		disableButtons(); 
-		queueViewManager.reloadCurrentQueue();
+		disableButtons();
+		closeProcessView();
+		queueViewManager.loadCurrentQueue();
 		
 		$(window).scrollTop(0);
 	}

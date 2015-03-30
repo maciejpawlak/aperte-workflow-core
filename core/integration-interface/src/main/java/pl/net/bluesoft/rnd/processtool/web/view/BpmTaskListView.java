@@ -29,12 +29,12 @@ public class BpmTaskListView extends AbstractTaskListView
     public ProcessInstanceFilter getProcessInstanceFilter(Map<String, Object> parameters)
     {
         ProcessInstanceFilterFactory filterFactory = new ProcessInstanceFilterFactory();
-        return filterFactory.createAllTasksFilter((String)parameters.get(PARAMETER_USER_LOGIN));
+
+        ProcessInstanceFilter filter = filterFactory.createAllTasksFilter((String)parameters.get(PARAMETER_USER_LOGIN));
+        filter.getAdditionalParameters().putAll(parameters);
+        filter.setBpmTaskQueryCondition(new BpmTaskQueryCondition());
+
+        return filter;
     }
 
-    @Override
-    public IBpmTaskQueryCondition getBpmTaskQueryCondition() {
-        /* Standard bpm task query */
-        return new BpmTaskQueryCondition();
-    }
 }

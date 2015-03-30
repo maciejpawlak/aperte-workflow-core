@@ -42,7 +42,8 @@ public class ComplaintRegistryPortletController extends CaseManagementPortletCon
     public static final String PORLET_FLIGHT_NO_PARAMETER = "flightNo";
     public static final String PORLET_PERSON_NAME_PARAMETER = "personName";
     public static final String PORTLET_TASK_ID_PARAMETER = "taskId";
-    private static Logger logger = Logger.getLogger(ComplaintRegistryPortletController.class.getName());
+	public static final String PORTLET_CASE_NO_PARAMETER = "caseNo";
+	private static Logger logger = Logger.getLogger(ComplaintRegistryPortletController.class.getName());
 
     @Autowired(required = false)
     private TaskViewController taskViewController;
@@ -86,6 +87,8 @@ public class ComplaintRegistryPortletController extends CaseManagementPortletCon
         String flightDate = originalHttpServletRequest.getParameter(PORLET_FLIGHT_DATE_PARAMETER);
         String flightNo = originalHttpServletRequest.getParameter(PORLET_FLIGHT_NO_PARAMETER);
         String personName = originalHttpServletRequest.getParameter(PORLET_PERSON_NAME_PARAMETER);
+        String caseNo = originalHttpServletRequest.getParameter(PORTLET_CASE_NO_PARAMETER);
+		modelView.addObject(PORTLET_CASE_NO_PARAMETER, caseNo);
         if (processId != null){
             modelView.addObject(PORTLET_PROCESS_ID_PARAMETER, processId);
             modelView.addObject(PORTLET_PIR_PARAMETER, pir);

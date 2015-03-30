@@ -18,10 +18,8 @@ import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static pl.net.bluesoft.util.lang.Formats.nvl;
@@ -69,18 +67,26 @@ public class FilesRepositoryFacade implements IFilesRepositoryFacade {
 		return uploadFile(inputStream, contentType, filesConsumer, fileName, fileDescription, creatorLogin, factory, null);
 	}
 
+    @Override
+    public IFilesRepositoryItem uploadFile(InputStream inputStream, String contentType, IAttributesConsumer filesConsumer,
+                                           String fileName, String fileDescription, String creatorLogin, FilesRepositoryAttributeFactory factory,
+                                           Boolean sendWithMail) throws UploadFileException {
+        return uploadFile(inputStream, contentType, filesConsumer, fileName, fileDescription, creatorLogin, factory, sendWithMail, null);
+    }
+
 	@Override
 	public IFilesRepositoryItem uploadFile(InputStream inputStream, String contentType, IAttributesConsumer filesConsumer,
 			String fileName, String fileDescription, String creatorLogin, FilesRepositoryAttributeFactory factory,
-			Boolean sendWithMail) throws UploadFileException {
+			Boolean sendWithMail, String groupId) throws UploadFileException {
         IFilesRepositoryItem result;
         String filePath = prepareFilePath(filesConsumer.getId(), fileName);
         try {
             getFilesRepositoryStorageDAO().uploadFileToStorage(inputStream, filePath);
         } catch (IOException e) {
+            logger.log(Level.SEVERE, "Error during uploading file", e);
             throw new UploadFileException("Cannot write file to storage", e);
         }
-        result = getFilesRepositoryItemDAO().addItem(filesConsumer, fileName, fileDescription, filePath, contentType, creatorLogin, sendWithMail, factory);
+        result = getFilesRepositoryItemDAO().addItem(filesConsumer, fileName, fileDescription, filePath, contentType, creatorLogin, sendWithMail, groupId, factory);
         return result;
     }
 
@@ -136,14 +142,25 @@ public class FilesRepositoryFacade implements IFilesRepositoryFacade {
 
 		for (IFilesRepositoryItem file : files) {
 			getFilesRepositoryItemDAO().addItem(filesConsumer, file.getName(), file.getDescription(), file.getRelativePath(),
-					file.getContentType(), file.getCreatorLogin(), file.getSendWithMail(), factory);
+					file.getContentType(), file.getCreatorLogin(), file.getSendWithMail(), file.getGroupId(), factory);
 		}
 		return result;
 	}
 
 	@Override
 	public Collection<? extends IFilesRepositoryItem> getFilesList(IAttributesProvider filesAttributeProvider, FileListFilter filter) {
-		Collection<? extends IFilesRepositoryItem> filesList = getFilesList(filesAttributeProvider);
+        List<IFilesRepositoryItem> filesList = new LinkedList<IFilesRepositoryItem>();
+
+        filesList.addAll(getFilesList(filesAttributeProvider));
+
+        Comparator<IFilesRepositoryItem> comparator = new Comparator<IFilesRepositoryItem>() {
+            @Override
+            public int compare(IFilesRepositoryItem o1, IFilesRepositoryItem o2) {
+                return o1.getCreateDate().compareTo(o2.getCreateDate());
+            }
+        };
+
+        Collections.sort(filesList, comparator);
 
 		if (filter == null || filter == FileListFilter.ALL) {
 			return filesList;
@@ -159,6 +176,8 @@ public class FilesRepositoryFacade implements IFilesRepositoryFacade {
 				result.add(item);
 			}
 		}
+
+
 		return result;
 	}
 

@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static pl.net.bluesoft.rnd.processtool.bpm.ProcessToolBpmConstants.ADMIN_USER;
@@ -52,6 +53,33 @@ public class LiferayUserSource implements IPortalUserSource, CacheProvider
     public LiferayUserSource()
     {
         SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+    }
+
+    public Locale getUserLocale(String login)
+    {
+        if (login == null) {
+            return null;
+        }
+
+        long[] companyIds = PortalUtil.getCompanyIds();
+
+        for (long companyId : companyIds) {
+            try {
+
+                User u = UserLocalServiceUtil.getUserByScreenName(companyId, login);
+                if (u != null) {
+                    return u.getLocale();
+                }
+            }
+            catch (PortalException e) {
+                return new Locale("en");
+            }
+            catch (Exception e) {
+                throw new UserSourceException(e);
+            }
+        }
+
+        return new Locale("en");
     }
 
 	@Override

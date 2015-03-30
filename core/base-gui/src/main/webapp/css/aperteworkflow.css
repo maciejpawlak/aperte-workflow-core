@@ -1,3 +1,21 @@
+.select2-container.select2-container-disabled .select2-choice .select2-arrow
+{
+	display: none;
+}
+.select2-container.select2-container-disabled .select2-choice:hover
+{
+	 text-decoration: none !important;
+	 color: #444 !important;
+
+}
+
+select[disabled] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-indent: 0.01px;
+    text-overflow: '';
+	padding: 0px;
+}
 
 @media (max-width: 767px)
 {

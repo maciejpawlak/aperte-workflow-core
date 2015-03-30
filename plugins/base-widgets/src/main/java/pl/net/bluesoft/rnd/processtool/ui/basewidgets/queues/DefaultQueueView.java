@@ -29,11 +29,10 @@ public class DefaultQueueView extends AbstractTaskListView
         ProcessInstanceFilter processInstanceFilter = new ProcessInstanceFilter();
         processInstanceFilter.setFilterOwnerLogin("controlling");
         processInstanceFilter.addQueue("controlling");
+        processInstanceFilter.setBpmTaskQueryCondition(new BpmTaskQueryCondition());
+        processInstanceFilter.getAdditionalParameters().putAll(parameters);
         return processInstanceFilter;
     }
 
-    @Override
-    public IBpmTaskQueryCondition getBpmTaskQueryCondition() {
-        return new BpmTaskQueryCondition();
-    }
+
 }
