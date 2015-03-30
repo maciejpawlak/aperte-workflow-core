@@ -1297,6 +1297,12 @@ table.dataTable th {
 	box-sizing: content-box;
 }
 
+table.dataTable td:nth-child(2) {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 150px;
+}
 
 table.dataTable {
 	clear: both;
