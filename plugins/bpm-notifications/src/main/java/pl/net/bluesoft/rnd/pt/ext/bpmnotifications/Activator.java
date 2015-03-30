@@ -83,8 +83,8 @@ public class Activator implements BundleActivator, EventListener<BpmEvent>
 
                 BpmAdminPortletRender.init(html);
 
-                getViewRegistry(processToolRegistry).registerGenericPortletViewRenderer("admin", BpmAdminPortletRender.INSTANCE);
-                getViewRegistry(processToolRegistry).registerGenericPortletViewRenderer("user", BpmAdminPortletRender.INSTANCE);
+                processToolRegistry.getGuiRegistry().registerGenericPortletViewRenderer("admin", BpmAdminPortletRender.INSTANCE);
+                processToolRegistry.getGuiRegistry().registerGenericPortletViewRenderer("user", BpmAdminPortletRender.INSTANCE);
 			}
    		     });
 
@@ -132,8 +132,8 @@ public class Activator implements BundleActivator, EventListener<BpmEvent>
         processToolRegistry.getEventBusManager().unsubscribe(MailEvent.class, mailEventListener);
 		mailEventListener = null;
 
-		getViewRegistry(processToolRegistry).unregisterGenericPortletViewRenderer("admin", BpmAdminPortletRender.INSTANCE);
-		getViewRegistry(processToolRegistry).unregisterGenericPortletViewRenderer("user", BpmAdminPortletRender.INSTANCE);
+        processToolRegistry.getGuiRegistry().unregisterGenericPortletViewRenderer("admin", BpmAdminPortletRender.INSTANCE);
+        processToolRegistry.getGuiRegistry().unregisterGenericPortletViewRenderer("user", BpmAdminPortletRender.INSTANCE);
 	}
 
 
@@ -155,8 +155,5 @@ public class Activator implements BundleActivator, EventListener<BpmEvent>
                     e.getUserLogin(), processStarted, processEnded, enteringStep);
         }
 	}
-	
-	private IViewRegistry getViewRegistry(ProcessToolRegistry registry) {
-		return registry.getRegisteredService(IViewRegistry.class);
-	}
+
 }

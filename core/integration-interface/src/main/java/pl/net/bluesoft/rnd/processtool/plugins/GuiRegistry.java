@@ -1,5 +1,6 @@
 package pl.net.bluesoft.rnd.processtool.plugins;
 
+import org.aperteworkflow.ui.view.GenericPortletViewRenderer;
 import pl.net.bluesoft.rnd.processtool.steps.ProcessToolProcessStep;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.ProcessHtmlWidget;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.ProcessToolActionButton;
@@ -35,6 +36,10 @@ public interface GuiRegistry {
 	void unregisterStep(Class<? extends ProcessToolProcessStep> clazz);
 	Map<String, Class<? extends ProcessToolProcessStep>> getAvailableSteps();
 	ProcessToolProcessStep createStep(String stepName);
+
+    Collection<GenericPortletViewRenderer> getGenericPortletViews(String portletKey);
+    void registerGenericPortletViewRenderer(String portletKey, GenericPortletViewRenderer renderer);
+    void unregisterGenericPortletViewRenderer(String portletKey, GenericPortletViewRenderer renderer);
 
 	/** Register new javaScript file for html widgets */
 	void registerJavaScript(String fileName, IWidgetScriptProvider scriptProvider);

@@ -3,6 +3,7 @@ package pl.net.bluesoft.rnd.processtool.plugins;
 import com.google.common.collect.Sets;
 import com.google.common.io.CharStreams;
 import org.apache.commons.collections.SetUtils;
+import org.aperteworkflow.ui.view.GenericPortletViewRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -50,6 +51,8 @@ public class GuiRegistryImpl implements GuiRegistry {
     private final Map<String, AbstractTaskListView> tasksListViews = new HashMap<String, AbstractTaskListView>();
 
 	private final Set<ButtonGenerator> buttonGenerators = new LinkedHashSet<ButtonGenerator>();
+
+    private final Map<String, Set<GenericPortletViewRenderer>> genericPortletViewRenderers = new HashMap<String, Set<GenericPortletViewRenderer>>();
 
 	private String javaScriptContent = "";
 
@@ -365,4 +368,26 @@ public class GuiRegistryImpl implements GuiRegistry {
 			throw new RuntimeException("No class nicknamed by: " + name);
 		}
 	}
+
+    @Override
+    public synchronized Collection<GenericPortletViewRenderer> getGenericPortletViews(String portletKey) {
+        return genericPortletViewRenderers.containsKey(portletKey)
+                ? genericPortletViewRenderers.get(portletKey)
+                : Collections.<GenericPortletViewRenderer>emptyList();
+    }
+
+    @Override
+    public synchronized void registerGenericPortletViewRenderer(String portletKey, GenericPortletViewRenderer renderer) {
+        if (!genericPortletViewRenderers.containsKey(portletKey)) {
+            genericPortletViewRenderers.put(portletKey, new HashSet<GenericPortletViewRenderer>());
+        }
+        genericPortletViewRenderers.get(portletKey).add(renderer);
+    }
+
+    @Override
+    public synchronized void unregisterGenericPortletViewRenderer(String portletKey, GenericPortletViewRenderer renderer) {
+        if (genericPortletViewRenderers.containsKey(portletKey)) {
+            genericPortletViewRenderers.get(portletKey).remove(renderer);
+        }
+    }
 }
