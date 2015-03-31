@@ -63,12 +63,14 @@
 							title="<spring:message code='substituting.date.from.tooltip' />"
 							for="SubstitutingDateFrom" class="col-sm-2 control-label"><spring:message
 								code="substituting.date.from.label" /></label>
-						<div class="controls input-append date"
+						<div class="input-group date"
 							id="SubstitutingDateFromPicker" data-date-format="yyyy-mm-dd">
-							<input style="width: 100%" name="SubstitutingDateFrom"
-								id="SubstitutingDateFrom" class="span2 form-control required"
-								size="16" type="text"> <span class="add-on"><i
-								class="icon-th"></i></span>
+							<input name="SubstitutingDateFrom"
+								id="SubstitutingDateFrom" class="form-control required"
+								size="16" type="text">
+								<span class="input-group-addon">
+								    <i class="glyphicon glyphicon-calendar"></i>
+								</span>
 						</div>
 					</div>
 					<br />
@@ -77,12 +79,14 @@
 							title="<spring:message code='substituting.date.to.tooltip' />"
 							for="SubstitutingDateTo" class="col-sm-2 control-label"><spring:message
 								code="substituting.date.to.label" /></label>
-						<div class="controls input-append date"
+						<div class="input-group date"
 							id="SubstitutingDateToPicker" data-date-format="yyyy-mm-dd">
-							<input style="width: 100%" name="SubstitutingDateTo"
-								id="SubstitutingDateTo" class="span2 form-control required"
-								size="16" type="text"> <span class="add-on"><i
-								class="icon-th"></i></span>
+							<input name="SubstitutingDateTo"
+								id="SubstitutingDateTo" class="form-control required"
+								size="16" type="text">
+								<span class="input-group-addon">
+								    <i class="glyphicon glyphicon-calendar"></i>
+								</span>
 						</div>
 					</div>
 				</form>

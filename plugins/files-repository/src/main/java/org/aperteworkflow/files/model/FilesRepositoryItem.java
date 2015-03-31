@@ -19,7 +19,7 @@ import java.util.Date;
                         columnNames = {"id"}
                 )
         })
-public class FilesRepositoryItem extends PersistentEntity {
+public class FilesRepositoryItem extends PersistentEntity implements IFilesRepositoryItem {
 
     public static final String COLUMN_PROCESS_INSTANCE_ID = "process_instance_id";
     public static final String COLUMN_NAME = "name";
@@ -52,6 +52,11 @@ public class FilesRepositoryItem extends PersistentEntity {
     @Column(name = COLUMN_CREATOR_LOGIN, nullable = false)
     @Index(name="idx_pt_files_creator_login")
     private String creatorLogin;
+
+    @Override
+    public String getItemId() {
+        return getId().toString();
+    }
 
     public String getName() {
         return name;
@@ -87,6 +92,11 @@ public class FilesRepositoryItem extends PersistentEntity {
 
     public String getCreatorLogin() {
         return creatorLogin;
+    }
+
+    @Override
+    public String getVersion() {
+        return "1.0";
     }
 
     public void setCreatorLogin(String creatorLogin) {

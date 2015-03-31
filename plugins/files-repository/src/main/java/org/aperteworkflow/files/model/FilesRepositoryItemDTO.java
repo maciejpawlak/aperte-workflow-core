@@ -7,29 +7,31 @@ import pl.net.bluesoft.util.lang.Formats;
  * @author pwysocki@bluesoft.net.pl
  */
 public class FilesRepositoryItemDTO {
-    private Long id;
+    private String itemId;
     private Long processInstanceId;
     private String name;
     private String description;
     private String createDate;
     private String creatorLogin;
+    private String version;
 
-    public FilesRepositoryItemDTO(FilesRepositoryItem frItem) {
-        setId(frItem.getId());
-        setProcessInstanceId(frItem.getProcessInstance().getId());
+    public FilesRepositoryItemDTO(IFilesRepositoryItem frItem, Long processInstanceId) {
+        setItemId(frItem.getItemId());
+        setProcessInstanceId(processInstanceId);
         setName(frItem.getName());
         setDescription(frItem.getDescription());
 
         setCreateDate(Formats.formatFullDate(frItem.getCreateDate()));
         setCreatorLogin(frItem.getCreatorLogin());
+        setVersion(frItem.getVersion());
     }
 
-    public Long getId() {
-        return id;
+    public String getItemId() {
+        return itemId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
     }
 
     public Long getProcessInstanceId() {
@@ -67,4 +69,12 @@ public class FilesRepositoryItemDTO {
     public String getCreatorLogin() { return creatorLogin; }
 
     public void setCreatorLogin(String creatorLogin) { this.creatorLogin = creatorLogin; }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 }
