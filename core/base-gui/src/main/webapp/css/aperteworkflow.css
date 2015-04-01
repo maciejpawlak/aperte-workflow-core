@@ -1297,11 +1297,11 @@ table.dataTable th {
 	box-sizing: content-box;
 }
 
-table.dataTable td:nth-child(2) {
+.description-column {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	max-width: 150px;
+	max-width: 170px;
 }
 
 table.dataTable {
