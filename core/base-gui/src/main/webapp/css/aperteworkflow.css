@@ -1,4 +1,9 @@
 
+.select2-hidden-accessible
+{
+    display:none;
+}
+
 @media (max-width: 767px)
 {
 	body
