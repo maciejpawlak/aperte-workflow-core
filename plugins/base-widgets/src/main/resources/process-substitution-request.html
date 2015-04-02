@@ -127,26 +127,30 @@
         $("#substitute-user-${widgetId}").select2('val', '${substitutingUserLoginFullName}');
 
 
-        <#if canEdit != "no">
+
             $("#substituting-date-from-datepicker-${widgetId}").datepicker({
-                format: "yyyy-mm-dd",
+                format: "dd-mm-yyyy",
+                startDate: moment().format("DD-MM-YYYY"),
                 language: "pl",
                 minDate: 0,
                 autoclose:true,
                 todayHighlight : true
             });
-        </#if>
+            $("#substituting-date-from-datepicker-${widgetId}").datepicker('update', '${substitutingDateFrom}');
 
 
-        <#if canEdit != "no">
+
+
             $("#substituting-date-to-datepicker-${widgetId}").datepicker({
-                format: "yyyy-mm-dd",
+                format: "dd-mm-yyyy",
+                startDate: moment().format("DD-MM-YYYY"),
                 language: "pl",
                 minDate: 0,
                 autoclose:true,
                 todayHighlight : true
             });
-        </#if>
+            $("#substituting-date-to-datepicker-${widgetId}").datepicker('update', '${substitutingDateTo}');
+
 
 
     });
@@ -164,15 +168,21 @@
 			errors.push('${messageSource.getMessage("substitute.user.empty")}');
 		}
 
+		var now = moment().startOf('day');
+
 		if(!substitutingDateFrom)
 		{
 			$('#warning').show();
 			errors.push('${messageSource.getMessage("substituting.date.from.empty")}');
 		}
-		else if(new Date(substitutingDateFrom).setHours(0,0,0,0) < (new Date()).setHours(0,0,0,0))
+		else
 		{
-            $('#warning').show();
-            errors.push('${messageSource.getMessage("substituting.date.from.past")}');
+		    var dateFrom = typeof substitutingDateFrom == 'string' ? moment(substitutingDateFrom, "DD-MM-YYYY") : null;
+            console.log('datefrom: '+dateFrom);
+		    if ((dateFrom.isValid()) && (now.isAfter(dateFrom))){
+                $('#warning').show();
+                errors.push('${messageSource.getMessage("substituting.date.from.past")}');
+            }
         }
 
         if(!substitutingDateTo)
@@ -182,13 +192,14 @@
 		}
 		else
 		{
-		    if(new Date(substitutingDateTo).setHours(0,0,0,0) < (new Date()).setHours(0,0,0,0))
-		    {
+			var dateTo = typeof substitutingDateFrom == 'string' ? moment(substitutingDateTo, "DD-MM-YYYY") : null;
+			var dateFrom = typeof substitutingDateFrom == 'string' ? moment(substitutingDateFrom, "DD-MM-YYYY") : null;
+
+		    if ((dateTo.isValid()) && (now.isAfter(dateTo))){
                 $('#warning').show();
                 errors.push('${messageSource.getMessage("substituting.date.to.past")}');
             }
-
-            if(substitutingDateTo && substitutingDateFrom && (new Date(substitutingDateTo).setHours(0,0,0,0) < (new Date(substitutingDateFrom)).setHours(0,0,0,0)))
+            else if(substitutingDateTo && substitutingDateFrom && dateTo.isBefore(dateFrom, 'day'))
             {
                 $('#warning').show();
                 errors.push('${messageSource.getMessage("substituting.date.fromto.lesser")}');
