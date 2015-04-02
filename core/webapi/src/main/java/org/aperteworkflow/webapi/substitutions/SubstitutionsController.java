@@ -63,10 +63,17 @@ public class SubstitutionsController {
         if(viewName == null)
             throw new RuntimeException("There is no view-jsp inintial paramter set for this portlet");
 
-
         ModelAndView modelView = new ModelAndView();
-        modelView.addObject(WebApiConstants.USER_PARAMETER_NAME, user);
         modelView.setView(viewName);
+        if (user == null || user.getLogin() == null)
+        {
+            modelView.setViewName("login");
+        }
+        else
+        {
+            modelView.setView(viewName);
+        }
+        modelView.addObject(WebApiConstants.USER_PARAMETER_NAME, user);
 
         return modelView;
     }
