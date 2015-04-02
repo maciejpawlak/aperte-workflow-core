@@ -90,9 +90,10 @@
                     return {
                         q: term, // search term
                         page_limit: 10,
-                        controller: "usercontroller",
+                        controller: "complaintregistrycontroller",
                         page: page,
-                        action: "getAllUsers"
+                        action: "getAllUsers",
+                        inactive: false
                     };
                 },
                 results: function (data, page)
@@ -125,25 +126,27 @@
         }).select2('readonly', "${canEdit}" == "no");
         $("#substitute-user-${widgetId}").select2('val', '${substitutingUserLoginFullName}');
 
-        $("#substituting-date-from-datepicker-${widgetId}").datepicker({
-            format: "dd-mm-yyyy",
-            startDate: moment().format("DD-MM-YYYY"),
-            language: "pl",
-            minDate: 0,
-            autoclose:true,
-            todayHighlight : true
-        });
-        $("#substituting-date-from-datepicker-${widgetId}").datepicker('update', '${substitutingDateFrom}');
 
-        $("#substituting-date-to-datepicker-${widgetId}").datepicker({
-            format: "dd-mm-yyyy",
-            startDate: moment().format("DD-MM-YYYY"),
-            language: "pl",
-            minDate: 0,
-            autoclose:true,
-            todayHighlight : true
-        });
-        $("#substituting-date-to-datepicker-${widgetId}").datepicker('update', '${substitutingDateTo}');
+        <#if canEdit != "no">
+            $("#substituting-date-from-datepicker-${widgetId}").datepicker({
+                format: "yyyy-mm-dd",
+                language: "pl",
+                minDate: 0,
+                autoclose:true,
+                todayHighlight : true
+            });
+        </#if>
+
+
+        <#if canEdit != "no">
+            $("#substituting-date-to-datepicker-${widgetId}").datepicker({
+                format: "yyyy-mm-dd",
+                language: "pl",
+                minDate: 0,
+                autoclose:true,
+                todayHighlight : true
+            });
+        </#if>
 
 
     });

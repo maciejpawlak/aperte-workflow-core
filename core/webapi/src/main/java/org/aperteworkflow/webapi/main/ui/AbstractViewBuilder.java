@@ -36,8 +36,6 @@ import static pl.net.bluesoft.util.lang.Strings.hasText;
 public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
     protected static Logger logger = Logger.getLogger(AbstractViewBuilder.class.getName());
 
-    public static final String CLAIM_ACTION_NAME = "claim";
-
     protected List<? extends IStateWidget> widgets;
     protected I18NSource i18Source;
     protected UserData user;
