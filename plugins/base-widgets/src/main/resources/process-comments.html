@@ -110,14 +110,14 @@
     function process_comments_button_add_click() {
 
         var date = new Date();
-
+console.log("test1");
         var day = date.getDate();
         var twoDigitMonth = format_2_digit(date.getMonth() + 1);
         var year = date.getFullYear();
         var twoDigitYear = date.getFullYear().toString().substr(2,2);
 
         var time = format_2_digit(date.getHours()) + ":" + format_2_digit(date.getMinutes());
-        var fullDate = day + "-" + twoDigitMonth + "-" + year + " " +  time + ":" + date.getSeconds();
+        var fullDate = year + "-" + twoDigitMonth + "-" + day + " " +  time + ":" + date.getSeconds();
         var dateToDisplay = day + "-" + twoDigitMonth + "-" + twoDigitYear + " " +  time;
 
         var body = $('#process_comments_body').val();
