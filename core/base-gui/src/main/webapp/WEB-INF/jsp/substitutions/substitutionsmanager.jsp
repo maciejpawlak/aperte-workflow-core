@@ -329,18 +329,14 @@
 											"sName" : "dateFrom",
 											"bSortable" : true,
 											"mData" : function(object) {
-												return $.format.date(
-														object.dateFrom,
-														'yyyy-MM-dd');
+												return moment(object.dateFrom).format('YYYY-MM-DD');
 											}
 										},
 										{
 											"sName" : "dateTo",
 											"bSortable" : true,
 											"mData" : function(object) {
-												return $.format.date(
-														object.dateTo,
-														'yyyy-MM-dd');
+												return moment(object.dateTo).format('YYYY-MM-DD');
 											}
 										},
 										{

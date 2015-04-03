@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * @author: Maciej
@@ -44,6 +45,7 @@ public class CommentDataHandler implements IWidgetDataHandler {
     private List<ProcessComment> convert(List<ProcessCommentBean> list, IAttributesConsumer consumer) {
         List<ProcessComment> result = new ArrayList<ProcessComment>();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone("Europe/Warsaw"));
 
         for (ProcessCommentBean bean : list) {
             result.add(convert(bean,  consumer, format));
