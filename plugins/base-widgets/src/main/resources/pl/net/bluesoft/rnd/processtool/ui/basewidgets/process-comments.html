@@ -36,7 +36,7 @@
                     <#assign substituteUser = processComment.substituteLogin!""/>
                     <li class="list-group-item">
                         <h4 class="list-group-item-heading">
-                            ${processComment.authorFullName} (${processComment.authorLogin}) [${processComment.createTime?string("dd-MM-yy HH:mm")}]
+                            ${processComment.authorFullName} (${processComment.authorLogin}) [${processComment.createTime?string("dd-MM-yyyy HH:mm:ss")}]
                             <#if substituteUser != "">
                                 ${messageSource.getMessage("process.history.subsituted.by")}
                                 ${processComment.substituteFullName} (${processComment.substituteLogin})
@@ -109,17 +109,7 @@
 
     function process_comments_button_add_click() {
 
-        var date = new Date();
-
-        var day = date.getDate();
-        var twoDigitMonth = format_2_digit(date.getMonth() + 1);
-        var year = date.getFullYear();
-        var twoDigitYear = date.getFullYear().toString().substr(2,2);
-
-        var time = format_2_digit(date.getHours()) + ":" + format_2_digit(date.getMinutes());
-        var fullDate = day + "-" + twoDigitMonth + "-" + year + " " +  time + ":" + date.getSeconds();
-        var dateToDisplay = day + "-" + twoDigitMonth + "-" + twoDigitYear + " " +  time;
-
+        var date = moment();
         var body = $('#process_comments_body').val();
         body = $("<div/>").text(body).html();
         var author = '${user.login}';
@@ -130,7 +120,7 @@
         }
 
         processCommentsAddedComments.push({
-            createDate: fullDate,
+            createDate: date.format('DD-MM-YYYY HH:mm:ss'),
             body: body,
             authorLogin: author,
             authorFullName: authorFullName
@@ -139,7 +129,7 @@
         var text = '<li class="list-group-item">' +
                 '<h4 class="list-group-item-heading">'+
                 authorFullName + ' (' + author + ')' +
-                " [" + dateToDisplay + "] " +
+                " [" + date.format('DD-MM-YYYY HH:mm:ss')   + "] " +
                 '</h4><p class="list-group-item-text">'+
                             body+
                         '</p></li>';
