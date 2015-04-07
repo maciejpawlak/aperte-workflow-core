@@ -9,6 +9,7 @@ import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
 import pl.net.bluesoft.rnd.processtool.model.config.ProcessQueueConfig;
 import pl.net.bluesoft.rnd.processtool.model.config.ProcessQueueRight;
 import pl.net.bluesoft.rnd.processtool.model.config.ProcessStateAction;
+import pl.net.bluesoft.rnd.processtool.model.nonpersistent.BpmPseudoTask;
 import pl.net.bluesoft.rnd.processtool.plugins.ActionPermissionChecker;
 import pl.net.bluesoft.rnd.processtool.plugins.QueueBean;
 import pl.net.bluesoft.rnd.processtool.plugins.TaskPermissionChecker;
@@ -266,6 +267,11 @@ public class TaskViewBuilder extends AbstractViewBuilder<TaskViewBuilder> {
         return queueBeans;
     }
 
+    private boolean isPseudoTask()
+    {
+        return task != null && task instanceof BpmPseudoTask;
+    }
+
 
     private boolean isTaskHasNoOwner() {
         return task.getAssignee() == null || task.getAssignee().isEmpty();
@@ -282,6 +288,11 @@ public class TaskViewBuilder extends AbstractViewBuilder<TaskViewBuilder> {
     @Override
     protected TaskViewBuilder getThis() {
         return this;
+    }
+
+    @Override
+    protected boolean showGenericButtons() {
+        return !isPseudoTask();
     }
 
 
