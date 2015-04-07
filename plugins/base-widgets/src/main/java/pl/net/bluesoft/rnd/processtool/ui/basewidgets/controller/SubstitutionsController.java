@@ -26,10 +26,16 @@ import pl.net.bluesoft.rnd.processtool.web.controller.OsgiWebRequest;
 import pl.net.bluesoft.rnd.processtool.web.domain.DataPagingBean;
 import pl.net.bluesoft.rnd.processtool.web.domain.GenericResultBean;
 import pl.net.bluesoft.rnd.processtool.web.domain.IProcessToolRequestContext;
+import pl.net.bluesoft.util.lang.exception.UtilityInvocationException;
 
 import java.io.IOException;
-import java.lang.Long;import java.lang.String;import java.util.Date;
+import java.lang.Long;import java.lang.String;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -162,8 +168,10 @@ public class SubstitutionsController implements IOsgiWebController {
 		userSubstitution.setId(id);
 		userSubstitution.setUserLogin(userLogin);
 		userSubstitution.setUserSubstituteLogin(userSubstituteLogin);
-		userSubstitution.setDateFrom(dateFrom);
-		userSubstitution.setDateTo(dateTo);
+//		userSubstitution.setDateFrom(dateFrom); original
+//		userSubstitution.setDateTo(dateTo);
+        userSubstitution.setDateFrom(beginOfDay(dateFrom));
+        userSubstitution.setDateTo(endOfDay(dateTo));
 
 		IProcessToolRequestContext requestContext = invocation.getProcessToolRequestContext();
 		ProcessToolContext ctx = invocation.getProcessToolContext();
@@ -172,4 +180,22 @@ public class SubstitutionsController implements IOsgiWebController {
 
 		return result;
 	}
+
+    public static Date beginOfDay(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeZone(TimeZone.getTimeZone("Europe/Warsaw"));
+        c.setTime(date);
+        c.set(c.get(1), c.get(2), c.get(5), 0, 0, 0);
+        c.set(14, 0);
+        return c.getTime();
+    }
+
+    public static Date endOfDay(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeZone(TimeZone.getTimeZone("Europe/Warsaw"));
+        c.setTime(date);
+        c.set(c.get(1), c.get(2), c.get(5), 23, 59, 59);
+        c.set(14, 999);
+        return c.getTime();
+    }
 }
