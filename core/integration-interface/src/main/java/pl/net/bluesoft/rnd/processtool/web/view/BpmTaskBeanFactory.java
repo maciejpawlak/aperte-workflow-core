@@ -44,6 +44,7 @@ public class BpmTaskBeanFactory implements ITasksListViewBeanFactory {
         taskBean.setCreationDate(task.getCreateDate());
         taskBean.setAssignee(task.getAssignee());
         taskBean.setCreator(task.getCreator());
+        taskBean.setReceivedDate(task.getCreateDate());
         taskBean.setTaskId(task.getInternalTaskId());
         taskBean.setInternalProcessId(task.getInternalProcessId());
         taskBean.setBusinessStatus(messageSource.getMessage(processStatus));

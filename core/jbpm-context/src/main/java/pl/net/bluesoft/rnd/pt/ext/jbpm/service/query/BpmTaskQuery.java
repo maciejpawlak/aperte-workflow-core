@@ -385,7 +385,7 @@ public class BpmTaskQuery {
         if (hasText(searchExpression)) {
             sb.append(" AND (");
 
-            sb.append(" (CASE WHEN process.externalKey IS NOT NULL THEN process.externalKey ELSE process.internalId END) ilike '%' || :expression || '%'");
+            sb.append(" process.externalKey is not null AND process.externalKey ilike '%' || :expression || '%'");
             queryParameters.add(new QueryParameter("expression", searchExpression.trim()));
 
 //            sb.append("task_.actualowner_id LIKE '%' || :expression || '%'");

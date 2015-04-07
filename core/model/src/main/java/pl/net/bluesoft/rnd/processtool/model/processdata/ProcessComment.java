@@ -7,7 +7,9 @@ import pl.net.bluesoft.rnd.processtool.model.AbstractPersistentEntity;
 import pl.net.bluesoft.rnd.processtool.model.ProcessInstance;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  *
@@ -131,6 +133,14 @@ public class ProcessComment extends AbstractPersistentEntity {
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
+
+    public String getFormattedDate(String format)
+    {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        //TODO user timezone
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Europe/Warsaw"));
+        return simpleDateFormat.format(getCreateTime());
+    }
 
 	public ProcessInstance getProcessInstance() {
 		return processInstance;

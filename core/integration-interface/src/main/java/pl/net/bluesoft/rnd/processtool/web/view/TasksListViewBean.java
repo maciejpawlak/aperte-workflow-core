@@ -15,6 +15,7 @@ public abstract class TasksListViewBean extends AbstractResultBean {
     private String taskId;
     private Date creationDate;
     private String creator;
+    private Date receivedDate;
 
     public String getQueueName() {
         return queueName;
@@ -62,5 +63,13 @@ public abstract class TasksListViewBean extends AbstractResultBean {
 
     public void setCreator(String creator) {
         this.creator = creator;
+    }
+
+    public Date getReceivedDate() {
+        return receivedDate;
+    }
+
+    public void setReceivedDate(Date receivedDate) {
+        this.receivedDate = receivedDate;
     }
 }

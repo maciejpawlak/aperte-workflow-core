@@ -2,8 +2,10 @@ package pl.net.bluesoft.rnd.processtool.model;
 
 import static pl.net.bluesoft.util.lang.FormatUtil.nvl;
 
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
@@ -115,6 +117,14 @@ public class ProcessInstanceLog extends AbstractPersistentEntity {
 	public void setEntryDate(Date entryDate) {
 		this.entryDate = entryDate;
 	}
+
+    public String getFormattedDate(String format)
+    {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        //TODO user timezone
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Europe/Warsaw"));
+        return simpleDateFormat.format(getEntryDate());
+    }
 
 	public String getEventI18NKey() {
 		return eventI18NKey;

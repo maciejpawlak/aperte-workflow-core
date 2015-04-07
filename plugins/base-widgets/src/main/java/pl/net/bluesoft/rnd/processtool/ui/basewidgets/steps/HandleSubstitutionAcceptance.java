@@ -9,15 +9,17 @@ import pl.net.bluesoft.rnd.processtool.ui.widgets.annotations.AliasName;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.annotations.AperteDoc;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.annotations.AutoWiredProperty;
 import pl.net.bluesoft.rnd.util.StepUtil;
+import pl.net.bluesoft.util.lang.exception.UtilityInvocationException;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
-import java.util.logging.Level;
+import java.util.TimeZone;
 import java.util.logging.Logger;
 
 import static pl.net.bluesoft.rnd.processtool.ProcessToolContext.Util.getThreadProcessToolContext;
-import static pl.net.bluesoft.util.lang.DateUtil.beginOfDay;
-import static pl.net.bluesoft.util.lang.DateUtil.endOfDay;
-import static pl.net.bluesoft.util.lang.Formats.parseShortDate;
 
 /**
  * @author mpawlak@bluesoft.net.pl
@@ -65,5 +67,33 @@ public class HandleSubstitutionAcceptance implements ProcessToolProcessStep
         logger.warning("Added substitution for user " + userSubstitution.getUserLogin());
         return STATUS_OK;
 
+    }
+
+    public static Date parseShortDate(String val) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+
+        try {
+            return sdf.parse(val);
+        } catch (ParseException var3) {
+            throw new UtilityInvocationException(var3);
+        }
+    }
+
+    public static Date beginOfDay(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeZone(TimeZone.getTimeZone("Europe/Warsaw"));
+        c.setTime(date);
+        c.set(c.get(1), c.get(2), c.get(5), 0, 0, 0);
+        c.set(14, 0);
+        return c.getTime();
+    }
+
+    public static Date endOfDay(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeZone(TimeZone.getTimeZone("Europe/Warsaw"));
+        c.setTime(date);
+        c.set(c.get(1), c.get(2), c.get(5), 23, 59, 59);
+        c.set(14, 999);
+        return c.getTime();
     }
 }

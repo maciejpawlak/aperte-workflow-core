@@ -10,7 +10,10 @@ import pl.net.bluesoft.rnd.processtool.model.processdata.ProcessComment;
 import pl.net.bluesoft.rnd.processtool.usersource.IUserSource;
 import pl.net.bluesoft.util.lang.Strings;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import static pl.net.bluesoft.util.lang.Strings.withEnding;
 
@@ -35,7 +38,9 @@ public class TaskUtil {
             String authorFullName = actionPerformer.getRealName();
 
             ProcessComment processComment = new ProcessComment();
-            processComment.setCreateTime(new Date());
+
+            Calendar calendar = GregorianCalendar.getInstance(TimeZone.getTimeZone("Europe/Warsaw"));
+            processComment.setCreateTime(calendar.getTime());
             processComment.setProcessState(task.getTaskName());
             processComment.setBody(comment);
             processComment.setAuthorLogin(authorLogin);
