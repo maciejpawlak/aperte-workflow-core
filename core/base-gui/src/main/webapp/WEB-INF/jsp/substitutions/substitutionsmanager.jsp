@@ -144,12 +144,26 @@
 
 <script type="text/javascript">
 	function editSubstitution(id, dateFrom, dateTo, userLogin, userSubstituteLogin) {
+		//special for IE 7
+		var fromDate = new Date(dateFrom);
+		fromDate.setHours(0);
+		var toDate = new Date(dateTo);
+		toDate.setHours(0);
+		// end special for IE 7
 		$("#UserLogin").select2('val', userLogin);
 		$("#UserSubstituteLogin").select2('val', userSubstituteLogin);
-		$("#SubstitutingDateFromPicker").datepicker("setDate", new Date(new Date($.format.date(dateFrom,'yyyy-MM-dd')).setHours(0)));
-		$("#SubstitutingDateToPicker").datepicker("setDate", new Date(new Date($.format.date(dateTo,'yyyy-MM-dd')).setHours(0)));
+		$("#SubstitutingDateFromPicker").datepicker("setDate", new Date(fromDate));
+		$("#SubstitutingDateToPicker").datepicker("setDate", new Date(toDate));
+		var dateFromTmp = new Date(fromDate);
+		var dateToTmp = new Date(toDate);
+		$("#SubstitutingDateFrom").val("" + padStr(dateFromTmp.getFullYear()) + "-" + padStr(1 + dateFromTmp.getMonth()) + "-" + padStr(dateFromTmp.getDate()));
+		$("#SubstitutingDateTo").val("" + padStr(dateToTmp.getFullYear()) + "-" + padStr(1 + dateToTmp.getMonth()) + "-" + padStr(dateToTmp.getDate()));
 		$("#SubstitutionId").val(id);
 	}
+	function padStr(i) {
+		return (i < 10) ? "0" + i : "" + i;
+	}
+
 
 	function onSubmitNewSubstitution(e)
 	{
@@ -198,8 +212,7 @@
 			isValid=false;
 		}
 
-		if (new Date($("#SubstitutingDateFrom").val()) > new Date($(
-				"#SubstitutingDateTo").val())) {
+		if ($("#SubstitutingDateFrom").val() > $("#SubstitutingDateTo").val()) {
 			addAlert('<spring:message code="substitution.alert.invalid.date" />');
 			isValid=false;
 		}
@@ -216,9 +229,12 @@
 
 	function resetSubstitutionForm()
 	{
+		var tmp = $("#SubstitutionForm");
 		$("#SubstitutionForm")[0].reset();
 		$("#SubstitutionId").val("");
 		$("#SubstitutionForm input.select2").select2("val", "");
+		$("#SubstitutingDateFrom").val("");
+		$("#SubstitutingDateTo").val("");
 	}
 
 	function onNewSubstitution(e) {
