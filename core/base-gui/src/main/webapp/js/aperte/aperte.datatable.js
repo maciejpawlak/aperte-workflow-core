@@ -110,6 +110,20 @@
 			}
 
 			this.dataTable = $('#'+this.tableId).DataTable(definition);
+				
+			var searchWasEnabled = this.dataTable.search() != "";
+			if(searchWasEnabled)
+				this.dataTable.search('').draw();
+			else
+			{
+				$.each(this.dataTable.columns().search(), function(columnIndex, columnSearch) {
+					if(columnSearch && columnSearch != "")
+						searchWasEnabled = true;
+				});
+
+				if(searchWasEnabled)
+					this.dataTable.columns().search('').draw();
+			}
 		}
 
 		this.toggleColumnButton = function(columnName, active)

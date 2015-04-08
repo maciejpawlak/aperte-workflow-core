@@ -1,5 +1,6 @@
 package org.aperteworkflow.webapi.main.processes.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.aperteworkflow.ui.help.datatable.JQueryDataTable;
 import org.aperteworkflow.ui.help.datatable.JQueryDataTableColumn;
 import org.aperteworkflow.ui.help.datatable.JQueryDataTableUtil;
@@ -36,6 +37,7 @@ import pl.net.bluesoft.rnd.processtool.web.domain.ErrorResultBean;
 import pl.net.bluesoft.rnd.processtool.web.domain.GenericResultBean;
 import pl.net.bluesoft.rnd.processtool.web.domain.IProcessToolRequestContext;
 import pl.net.bluesoft.rnd.processtool.web.view.*;
+import pl.net.bluesoft.rnd.util.TaskUtil;
 import pl.net.bluesoft.rnd.util.i18n.I18NSource;
 
 import javax.servlet.ServletException;
@@ -154,7 +156,8 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
                              task.getProcessInstance().setSimpleAttribute(changeOwnerAttributeKey, changeOwnerAttributeValue);
                         }
 
-	                    saveComment(task);
+                        if(StringUtils.isNotEmpty(comment))
+                            TaskUtil.saveComment(task, context.getUser(), getUserSource(), comment);
 
                         List<BpmTask> newTasks = getBpmSession(context, task.getAssignee()).performAction(actionName, task, false);
 
