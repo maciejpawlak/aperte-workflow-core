@@ -113,6 +113,8 @@ public class IMAPPropertiesSessionProvider implements IIMAPMailSessionProvider
         props.setProperty("mail.imap.socketFactory.class", mailAccountProperties.getMailSocketFactoryClass());
         props.setProperty("mail.imap.socketFactory.port", port);
         props.setProperty("mail.imaps.ssl.trust", "*");
+        props.setProperty("mail.mime.encodefilename", "true");
+        props.setProperty("mail.mime.decodefilename", "true");
 
         if(StringUtils.isNotEmpty(mailAccountProperties.getMailAuthMechanism()))
             props.setProperty("mail.imap.auth.mechanisms", mailAccountProperties.getMailAuthMechanism());

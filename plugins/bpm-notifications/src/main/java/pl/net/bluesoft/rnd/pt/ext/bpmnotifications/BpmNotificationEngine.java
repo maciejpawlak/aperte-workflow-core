@@ -35,6 +35,7 @@ import javax.activation.DataHandler;
 import javax.mail.*;
 import javax.mail.internet.*;
 import javax.mail.util.ByteArrayDataSource;
+import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -672,6 +673,8 @@ public class BpmNotificationEngine implements IBpmNotificationService
 		if(notification.hasAttachments()) {
 			List<BpmAttachment> attachments = notification.decodeAttachments();
 
+            String attachmentsHeaderValue = "";
+            Integer attachmentIndex = 0;
 	        for (BpmAttachment attachment : attachments) {
 				MimeBodyPart attachmentPart = createAttachmentPart(attachment);
 
@@ -680,7 +683,9 @@ public class BpmNotificationEngine implements IBpmNotificationService
 				if (logger.isLoggable(Level.INFO)) {
 					logger.info("Added attachment " + attachment.getName());
 				}
-	        }       
+	        }
+
+          //  message.addHeader("Content-Disposition", "attachment; " +attachmentsHeaderValue);
         }
 
 		for (int i = 0; i < extractedImages.size(); ++i) {
@@ -711,12 +716,17 @@ public class BpmNotificationEngine implements IBpmNotificationService
 		return bodyPart;
 	}
 
-	private static MimeBodyPart createAttachmentPart(BpmAttachment attachment) throws MessagingException {
+	private static MimeBodyPart createAttachmentPart(BpmAttachment attachment) throws MessagingException, UnsupportedEncodingException {
+
+
 		MimeBodyPart attachmentPart = new MimeBodyPart();
 		ByteArrayDataSource ds = new ByteArrayDataSource(attachment.getBody(), attachment.getContentType());
-
+//        attachmentPart.addHeader("Content-Type", attachment.getContentType());
+//        attachmentPart.addHeader("Content-Transfer-Encoding", "base64");
+//        attachmentPart.addHeader("Content-Disposition", "attachment; " +
+//                "filename=\"" + MimeUtility.encodeWord(attachment.getName(), "utf-8", "Q") + "\"");
 		attachmentPart.setDataHandler(new DataHandler(ds));
-		attachmentPart.setFileName(attachment.getName());
+		attachmentPart.setFileName(MimeUtility.encodeWord(attachment.getName(), "utf-8", "Q"));
 		return attachmentPart;
 	}
 
