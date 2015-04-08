@@ -1308,7 +1308,9 @@ public class ProcessToolJbpmSession extends AbstractProcessToolSession implement
 			ProcessInstanceLog log = new ProcessInstanceLog();
 
 			log.setState(null);
-			log.setEntryDate(new Date());
+            Calendar calendar = GregorianCalendar.getInstance();
+            Date currentTime = calendar.getTime();
+			log.setEntryDate(currentTime);
 			if (parentProcessInstance != null) {
 			    log.setEventI18NKey("process.log.subprocess-started");
 			} else {

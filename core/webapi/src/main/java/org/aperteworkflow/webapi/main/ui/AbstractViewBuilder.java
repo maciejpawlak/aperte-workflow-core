@@ -72,6 +72,8 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
 
     protected abstract T getThis();
 
+    protected abstract boolean showGenericButtons();
+
     public StringBuilder build() throws Exception
     {
 
@@ -94,7 +96,8 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
             return stringBuilder;
         }
 
-        buildActionButtons(document);
+        if(showGenericButtons())
+            buildActionButtons(document);
 
         final Element widgetsNode = document.createElement("div")
                 .attr("id", getVaadinWidgetsHtmlId())

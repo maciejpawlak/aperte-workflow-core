@@ -90,9 +90,10 @@
                     return {
                         q: term, // search term
                         page_limit: 10,
-                        controller: "usercontroller",
+                        controller: "complaintregistrycontroller",
                         page: page,
-                        action: "getAllUsers"
+                        action: "getAllUsers",
+                        inactive: false
                     };
                 },
                 results: function (data, page)
@@ -125,25 +126,31 @@
         }).select2('readonly', "${canEdit}" == "no");
         $("#substitute-user-${widgetId}").select2('val', '${substitutingUserLoginFullName}');
 
-        $("#substituting-date-from-datepicker-${widgetId}").datepicker({
-            format: "dd-mm-yyyy",
-            startDate: moment().format("DD-MM-YYYY"),
-            language: "pl",
-            minDate: 0,
-            autoclose:true,
-            todayHighlight : true
-        });
-        $("#substituting-date-from-datepicker-${widgetId}").datepicker('update', '${substitutingDateFrom}');
 
-        $("#substituting-date-to-datepicker-${widgetId}").datepicker({
-            format: "dd-mm-yyyy",
-            startDate: moment().format("DD-MM-YYYY"),
-            language: "pl",
-            minDate: 0,
-            autoclose:true,
-            todayHighlight : true
-        });
-        $("#substituting-date-to-datepicker-${widgetId}").datepicker('update', '${substitutingDateTo}');
+
+            $("#substituting-date-from-datepicker-${widgetId}").datepicker({
+                format: "dd-mm-yyyy",
+                startDate: moment().format("DD-MM-YYYY"),
+                language: "pl",
+                minDate: 0,
+                autoclose:true,
+                todayHighlight : true
+            });
+            $("#substituting-date-from-datepicker-${widgetId}").datepicker('update', '${substitutingDateFrom}');
+
+
+
+
+            $("#substituting-date-to-datepicker-${widgetId}").datepicker({
+                format: "dd-mm-yyyy",
+                startDate: moment().format("DD-MM-YYYY"),
+                language: "pl",
+                minDate: 0,
+                autoclose:true,
+                todayHighlight : true
+            });
+            $("#substituting-date-to-datepicker-${widgetId}").datepicker('update', '${substitutingDateTo}');
+
 
 
     });
@@ -161,15 +168,21 @@
 			errors.push('${messageSource.getMessage("substitute.user.empty")}');
 		}
 
+		var now = moment().startOf('day');
+
 		if(!substitutingDateFrom)
 		{
 			$('#warning').show();
 			errors.push('${messageSource.getMessage("substituting.date.from.empty")}');
 		}
-		else if(new Date(substitutingDateFrom).setHours(0,0,0,0) < (new Date()).setHours(0,0,0,0))
+		else
 		{
-            $('#warning').show();
-            errors.push('${messageSource.getMessage("substituting.date.from.past")}');
+		    var dateFrom = typeof substitutingDateFrom == 'string' ? moment(substitutingDateFrom, "DD-MM-YYYY") : null;
+            console.log('datefrom: '+dateFrom);
+		    if ((dateFrom.isValid()) && (now.isAfter(dateFrom))){
+                $('#warning').show();
+                errors.push('${messageSource.getMessage("substituting.date.from.past")}');
+            }
         }
 
         if(!substitutingDateTo)
@@ -179,13 +192,14 @@
 		}
 		else
 		{
-		    if(new Date(substitutingDateTo).setHours(0,0,0,0) < (new Date()).setHours(0,0,0,0))
-		    {
+			var dateTo = typeof substitutingDateFrom == 'string' ? moment(substitutingDateTo, "DD-MM-YYYY") : null;
+			var dateFrom = typeof substitutingDateFrom == 'string' ? moment(substitutingDateFrom, "DD-MM-YYYY") : null;
+
+		    if ((dateTo.isValid()) && (now.isAfter(dateTo))){
                 $('#warning').show();
                 errors.push('${messageSource.getMessage("substituting.date.to.past")}');
             }
-
-            if(substitutingDateTo && substitutingDateFrom && (new Date(substitutingDateTo).setHours(0,0,0,0) < (new Date(substitutingDateFrom)).setHours(0,0,0,0)))
+            else if(substitutingDateTo && substitutingDateFrom && dateTo.isBefore(dateFrom, 'day'))
             {
                 $('#warning').show();
                 errors.push('${messageSource.getMessage("substituting.date.fromto.lesser")}');
