@@ -1,15 +1,18 @@
 package pl.net.bluesoft.rnd.processtool.plugins;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContextFactory;
 import pl.net.bluesoft.rnd.processtool.ReturningProcessToolContextCallback;
 import pl.net.bluesoft.rnd.processtool.authorization.IAuthorizationService;
 import pl.net.bluesoft.rnd.processtool.bpm.BpmTaskNotification;
 import pl.net.bluesoft.rnd.processtool.bpm.ProcessToolBpmSession;
-import pl.net.bluesoft.rnd.processtool.di.ObjectFactory;
+import pl.net.bluesoft.rnd.processtool.model.UserData;
 import pl.net.bluesoft.util.lang.Strings;
 import pl.net.bluesoft.util.lang.cquery.func.F;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
@@ -25,7 +28,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static org.apache.commons.lang.StringEscapeUtils.escapeXml;
+
 import org.apache.commons.codec.binary.Base64;
+
 import static pl.net.bluesoft.rnd.processtool.plugins.ProcessToolRegistry.Util.getRegistry;
 import static pl.net.bluesoft.util.lang.Formats.nvl;
 import static pl.net.bluesoft.util.lang.cquery.CQuery.from;
@@ -35,140 +40,147 @@ import static pl.net.bluesoft.util.lang.cquery.CQuery.from;
  * Date: 2014-01-26
  */
 public class NotificationServlet extends HttpServlet {
-	private static final Logger logger = Logger.getLogger(NotificationServlet.class.getName());
+    private static final Logger logger = Logger.getLogger(NotificationServlet.class.getName());
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.setContentType("text/plain");
+    @Autowired
+    IAuthorizationService authorizationService;
 
-		String lang = req.getParameter("l");
-		String login = req.getParameter("u");
-		long timestamp = Long.parseLong(nvl(req.getParameter("t"), "-1"));
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
+    }
 
-		if (!Strings.hasText(lang) || !Strings.hasText(login) || timestamp < 0) {
-			output(resp, "Incomplete arguments");
-			return;
-		}
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("text/plain");
 
-		String[] credentials = getCredentials(req);
+        String lang = req.getParameter("l");
+        String login = req.getParameter("u");
+        long timestamp = Long.parseLong(nvl(req.getParameter("t"), "-1"));
 
-		if (credentials == null) {
-			output(resp, "No auth");
-			return;
-		}
+        if (!Strings.hasText(lang) || !Strings.hasText(login) || timestamp < 0) {
+            output(resp, "Incomplete arguments");
+            return;
+        }
 
-		IAuthorizationService authorizationService = ObjectFactory.create(IAuthorizationService.class);
+        String[] credentials = getCredentials(req);
 
-		try {
-			authorizationService.authenticateByLogin(credentials[0], credentials[1]);
-		}
-		catch (Exception e) {
-			output(resp, "Auth failed ");
-			logger.warning(String.format("Invalid login %s %s", credentials[0], credentials[1]));
-			return;
-		}
+        if (credentials == null) {
+            output(resp, "No auth");
+            return;
+        }
 
-		Date date = timestamp != 0 ? new Date(timestamp) : null;
+        try {
+            UserData userData = authorizationService.authenticateByLogin(credentials[0], credentials[1]);
 
-		doExecute(lang, login, date, resp);
-	}
+        } catch (Exception e) {
+            output(resp, "Auth failed");
+            logger.warning(String.format("Invalid login %s %s", credentials[0], credentials[1]));
+            return;
+        }
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		doGet(req, resp);
-	}
+        Date date = timestamp != 0 ? new Date(timestamp) : null;
 
-	private String[] getCredentials(HttpServletRequest req) {
-		String authHeader = req.getHeader("Authorization");
+        doExecute(lang, login, date, resp);
+    }
 
-		if (authHeader != null) {
-			StringTokenizer st = new StringTokenizer(authHeader);
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
+    }
 
-			if (st.hasMoreTokens()) {
-				String basic = st.nextToken();
+    private String[] getCredentials(HttpServletRequest req) {
+        String authHeader = req.getHeader("Authorization");
 
-				if (basic.equalsIgnoreCase("Basic")) {
-					try {
-						String credentials = new String(Base64.decodeBase64(st.nextToken()), "UTF-8");
+        if (authHeader != null) {
+            StringTokenizer st = new StringTokenizer(authHeader);
 
-						int p = credentials.indexOf(':');
+            if (st.hasMoreTokens()) {
+                String basic = st.nextToken();
 
-						if (p != -1) {
-							String login = credentials.substring(0, p).trim();
-							String password = credentials.substring(p + 1).trim();
+                if (basic.equalsIgnoreCase("Basic")) {
+                    try {
+                        String credentials = new String(Base64.decodeBase64(st.nextToken()), "UTF-8");
 
-							return new String[] { login, password };
-						}
-					} catch (Exception e) {
-						logger.log(Level.SEVERE, "Couldn't retrieve authentication", e);
-					}
-				}
-			}
-		}
+                        int p = credentials.indexOf(':');
 
-		return null;
-	}
+                        if (p != -1) {
+                            String login = credentials.substring(0, p).trim();
+                            String password = credentials.substring(p + 1).trim();
 
-	private static void doExecute(final String lang, final String login, final Date date, HttpServletResponse resp) throws IOException {
-		List<BpmTaskNotification> notifications = getRegistry().withProcessToolContext(
-				new ReturningProcessToolContextCallback<List<BpmTaskNotification>>() {
-					@Override
-					public List<BpmTaskNotification> processWithContext(ProcessToolContext ctx) {
-						ProcessToolBpmSession session = getRegistry().getProcessToolSessionFactory().createSession(login);
+                            return new String[]{login, password};
+                        }
+                    } catch (Exception e) {
+                        logger.log(Level.SEVERE, "Couldn't retrieve authentication", e);
+                    }
+                }
+            }
+        }
 
-						return session.getNotifications(date, getLocale(lang));
-					}
-				}, ProcessToolContextFactory.ExecutionType.NO_TRANSACTION);
+        return null;
+    }
 
-		printXml(notifications, resp, date);
-	}
+    private static void doExecute(final String lang, final String login, final Date date, HttpServletResponse resp) throws IOException {
+        List<BpmTaskNotification> notifications = getRegistry().withProcessToolContext(
+                new ReturningProcessToolContextCallback<List<BpmTaskNotification>>() {
+                    @Override
+                    public List<BpmTaskNotification> processWithContext(ProcessToolContext ctx) {
+                        ProcessToolBpmSession session = getRegistry().getProcessToolSessionFactory().createSession(login);
 
-	private static void printXml(List<BpmTaskNotification> notifications, HttpServletResponse resp, Date date) throws IOException {
-		Date maxDate = notifications.isEmpty() ? date : getMaxDate(notifications);
+                        return session.getNotifications(date, getLocale(lang));
+                    }
+                }, ProcessToolContextFactory.ExecutionType.NO_TRANSACTION);
 
-		ServletOutputStream out = resp.getOutputStream();
+        printXml(notifications, resp, date);
+    }
 
-		out.print(String.format("<r t=\"%s\">", maxDate != null ? maxDate.getTime() : 0));
+    private static void printXml(List<BpmTaskNotification> notifications, HttpServletResponse resp, Date date) throws IOException {
+        Date maxDate = notifications.isEmpty() ? date : getMaxDate(notifications);
 
-		for (BpmTaskNotification notification : notifications) {
-			if (notification.getCompletionDate() == null) {
-				out.print(String.format("<n i=\"%s\" l=\"%s\" d=\"%s\" ad=\"%s\"/>",
-						notification.getTaskId(),
-						escapeXml(notification.getLink()),
-						escapeXml(nvl(notification.getDescription())),
-						escapeXml(nvl(notification.getAdditionalDescription()))
-				));
-			}
-		}
+        ServletOutputStream out = resp.getOutputStream();
 
-		for (BpmTaskNotification notification : notifications) {
-			if (notification.getCompletionDate() != null) {
-				out.print(String.format("<c i=\"%s\"/>", notification.getTaskId()));
-			}
-		}
+        out.print(String.format("<r t=\"%s\">", maxDate != null ? maxDate.getTime() : 0));
 
-		out.print("</r>");
+        for (BpmTaskNotification notification : notifications) {
+            if (notification.getCompletionDate() == null) {
+                out.print(String.format("<n i=\"%s\" l=\"%s\" d=\"%s\" ad=\"%s\"/>",
+                        notification.getTaskId(),
+                        escapeXml(notification.getLink()),
+                        escapeXml(nvl(notification.getDescription())),
+                        escapeXml(nvl(notification.getAdditionalDescription()))
+                ));
+            }
+        }
 
-		out.close();
-	}
+        for (BpmTaskNotification notification : notifications) {
+            if (notification.getCompletionDate() != null) {
+                out.print(String.format("<c i=\"%s\"/>", notification.getTaskId()));
+            }
+        }
 
-	private static Date getMaxDate(List<BpmTaskNotification> notifications) {
-		return from(notifications).select(new F<BpmTaskNotification, Date>() {
-			@Override
-			public Date invoke(BpmTaskNotification x) {
-				return nvl(x.getCompletionDate(), x.getCreationDate());
-			}
-		}).max();
-	}
+        out.print("</r>");
 
-	private static Locale getLocale(String lang) {
-		String[] parts = lang.split("_");
-		return parts.length > 1 ? new Locale(parts[0], parts[1]) : new Locale(parts[0]);
-	}
+        out.close();
+    }
 
-	private static void output(HttpServletResponse resp, String msg) throws IOException {
-		PrintWriter out = resp.getWriter();
-		out.print(msg);
-		out.close();
-	}
+    private static Date getMaxDate(List<BpmTaskNotification> notifications) {
+        return from(notifications).select(new F<BpmTaskNotification, Date>() {
+            @Override
+            public Date invoke(BpmTaskNotification x) {
+                return nvl(x.getCompletionDate(), x.getCreationDate());
+            }
+        }).max();
+    }
+
+    private static Locale getLocale(String lang) {
+        String[] parts = lang.split("_");
+        return parts.length > 1 ? new Locale(parts[0], parts[1]) : new Locale(parts[0]);
+    }
+
+    private static void output(HttpServletResponse resp, String msg) throws IOException {
+        PrintWriter out = resp.getWriter();
+        out.print(msg);
+        out.close();
+    }
 }
