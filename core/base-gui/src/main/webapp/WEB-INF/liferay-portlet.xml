@@ -163,6 +163,8 @@
     <header-portlet-css>/sa/css/select2-bootstrap.css</header-portlet-css>
     <header-portlet-css>/sa/css/liferay.css</header-portlet-css>
     <header-portlet-javascript>/sa/js/respond.min.js</header-portlet-javascript>
+    <header-portlet-javascript>/sa/js/jquery.alphanum.js</header-portlet-javascript>
+
 </portlet>
 
 
