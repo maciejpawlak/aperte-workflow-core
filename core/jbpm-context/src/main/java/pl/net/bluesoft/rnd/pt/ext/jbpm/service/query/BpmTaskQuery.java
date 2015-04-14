@@ -386,7 +386,6 @@ public class BpmTaskQuery {
             sb.append(" AND (");
 
             sb.append(" (process.externalKey is not null AND process.externalKey ilike '%' || :expression || '%')");
-            //sb.append("OR EXISTS (SELECT 1 FROM pt_process_instance parentProcess WHERE parentProcess.id = process.parent_id AND parentProcess.externalKey ilike '%ZU/ACP/2015/0006%')
             sb.append(" OR EXISTS (SELECT 1 FROM pt_process_instance parentProcess WHERE parentProcess.id = process.parent_id AND parentProcess.externalKey ilike '%' || :expression || '%')");
             queryParameters.add(new QueryParameter("expression", searchExpression.trim()));
 

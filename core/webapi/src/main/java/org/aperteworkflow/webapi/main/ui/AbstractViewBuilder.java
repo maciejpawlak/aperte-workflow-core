@@ -202,7 +202,16 @@ public abstract class AbstractViewBuilder<T extends AbstractViewBuilder> {
                     .attr("id", "vertical_layout" + widget.getId());
             parent.appendChild(divContentNode);
 
-            for (IStateWidget childWidget : processStateConfiguration.getWidgets()) {
+            List<IStateWidget> shadowWidgetChildren = new ArrayList<IStateWidget>(processStateConfiguration.getWidgets());
+
+            Collections.sort(shadowWidgetChildren, new Comparator<IStateWidget>() {
+                @Override
+                public int compare(IStateWidget widget1, IStateWidget widget2) {
+                    return widget1.getPriority().compareTo(widget2.getPriority());
+                }
+            });
+
+            for (IStateWidget childWidget : shadowWidgetChildren) {
                 WidgetHierarchyBean childBean = new WidgetHierarchyBean()
                         .setParent(divContentNode)
                         .setWidget(childWidget)
