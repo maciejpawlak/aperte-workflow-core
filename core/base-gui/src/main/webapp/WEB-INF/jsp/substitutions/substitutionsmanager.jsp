@@ -143,27 +143,17 @@
 
 
 <script type="text/javascript">
-	function editSubstitution(id, dateFrom, dateTo, userLogin, userSubstituteLogin) {
-		//special for IE 7
-		var fromDate = new Date(dateFrom);
-		fromDate.setHours(0);
-		var toDate = new Date(dateTo);
-		toDate.setHours(0);
-		// end special for IE 7
+	function editSubstitution(id, dateFrom, dateTo, userLogin, userSubstituteLogin)
+	{
+		var dateFromString = moment(dateFrom).format("YYYY-MM-DD");
+		var dateToString = moment(dateTo).format("YYYY-MM-DD");
+
 		$("#UserLogin").select2('val', userLogin);
 		$("#UserSubstituteLogin").select2('val', userSubstituteLogin);
-		$("#SubstitutingDateFromPicker").datepicker("setDate", new Date(fromDate));
-		$("#SubstitutingDateToPicker").datepicker("setDate", new Date(toDate));
-		var dateFromTmp = new Date(fromDate);
-		var dateToTmp = new Date(toDate);
-		$("#SubstitutingDateFrom").val("" + padStr(dateFromTmp.getFullYear()) + "-" + padStr(1 + dateFromTmp.getMonth()) + "-" + padStr(dateFromTmp.getDate()));
-		$("#SubstitutingDateTo").val("" + padStr(dateToTmp.getFullYear()) + "-" + padStr(1 + dateToTmp.getMonth()) + "-" + padStr(dateToTmp.getDate()));
+		$("#SubstitutingDateFromPicker").datepicker("update", dateFromString);
+		$("#SubstitutingDateToPicker").datepicker("update", dateToString);
 		$("#SubstitutionId").val(id);
 	}
-	function padStr(i) {
-		return (i < 10) ? "0" + i : "" + i;
-	}
-
 
 	function onSubmitNewSubstitution(e)
 	{
@@ -212,7 +202,8 @@
 			isValid=false;
 		}
 
-		if ($("#SubstitutingDateFrom").val() > $("#SubstitutingDateTo").val()) {
+		if (new Date($("#SubstitutingDateFrom").val()) > new Date($(
+				"#SubstitutingDateTo").val())) {
 			addAlert('<spring:message code="substitution.alert.invalid.date" />');
 			isValid=false;
 		}
@@ -229,12 +220,9 @@
 
 	function resetSubstitutionForm()
 	{
-		var tmp = $("#SubstitutionForm");
 		$("#SubstitutionForm")[0].reset();
 		$("#SubstitutionId").val("");
 		$("#SubstitutionForm input.select2").select2("val", "");
-		$("#SubstitutingDateFrom").val("");
-		$("#SubstitutingDateTo").val("");
 	}
 
 	function onNewSubstitution(e) {
@@ -315,18 +303,8 @@
 	$(document)
 			.ready(
 					function() {
-						$("#SubstitutingDateFromPicker").datepicker().on(
-								'changeDate',
-								function(ev) {
-									$("#SubstitutingDateFromPicker")
-											.datepicker("hide")
-								});
-						$("#SubstitutingDateToPicker").datepicker().on(
-								'changeDate',
-								function(ev) {
-									$("#SubstitutingDateToPicker").datepicker(
-											"hide")
-								});
+						$("#SubstitutingDateFromPicker").datepicker({format: "yyyy-mm-dd", language: "pl", todayHighlight : true, autoclose:true });
+						$("#SubstitutingDateToPicker").datepicker({format: "yyyy-mm-dd", language: "pl", todayHighlight : true, autoclose:true });
 
 						dataTable = new AperteDataTable(
 								"substitutionTable",
