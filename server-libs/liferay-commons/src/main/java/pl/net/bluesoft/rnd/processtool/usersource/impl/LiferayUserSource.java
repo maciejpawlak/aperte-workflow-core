@@ -3,10 +3,15 @@ package pl.net.bluesoft.rnd.processtool.usersource.impl;
 import com.liferay.portal.NoSuchUserException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.search.Hits;
+import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.Portal;
 import com.liferay.portal.util.PortalUtil;
+import com.liferay.portal.util.comparator.UserScreenNameComparator;
+import org.apache.commons.lang3.StringUtils;
 import org.aperteworkflow.integration.liferay.utils.LiferayUserConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
@@ -24,9 +29,7 @@ import javax.portlet.PortletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static pl.net.bluesoft.rnd.processtool.bpm.ProcessToolBpmConstants.ADMIN_USER;
 import static pl.net.bluesoft.rnd.processtool.bpm.ProcessToolBpmConstants.SYSTEM_USER;
@@ -105,9 +108,9 @@ public class LiferayUserSource implements IPortalUserSource, CacheProvider
 	@Override
 	public UserData getUserByEmail(String email) 
 	{
-        if (email == null) 
+        if (StringUtils.isEmpty(email))
             return null;
-        
+
         try {
             long[] companyIds = PortalUtil.getCompanyIds();
             for (int i = 0; i < companyIds.length; ++i) {
@@ -153,22 +156,28 @@ public class LiferayUserSource implements IPortalUserSource, CacheProvider
     @Override
     public List<UserData> findUsers(String query)
     {
-        return allUsers.get(null, new ExpiringCache.NewValueCallback<String, List<UserData>>() {
-            @Override
-            public List<UserData> getNewValue(String key) {
-                try {
-                    List<UserData> users = LiferayUserConverter.convertLiferayUsers(UserLocalServiceUtil.getUsers(0, UserLocalServiceUtil.getUsersCount()));
+        List<UserData> users = new LinkedList<UserData>();
+        if (StringUtils.isEmpty(query))
+            return users;
 
-                    for (UserData user : users) {
-                        usersByLogin.put(user.getLogin(), user);
-                    }
-                    return users;
+        try {
+            long[] companyIds = PortalUtil.getCompanyIds();
+            for (int i = 0; i < companyIds.length; ++i) {
+                long ci = companyIds[i];
+                try {
+                    List<User> liferayUsers = UserLocalServiceUtil.search(ci, query, true, new LinkedHashMap<String, Object>(), 0, 100, new UserScreenNameComparator());
+
+                    users.addAll(LiferayUserConverter.convertLiferayUsers(liferayUsers));
                 }
-                catch (SystemException e) {
-                    throw new UserSourceException(e);
+                catch (Throwable e) {
+                    // continue
                 }
             }
-        });
+            return users;
+        }
+        catch (Exception e) {
+            throw new UserSourceException(e);
+        }
     }
 
     @Override

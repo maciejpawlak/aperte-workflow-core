@@ -11,6 +11,8 @@ import pl.net.bluesoft.rnd.processtool.web.domain.GenericResultBean;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author: mpawlak@bluesoft.net.pl
@@ -18,12 +20,16 @@ import java.util.LinkedList;
 @OsgiController(name="usercontroller")
 public class UserController  implements IOsgiWebController
 {
+    private final static Logger logger = Logger.getLogger(UserController.class.getName());
+
     @Autowired
     protected IPortalUserSource portalUserSource;
 
     @ControllerMethod(action="getAllUsers")
     public GenericResultBean getSyncStatus(final OsgiWebRequest invocation)
     {
+        long t0 = System.currentTimeMillis();
+
         GenericResultBean result = new GenericResultBean();
 
         String pageLimit = invocation.getRequest().getParameter("page_limit");
@@ -39,14 +45,11 @@ public class UserController  implements IOsgiWebController
         }
 
 
-        Collection<UserData> filtered = new LinkedList<UserData>();
-        for(UserData user: users)
-        {
-            if(user.getRealName().toLowerCase().contains(queryTerm.toLowerCase()) ||
-                    user.getLogin().toLowerCase().contains(queryTerm.toLowerCase()))
-                filtered.add(user);
-        }
+        Collection<UserData> filtered = portalUserSource.findUsers(queryTerm);
 
+        long t1= System.currentTimeMillis();
+
+        logger.log(Level.INFO, "Search user: [1]: " + (t1 - t0) + "ms");
         result.setData(filtered);
 
         return result;
