@@ -93,6 +93,10 @@ public class UserProcessQueuesSizeProvider
 		
 		for (String substitutedUserLogin : substitutedUserLogins)
 		{
+			/** User is substituting itself, ignore */
+			if(substitutedUserLogin.equals(userLogin))
+				continue;
+
 			ProcessToolBpmSession substitutedUserSession = getRegistry().getProcessToolSessionFactory().createSession(substitutedUserLogin);
 			fillUserQueues(substitutedUserLogin, substitutedUserSession);
 		}
@@ -128,11 +132,6 @@ public class UserProcessQueuesSizeProvider
 
             userQueueSize.addQueueSize(queueName, queueId, queueDesc, filteredQueueSize);
         }
-		
-		/* Create organized tasks filters */
-//        queuesFilters.add(filterFactory.createAllTasksFilter(userLogin));
-//		queuesFilters.add(filterFactory.createMyTasksInProgress(userLogin));
-//		queuesFilters.add(filterFactory.createMyClosedTasksFilter(userLogin));
 		
 
 		/* Add queues */
