@@ -385,39 +385,11 @@ public class BpmTaskQuery {
         if (hasText(searchExpression)) {
             sb.append(" AND (");
 
-            sb.append(" process.externalKey is not null AND process.externalKey ilike '%' || :expression || '%'");
+            sb.append(" (process.externalKey is not null AND process.externalKey ilike '%' || :expression || '%')");
+            //sb.append("OR EXISTS (SELECT 1 FROM pt_process_instance parentProcess WHERE parentProcess.id = process.parent_id AND parentProcess.externalKey ilike '%ZU/ACP/2015/0006%')
+            sb.append(" OR EXISTS (SELECT 1 FROM pt_process_instance parentProcess WHERE parentProcess.id = process.parent_id AND parentProcess.externalKey ilike '%' || :expression || '%')");
             queryParameters.add(new QueryParameter("expression", searchExpression.trim()));
 
-//            sb.append("task_.actualowner_id LIKE '%' || :expression || '%'");
-//            sb.append(" OR process.creatorLogin LIKE '%' || :expression || '%'");
-//            sb.append(" OR (CASE WHEN process.externalKey IS NOT NULL THEN process.externalKey ELSE process.internalId END) ilike '%' || :expression || '%'");
-//            sb.append(" OR to_char(task_.createdOn, CAST('YYYY-MM-DD HH24:MI:SS' AS CHAR)) LIKE :expression || '%'");
-//            sb.append(" OR EXISTS(SELECT 1 FROM pt_process_instance_s_attr attr");
-//            sb.append("	WHERE attr.process_instance_id = process.id AND attr.value_ LIKE '%' || :expression || '%')");
-//            sb.append(" OR ");
-//            sb.append(DEADLINE_SUBQUERY);
-//            sb.append(" ilike :expression || '%'");
-//
-//            queryParameters.add(new QueryParameter("expression", searchExpression.trim()));
-//
-//            List<Long> definitionDescrKeys = getSearchKeywordMatchingIds(getThreadProcessToolContext()
-//                    .getProcessDefinitionDAO().getProcessDefinitionDescriptions());
-//
-//            if (!definitionDescrKeys.isEmpty()) {
-//                sb.append(" OR process.definition_id IN (:searchProcessDefIds)");
-//
-//                queryParameters.add(new QueryParameter("searchProcessDefIds", definitionDescrKeys));
-//            }
-//
-//            List<Long> stateDescrKeys = getSearchKeywordMatchingIds(getThreadProcessToolContext()
-//                    .getProcessDefinitionDAO().getProcessStateDescriptions());
-//
-//            if (!stateDescrKeys.isEmpty()) {
-//                sb.append(" OR EXISTS(SELECT 1 FROM pt_process_state_config psc WHERE psc.id IN (:searchProcessStateIds)");
-//                sb.append(" AND psc.definition_id = process.definition_id AND psc.name = i18ntext_.shortText)");
-//
-//                queryParameters.add(new QueryParameter("searchProcessStateIds", stateDescrKeys));
-//            }
 
             sb.append(')');
         }
