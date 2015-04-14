@@ -1,5 +1,5 @@
 <#if attributesProvider.processInstance??>
-    <#assign processComments = attributesProvider.processInstance.getCommentsOrderedByDate(true) />
+    <#assign processComments = attributesProvider.processInstance.getCommentsOrderedByDate(false) />
     <#assign internalId = task.internalTaskId />
 </#if>
 <#if !processComments??>
@@ -128,7 +128,7 @@
             return;
         }
 
-        processCommentsAddedComments.push({
+        processCommentsAddedComments.unshift({
             createDate: fullDate,
             body: body,
             authorLogin: author,
@@ -143,7 +143,7 @@
                             body+
                         '</p></li>';
 
-        $("#process_comments_list").append(text);
+        $("#process_comments_list").prepend(text);
 
         process_comments_button_cancel_click();
     }
