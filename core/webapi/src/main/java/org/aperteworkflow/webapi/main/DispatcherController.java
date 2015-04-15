@@ -79,20 +79,20 @@ public class DispatcherController extends AbstractProcessToolServletController
                     controllerInvocation.setRequest(request);
                     controllerInvocation.setResponse(response);
                     controllerInvocation.setProcessToolContext(ctx);
+
+                    GenericResultBean result = null;
                     try {
-                        Object result = controllerMethod.getJavaMethod().invoke(servletController, controllerInvocation);
+                        result = (GenericResultBean)controllerMethod.getJavaMethod().invoke(servletController, controllerInvocation);
                         return result;
 
                     }
-                    catch (IllegalAccessException e)
+                    catch (Throwable e)
                     {
-                        resultBean.addError(SYSTEM_SOURCE, e.getMessage());
-                        logger.log(Level.SEVERE, "Problem during plugin request processing in dispatcher ["+controllerName+"]", e);
-                        return resultBean;
-                    }
-                    catch (InvocationTargetException e)
-                    {
-                        resultBean.addError(SYSTEM_SOURCE, e.getMessage());
+                        if(result != null)
+                            resultBean.copyErrors(result);
+                        else {
+                            resultBean.addError(SYSTEM_SOURCE, e.getMessage());
+                        }
                         logger.log(Level.SEVERE, "Problem during plugin request processing in dispatcher ["+controllerName+"]", e);
                         return resultBean;
                     }
@@ -106,20 +106,20 @@ public class DispatcherController extends AbstractProcessToolServletController
             noTransactionOsgiWebRequest.setRequest(request);
             noTransactionOsgiWebRequest.setResponse(response);
 
+            GenericResultBean result = null;
+
             try {
-                Object result = controllerMethod.getJavaMethod().invoke(servletController, noTransactionOsgiWebRequest);
+                result = (GenericResultBean)controllerMethod.getJavaMethod().invoke(servletController, noTransactionOsgiWebRequest);
                 return result;
 
             }
-            catch (IllegalAccessException e)
+            catch (Throwable e)
             {
-                resultBean.addError(SYSTEM_SOURCE, e.getMessage());
-                logger.log(Level.SEVERE, "Problem during plugin request processing in dispatcher ["+controllerName+"]", e);
-                return resultBean;
-            }
-            catch (InvocationTargetException e)
-            {
-                resultBean.addError(SYSTEM_SOURCE, e.getMessage());
+                if(result != null)
+                    resultBean.copyErrors(result);
+                else {
+                    resultBean.addError(SYSTEM_SOURCE, e.getMessage());
+                }
                 logger.log(Level.SEVERE, "Problem during plugin request processing in dispatcher ["+controllerName+"]", e);
                 return resultBean;
             }
