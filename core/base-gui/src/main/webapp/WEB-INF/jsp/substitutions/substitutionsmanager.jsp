@@ -182,15 +182,27 @@
 
 		isValid=true;
 
-		if ($("#SubstitutingDateFrom").val() == "") {
+		var substitutingDateFrom = $('#SubstitutingDateFrom').val();
+		var substitutingDateTo = $('#SubstitutingDateTo').val();
+
+
+		if (substitutingDateFrom == "") {
 			addAlert('<spring:message code="substitution.alert.required.dateFrom" />');
 			isValid=false;
 		}
 
-		if ($("#SubstitutingDateTo").val() == "") {
+		if (substitutingDateTo == "") {
 			addAlert('<spring:message code="substitution.alert.required.dateTo" />');
 			isValid=false;
 		}
+
+		var dateFrom = typeof substitutingDateFrom == 'string' ? moment(substitutingDateFrom, "YYYY-MM-DD") : null;
+		var dateTo = typeof substitutingDateFrom == 'string' ? moment(substitutingDateTo, "YYYY-MM-DD") : null;
+
+		if ((dateFrom.isValid()) && (dateFrom.isAfter(dateTo))){
+			 isValid=false;
+			 addAlert('<spring:message code="substitution.alert.invalid.date" />');
+		 }
 
 		if ($("#UserLogin").val() == "") {
 			addAlert('<spring:message code="substitution.alert.required.UserLogin" />');
@@ -199,12 +211,6 @@
 
 		if ($("#UserSubstituteLogin").val() == "") {
 			addAlert('<spring:message code="substitution.alert.required.UserSubstituteLogin" />');
-			isValid=false;
-		}
-
-		if (new Date($("#SubstitutingDateFrom").val()) > new Date($(
-				"#SubstitutingDateTo").val())) {
-			addAlert('<spring:message code="substitution.alert.invalid.date" />');
 			isValid=false;
 		}
 
@@ -303,8 +309,8 @@
 	$(document)
 			.ready(
 					function() {
-						$("#SubstitutingDateFromPicker").datepicker({format: "yyyy-mm-dd", language: "pl", todayHighlight : true, autoclose:true });
-						$("#SubstitutingDateToPicker").datepicker({format: "yyyy-mm-dd", language: "pl", todayHighlight : true, autoclose:true });
+						$("#SubstitutingDateFromPicker").datepicker({format: "yyyy-mm-dd", language: "pl", todayHighlight : true, autoclose:true});
+						$("#SubstitutingDateToPicker").datepicker({format: "yyyy-mm-dd", language: "pl", todayHighlight : true, autoclose:true});
 
 						dataTable = new AperteDataTable(
 								"substitutionTable",

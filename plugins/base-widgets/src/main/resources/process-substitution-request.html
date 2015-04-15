@@ -163,7 +163,7 @@
 		else
 		{
 		    var dateFrom = typeof substitutingDateFrom == 'string' ? moment(substitutingDateFrom, "DD-MM-YYYY") : null;
-            console.log('datefrom: '+dateFrom);
+
 		    if ((dateFrom.isValid()) && (now.isAfter(dateFrom))){
                 $('#warning').show();
                 errors.push('${messageSource.getMessage("substituting.date.from.past")}');
