@@ -348,12 +348,20 @@
 					dataType: 'json',
 					quietMillis: 200,
 					data: function (term, page) {
+						var complaintTypeElement = $('.complaint-case-number');
+						var complaintType = '';
+						if(complaintTypeElement) {
+							complaintType = $('.complaint-case-number').attr('data-complaint-type');
+						}
 						return {
 							q: term, // search term
 							page_limit: 10,
-							controller: "usercontroller",
+							controller: "complaintregistrycontroller",
 							page: page,
-							action: "getAllUsers"
+							action: "getAllUsers",
+							inactive: false,
+							sections: complaintType,
+							requiredRolePrefix: "EDIT_COMPLAINT_"
 						};
 					},
 					results: function (data, page)
