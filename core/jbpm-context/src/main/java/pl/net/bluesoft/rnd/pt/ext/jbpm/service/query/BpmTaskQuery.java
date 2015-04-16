@@ -305,8 +305,10 @@ public class BpmTaskQuery {
 
         String castTypeName = hibernateDialect.getCastTypeName(Types.VARCHAR);
         sb.append(" FROM pt_process_instance process JOIN Task task_ ON CAST(task_.processinstanceid AS "+castTypeName+" ) = process.internalId ");
-        sb.append(" LEFT JOIN PeopleAssignments_PotOwners potowners on potowners.task_id = task_.id ");
-        sb.append(" LEFT JOIN pt_process_instance_owners powner on powner.process_id = process.id ");
+        sb.append(" LEFT JOIN PeopleAssignments_PotOwners potowners on potowners.task_id = task_.id AND potowners.entity_id = :user ");
+        sb.append(" LEFT JOIN pt_process_instance_owners powner on powner.process_id = process.id AND powner.owners = :user ");
+
+        queryParameters.add(new QueryParameter("user", user));
 
         if (taskNames != null || queryType == QueryType.LIST || hasText(searchExpression)) {
             sb.append(" JOIN I18NText i18ntext_ ON i18ntext_.task_names_id = task_.id");
@@ -343,7 +345,6 @@ public class BpmTaskQuery {
 
         if (virtualQueues != null && user != null) {
             sb.append(from(virtualQueues).select(GET_VIRTUAL_QUEUES).toString(" OR ", " AND (", ")"));
-            queryParameters.add(new QueryParameter("user", user));
         }
 
         if (taskNames != null) {
