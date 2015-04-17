@@ -379,7 +379,7 @@ ${b}	</tr>${b}
                     .replace(new RegExp('%%fileId%%', 'g'), file.id)
                     .replace(new RegExp('%%fileName%%', 'g'), file.name)
                     .replace(new RegExp('%%fileDescription%%', 'g'), file.description != null ? file.description : "")
-                    .replace(new RegExp('%%fileCreateDate%%', 'g'), $.format.date(file.createDate, 'dd-MM-yy HH:mm'))
+                    .replace(new RegExp('%%fileCreateDate%%', 'g'), moment(file.createDate).format('DD-MM-YYYY HH:mm'))
                     .replace(new RegExp('%%fileCreatorLogin%%', 'g'), file.creatorLogin)
                     .replace(new RegExp('%%fileSendWithMail%%', 'g'), file.sendWithMail);
 

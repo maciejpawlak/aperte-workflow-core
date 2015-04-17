@@ -143,7 +143,8 @@
         <header-portlet-javascript>/sa/js/respond.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.mask.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.dotdotdot.min.js</header-portlet-javascript>
-        <header-portlet-javascript>/sa/js/jquery.validate.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/jquery.validate.min.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/jquery.validate.additional-methods.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/iban.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.numeric.min.js</header-portlet-javascript>
         <header-portlet-css>/sa/css/customComplaints.css</header-portlet-css>
@@ -194,7 +195,8 @@
         <header-portlet-css>/sa/css/liferay.css</header-portlet-css>
         <header-portlet-javascript>/sa/js/respond.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.mask.min.js</header-portlet-javascript>
-        <header-portlet-javascript>/sa/js/jquery.validate.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/jquery.validate.min.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/jquery.validate.additional-methods.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/iban.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.numeric.min.js</header-portlet-javascript>
         <header-portlet-css>/sa/css/customComplaints.css</header-portlet-css>
@@ -281,7 +283,8 @@
         <header-portlet-javascript>/sa/js/history.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/aperte/aperte.widget.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.mask.min.js</header-portlet-javascript>
-        <header-portlet-javascript>/sa/js/jquery.validate.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/jquery.validate.min.js</header-portlet-javascript>
+        <header-portlet-javascript>/sa/js/jquery.validate.additional-methods.min.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/iban.js</header-portlet-javascript>
         <header-portlet-javascript>/sa/js/jquery.numeric.min.js</header-portlet-javascript>
 		<header-portlet-javascript>/sa/js/bootstrap-wysiwyg.js</header-portlet-javascript>

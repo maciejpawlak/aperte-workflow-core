@@ -26,7 +26,7 @@
 				 { "sName":"name", "bSortable": true,"bVisible":parsedCustom.name,"mData": function(object){return generateNameColumn(object);}},
 				 { "sName":"businessStatus", "bSortable": true ,"bVisible":parsedCustom.businessStatus, "mData": function(object){return generateStatusColumn(object);}},
 				 { "sName":"creationDate", "bSortable": true,"bVisible":parsedCustom.creationDate,"mData": function(object){return generateCreationDate(object);}},
-				 { "sName":"deadline", "bSortable": true,"bVisible":parsedCustom.deadline,"mData": function(object){return object.deadline == null ? "${messageSource.getMessage('processes.list.table.nodeadline')}" : $.format.date(object.deadline, 'dd-MM-yyyy, HH:mm');}},
+				 { "sName":"deadline", "bSortable": true,"bVisible":parsedCustom.deadline,"mData": function(object){return object.deadline == null ? "${messageSource.getMessage('processes.list.table.nodeadline')}" : moment(object.deadline).format('DD-MM-YYYY, HH:mm');}},
 				 { "sName":"actions", "bSortable": false,"bVisible":parsedCustom.actions,"mData": function(object){return generateButtons(object)}},
 				 { "sName":"creator", "bSortable": true,"bVisible":parsedCustom.creator,"mData": "creator" }
 			 ],
@@ -48,7 +48,7 @@
 	    {
 	     return "${messageSource.getMessage('demand.filledDate.empty')}";
 	    }
-	    return $.format.date(task.creationDate, 'dd-MM-yyyy');
+	    return moment(task.creationDate).format('DD-MM-YYYY');
 	}
 
 	function generateStatusColumn(task)

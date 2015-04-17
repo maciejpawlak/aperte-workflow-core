@@ -83,7 +83,7 @@
                 { "sName":"definitionName", "bSortable": true , "mData": function(object) {return formatDefinitionName(object);}},
                 { "sName":"externalKey", "bSortable": true , "mData": "externalKey" },
                 { "sName":"creatorLogin", "bSortable": true , "mData": "creatorLogin"},
-                { "sName":"creationDate", "bSortable": true ,"mData": function(object){return $.format.date(object.creationDate, 'dd-MM-yyyy, HH:mm:ss');}},
+                { "sName":"creationDate", "bSortable": true ,"mData": function(object){return moment(object.creationDate).format('DD-MM-YYYY, HH:mm:ss');}},
                 { "sName":"taskName", "bSortable": true , "mData": "taskName" },
                 { "sName":"assignedTo", "bSortable": true , "mData": function(object){return generateAssignedUserDropdown(object);}},
                 { "sName":"status", "bSortable": true , "mData": function(object){return taskState(object);}},

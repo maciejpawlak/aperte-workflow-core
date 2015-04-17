@@ -584,7 +584,7 @@
             });
             $(dataControl).datepicker('update', currentItem.values[iRow].dateFrom);
             $(dataControl).on('changeDate',function(e){
-                var dateString = $.format.date(e.dates[0], "yyyy-MM-dd");
+                var dateString = moment(e.dates[0]).format("YYYY-MM-DD");
                 currentItem.values[iRow].dateFrom = dateString;
             });
             $(nTd).prepend(dataControl);
@@ -600,7 +600,7 @@
             });
             $(dataControl).datepicker('update', currentItem.values[iRow].dateTo);
             $(dataControl).on('changeDate',function(e){
-                var dateString = $.format.date(e.dates[0], "yyyy-MM-dd");
+                var dateString = moment(e.dates[0]).format("YYYY-MM-DD");
                 currentItem.values[iRow].dateTo = dateString;
             });
             $(nTd).prepend(dataControl);
