@@ -214,6 +214,17 @@
 			isValid=false;
 		}
 
+        if($("#UserLogin").val() != "" && $("#UserLogin").val() == $("#UserSubstituteLogin").val()){ //fix DPDW-720
+            addAlert('<spring:message code="substitution.alert.required.sameUsersLogins" />');
+            isValid=false;
+        }
+
+        if(moment(dateFrom).format("YYYY-MM-DD") < moment("1980-11-18").format("YYYY-MM-DD")){ //fix DPDW-718
+            addAlert('<spring:message code="substitution.alert.required.tooAgoDateFrom" />');
+            isValid=false;
+        }
+
+
 		return isValid;
 	}
 
