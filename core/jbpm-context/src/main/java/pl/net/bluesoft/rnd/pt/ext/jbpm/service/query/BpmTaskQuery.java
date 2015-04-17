@@ -371,7 +371,7 @@ public class BpmTaskQuery {
 
         if (hasText(searchExpression)) {
             sb.append(" AND (");
-//            sb.append("task_.actualowner_id LIKE '%' || :expression || '%'");
+            sb.append("task_.actualowner_id LIKE '%' || :expression || '%'");
 //            sb.append(" OR process.creatorLogin LIKE '%' || :expression || '%'");
 //            sb.append(" OR (CASE WHEN process.externalKey IS NOT NULL THEN process.externalKey ELSE process.internalId END) LIKE '%' || :expression || '%'");
 //            sb.append(" OR to_char(task_.createdOn, 'YYYY-MM-DD HH24:MI:SS') LIKE :expression || '%'");
@@ -380,9 +380,8 @@ public class BpmTaskQuery {
 //            sb.append(" OR to_char(");
 //            sb.append(DEADLINE_SUBQUERY);
 //            sb.append(", 'YYYY-MM-DD HH24:MI:SS') LIKE :expression || '%'");
-//            sb.append(" OR " + queryConditions.getSearchCondition());
+            sb.append(" OR " + queryConditions.getSearchCondition());
 //
-            sb.append(queryConditions.getSearchCondition());
             queryParameters.add(new QueryParameter("expression", searchExpression.trim()));
 
             List<Long> definitionDescrKeys = getSearchKeywordMatchingIds(getThreadProcessToolContext()

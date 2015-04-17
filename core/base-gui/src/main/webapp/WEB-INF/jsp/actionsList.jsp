@@ -111,6 +111,9 @@
 	function cancelChangerOwnerModal()
 	{
 		$('#changeOwnerModal').modal('hide');
+		tempChangeOwner = null;
+		tempChangeOwnerAttrKey = null;
+		tempCommentNeeded = null;
 	}
 	
 	function performCommentModal()
