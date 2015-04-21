@@ -1541,3 +1541,10 @@ body.blue
 {
     text-decoration: none;
 }
+
+.ie7 span.delete-capex-button, .ie7 span.remove-account-button{
+     width: 16px;
+     height: 16px;
+     background-image: url(../images/progress_bar/editing-delete-icon.png);
+     background-color: red;
+}
