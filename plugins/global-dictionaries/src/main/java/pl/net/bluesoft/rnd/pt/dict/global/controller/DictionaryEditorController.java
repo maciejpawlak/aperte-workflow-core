@@ -26,6 +26,8 @@ import pl.net.bluesoft.rnd.util.i18n.I18NSource;
 import java.net.URLDecoder;
 import java.util.*;
 
+import static pl.net.bluesoft.util.lang.Formats.nvl;
+
 /**
  * Created by pkuciapski on 2014-05-30.
  */
@@ -63,6 +65,8 @@ public class DictionaryEditorController implements IOsgiWebController {
         GenericResultBean result = new GenericResultBean();
         ProcessDictionaryDAO dao = registry.getDataRegistry().getProcessDictionaryDAO(invocation.getProcessToolContext().getHibernateSession());
 
+        String queryTerm = invocation.getRequest().getParameter("q");
+
         List<ProcessDBDictionary> dictionary = dao.fetchAllDictionaries();
         List<DictionaryDTO> dtos = new ArrayList(createDTOList(dictionary, invocation.getProcessToolRequestContext().getMessageSource()));
 
@@ -72,14 +76,33 @@ public class DictionaryEditorController implements IOsgiWebController {
             if (user.hasRole("DICT_EDITOR_" + dto.getId().toUpperCase()))
                 dictionaries.add(dto);
         }
-        Collections.sort(dictionaries, new Comparator<DictionaryDTO>() {
+
+
+        List<DictionaryDTO> filteredDictionaryItems = new ArrayList<DictionaryDTO>();
+
+        if(queryTerm == null || queryTerm.isEmpty())
+            filteredDictionaryItems.addAll(dictionaries);
+        else
+        {
+
+            for(DictionaryDTO dict: dictionaries)
+            {
+                String dictionaryName = dict.getName().toLowerCase();
+                String dictionaryDesc = dict.getDescription() != null ? dict.getDescription().toLowerCase() : "";
+                if(dictionaryName.contains(queryTerm.toLowerCase()) || (!dictionaryDesc.isEmpty() && dictionaryDesc.contains(queryTerm.toLowerCase())))
+                    filteredDictionaryItems.add(dict);
+            }
+
+        }
+
+        Collections.sort(filteredDictionaryItems, new Comparator<DictionaryDTO>() {
             @Override
             public int compare(DictionaryDTO d1, DictionaryDTO d2) {
                 return d1.getName().compareTo(d2.getName());
             }
         });
 
-        result.setData(dictionaries);
+        result.setData(filteredDictionaryItems);
 
         return result;
     }
@@ -179,6 +202,35 @@ public class DictionaryEditorController implements IOsgiWebController {
         return null;
     }
 
+	@ControllerMethod(action = "getNewItemValuePrototype")
+	public GenericResultBean getNewItemValuePrototype(final OsgiWebRequest invocation) throws Exception {
+		GenericResultBean result = new GenericResultBean();
+		String dictId = invocation.getRequest().getParameter("dictId");
+		ProcessDictionaryDAO dao = registry.getDataRegistry().getProcessDictionaryDAO(invocation.getProcessToolContext().getHibernateSession());
+
+		try {
+			ProcessDBDictionary dictionary = getDictionary(dictId, invocation.getProcessToolContext());
+			ProcessDBDictionaryItemValue value = new ProcessDBDictionaryItemValue();
+			value.addLocalizedValue("default", "");
+			dictionary.initValueExtensions(value);
+
+			DictionaryItemValueDTO valueDTO = DictionaryItemValueDTO.createFrom(value,
+					invocation.getProcessToolRequestContext().getMessageSource());
+
+			valueDTO.setDateFrom("");
+			valueDTO.setDateTo("");
+			valueDTO.setValue(nvl(valueDTO.getValue()));
+
+			result.setData(valueDTO);
+		}
+		catch (Exception e) {
+			result.addError("getNewItemValuePrototype", e.getMessage());
+			if (dao.getSession().isDirty()) {
+				dao.getSession().clear();
+			}
+		}
+		return result;
+	}
 
     @ControllerMethod(action = "saveDictionaryItem")
     public GenericResultBean saveDictionaryItem(final OsgiWebRequest invocation) throws Exception {

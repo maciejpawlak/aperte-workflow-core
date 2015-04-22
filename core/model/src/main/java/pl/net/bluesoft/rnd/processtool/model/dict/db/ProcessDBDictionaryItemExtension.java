@@ -43,6 +43,8 @@ public class ProcessDBDictionaryItemExtension extends AbstractPersistentEntity i
     private String description;
     private String valueType;
 
+	private Boolean default_;
+
     public ProcessDBDictionaryItemExtension() {
     }
 
@@ -53,6 +55,7 @@ public class ProcessDBDictionaryItemExtension extends AbstractPersistentEntity i
         valueType = ext.value;
         description = ext.description;
         itemValue = ext.itemValue;
+		default_ = ext.default_;
     }
 
     public ProcessDBDictionaryItemExtension exactCopy() {
@@ -112,4 +115,12 @@ public class ProcessDBDictionaryItemExtension extends AbstractPersistentEntity i
     public void setDescription(String description) {
         this.description = description;
     }
+
+	public Boolean getDefault_() {
+		return default_ != null ? default_ : false;
+	}
+
+	public void setDefault_(Boolean default_) {
+		this.default_ = default_;
+	}
 }

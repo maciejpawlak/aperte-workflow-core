@@ -165,7 +165,7 @@ public class LiferayUserSource implements IPortalUserSource, CacheProvider
             for (int i = 0; i < companyIds.length; ++i) {
                 long ci = companyIds[i];
                 try {
-                    List<User> liferayUsers = UserLocalServiceUtil.search(ci, query, true, new LinkedHashMap<String, Object>(), 0, 100, new UserScreenNameComparator());
+                    List<User> liferayUsers = UserLocalServiceUtil.search(ci, query, true, new LinkedHashMap<String, Object>(), 0, 10, new UserScreenNameComparator());
 
                     users.addAll(LiferayUserConverter.convertLiferayUsers(liferayUsers));
                 }

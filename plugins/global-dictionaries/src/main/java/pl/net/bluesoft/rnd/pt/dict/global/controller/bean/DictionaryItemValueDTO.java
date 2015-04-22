@@ -92,10 +92,19 @@ public class DictionaryItemValueDTO {
 
     public void updateValue(ProcessDBDictionaryItemValue value, String languageCode) {
         value.setDefaultValue(StringEscapeUtils.unescapeHtml4(this.getValue()));
-        if (this.getDateFrom() != null && !"".equals(this.getDateFrom()))
+        if (this.getDateFrom() != null && !"".equals(this.getDateFrom())) {
             value.setValidFrom(FormatUtil.parseDate("yyyy-MM-dd", this.getDateFrom()));
+        }
+        else
+        {
+            value.setValidFrom(null);
+        }
         if (this.getDateTo() != null && !"".equals(this.getDateTo())) {
             value.setValidTo(FormatUtil.parseDate("yyyy-MM-dd", this.getDateTo()));
+        }
+        else
+        {
+            value.setValidTo(null);
         }
         for (DictionaryI18NDTO i18nDTO: this.getLocalizedValues().values()) {
             ProcessDBDictionaryI18N i18n = null;

@@ -23,7 +23,7 @@ public class DictionaryLoader extends OXHelper {
 
     @Override
     protected Class[] getSupportedClasses() {
-        return new Class[] { 
+        return new Class[] {
                 Dictionary.class,
                 DictionaryPermission.class,
                 DictionaryEntry.class,
@@ -36,95 +36,113 @@ public class DictionaryLoader extends OXHelper {
     public static List<ProcessDBDictionary> getDictionariesFromXML(ProcessDictionaries processDictionaries) {
         List<ProcessDBDictionary> result = new ArrayList<ProcessDBDictionary>();
 
-		for (Dictionary dict : processDictionaries.getDictionaries()) {
-			result.add(createDbDict(processDictionaries, dict));
+        for (Dictionary dict : processDictionaries.getDictionaries()) {
+            result.add(createDbDict(processDictionaries, dict));
         }
         return result;
     }
 
-	private static ProcessDBDictionary createDbDict(ProcessDictionaries processDictionaries, Dictionary dict) {
-		ProcessDBDictionary dbDict = new ProcessDBDictionary();
+    private static ProcessDBDictionary createDbDict(ProcessDictionaries processDictionaries, Dictionary dict) {
+        ProcessDBDictionary dbDict = new ProcessDBDictionary();
 
-		dbDict.setDictionaryId(dict.getId());
-		dbDict.setDefaultName(dict.getName());
+        dbDict.setDictionaryId(dict.getId());
+        dbDict.setDefaultName(dict.getName());
 
-		for (DictionaryI18N localizedName : dict.getLocalizedNames()) {
-			dbDict.setName(localizedName.getLang(), localizedName.getValue());
-		}
+        for (DictionaryI18N localizedName : dict.getLocalizedNames()) {
+            dbDict.setName(localizedName.getLang(), localizedName.getValue());
+        }
 
-		dbDict.setDescription(dict.getDescription());
+        dbDict.setDescription(dict.getDescription());
 
-		for (DictionaryPermission permission : getPermissions(processDictionaries, dict)) {
-			dbDict.addPermission(createDbPermission(permission));
-		}
+        for (DictionaryPermission permission : getPermissions(processDictionaries, dict)) {
+            dbDict.addPermission(createDbPermission(permission));
+        }
 
-		for (DictionaryEntry entry : dict.getEntries()) {
-			dbDict.addItem(createDbItem(entry));
-		}
-		return dbDict;
-	}
+        if (dict.getDefaultExtensions() != null) {
+            for (DictionaryDefaultEntryExtension defaultExt : dict.getDefaultExtensions()) {
+                dbDict.addDefaultExtension(createDbDefaultExt(defaultExt));
+            }
+        }
 
-	private static List<DictionaryPermission> getPermissions(ProcessDictionaries processDictionaries, Dictionary dict) {
-		return dict.getPermissions().isEmpty() ? processDictionaries.getPermissions() : dict.getPermissions();
-	}
+        for (DictionaryEntry entry : dict.getEntries()) {
+            dbDict.addItem(createDbItem(dbDict, entry));
+        }
 
-	private static ProcessDBDictionaryItem createDbItem(DictionaryEntry entry) {
-		ProcessDBDictionaryItem dbItem = new ProcessDBDictionaryItem();
+        return dbDict;
+    }
 
-		dbItem.setDefaultDescription(entry.getDescription());
+    private static List<DictionaryPermission> getPermissions(ProcessDictionaries processDictionaries, Dictionary dict) {
+        return dict.getPermissions().isEmpty() ? processDictionaries.getPermissions() : dict.getPermissions();
+    }
+
+    private static ProcessDBDictionaryItem createDbItem(ProcessDBDictionary dbDict, DictionaryEntry entry) {
+        ProcessDBDictionaryItem dbItem = new ProcessDBDictionaryItem();
+
+        dbItem.setDefaultDescription(entry.getDescription());
         for (DictionaryI18N localizedDescription : entry.getLocalizedDescriptions()) {
             dbItem.setDescription(localizedDescription.getLang(), localizedDescription.getValue());
         }
 
 
         dbItem.setKey(entry.getKey());
-		dbItem.setValueType(entry.getValueType());
+        dbItem.setValueType(entry.getValueType());
 
-		for (DictionaryEntryValue val : entry.getValues()) {
-			dbItem.addValue(createDbValue(val));
-		}
-		return dbItem;
-	}
+        for (DictionaryEntryValue val : entry.getValues()) {
+            dbItem.addValue(createDbValue(dbDict, val));
+        }
+        return dbItem;
+    }
 
-	private static ProcessDBDictionaryItemValue createDbValue(DictionaryEntryValue val) {
-		ProcessDBDictionaryItemValue dbValue = new ProcessDBDictionaryItemValue();
+    private static ProcessDBDictionaryItemValue createDbValue(ProcessDBDictionary dbDict, DictionaryEntryValue val) {
+        ProcessDBDictionaryItemValue dbValue = new ProcessDBDictionaryItemValue();
 
-		dbValue.setDefaultValue(val.getValue());
+        dbValue.setDefaultValue(val.getValue());
 
-		for (DictionaryI18N localizedValue : val.getLocalizedValues()) {
-			dbValue.setValue(localizedValue.getLang(), localizedValue.getValue());
-		}
+        for (DictionaryI18N localizedValue : val.getLocalizedValues()) {
+            dbValue.setValue(localizedValue.getLang(), localizedValue.getValue());
+        }
 
-		if (val.getValidDay() != null) {
-			dbValue.setValidityDates(val.getValidDay(), val.getValidDay());
-		}
-		else {
-			dbValue.setValidityDates(val.getValidFrom(), val.getValidTo());
-		}
+        if (val.getValidDay() != null) {
+            dbValue.setValidityDates(val.getValidDay(), val.getValidDay());
+        }
+        else {
+            dbValue.setValidityDates(val.getValidFrom(), val.getValidTo());
+        }
 
-		for (DictionaryEntryExtension ext : val.getExtensions()) {
-			dbValue.addExtension(createDbExt(ext));
-		}
-		return dbValue;
-	}
+        dbDict.initValueExtensions(dbValue);
 
-	private static ProcessDBDictionaryPermission createDbPermission(DictionaryPermission permission) {
-		ProcessDBDictionaryPermission dbPerm = new ProcessDBDictionaryPermission();
-		dbPerm.setPrivilegeName(permission.getPrivilegeName());
-		dbPerm.setRoleName(permission.getRoleName());
-		return dbPerm;
-	}
+        for (DictionaryEntryExtension ext : val.getExtensions()) {
+            dbValue.addOrUpdateExtension(createDbExt(ext));
+        }
+        return dbValue;
+    }
 
-	private static ProcessDBDictionaryItemExtension createDbExt(DictionaryEntryExtension ext) {
-		ProcessDBDictionaryItemExtension dbItemExt = new ProcessDBDictionaryItemExtension();
-		dbItemExt.setName(ext.getName());
-		dbItemExt.setValue(ext.getValue());
-		dbItemExt.setValueType(ext.getValueType());
-		dbItemExt.setDescription(ext.getDescription());
-		return dbItemExt;
-	}
+    private static ProcessDBDictionaryPermission createDbPermission(DictionaryPermission permission) {
+        ProcessDBDictionaryPermission dbPerm = new ProcessDBDictionaryPermission();
+        dbPerm.setPrivilegeName(permission.getPrivilegeName());
+        dbPerm.setRoleName(permission.getRoleName());
+        return dbPerm;
+    }
 
-	public static void validateDictionaries(List<ProcessDBDictionary> processDBDictionaries) {
+    private static ProcessDBDictionaryItemExtension createDbExt(DictionaryEntryExtension ext) {
+        ProcessDBDictionaryItemExtension dbItemExt = new ProcessDBDictionaryItemExtension();
+        dbItemExt.setName(ext.getName());
+        dbItemExt.setValue(ext.getValue());
+        dbItemExt.setValueType(ext.getValueType());
+        dbItemExt.setDescription(ext.getDescription());
+        return dbItemExt;
+    }
+
+    private static ProcessDBDictionaryDefaultItemExtension createDbDefaultExt(DictionaryDefaultEntryExtension ext) {
+        ProcessDBDictionaryDefaultItemExtension dbItemExt = new ProcessDBDictionaryDefaultItemExtension();
+        dbItemExt.setName(ext.getName());
+        dbItemExt.setValue(ext.getValue());
+        dbItemExt.setValueType(ext.getValueType());
+        dbItemExt.setDescription(ext.getDescription());
+        return dbItemExt;
+    }
+
+    public static void validateDictionaries(List<ProcessDBDictionary> processDBDictionaries) {
         StringBuilder sb = new StringBuilder();
         Set<String> hashSet = new HashSet<String>();
         for (ProcessDBDictionary dict : processDBDictionaries) {
@@ -138,7 +156,7 @@ public class DictionaryLoader extends OXHelper {
                 continue;
             }
             hashSet.add(hash);
-			for (ProcessDBDictionaryItem item : dict.getItems().values()) {
+            for (ProcessDBDictionaryItem item : dict.getItems().values()) {
                 if (!Strings.hasText(item.getKey())) {
                     sb.append(hash).append(": empty item key").append('\n');
                     continue;

@@ -1,5 +1,6 @@
 package pl.net.bluesoft.rnd.processtool.ui.basewidgets.controller;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.net.bluesoft.rnd.processtool.model.UserData;
 import pl.net.bluesoft.rnd.processtool.usersource.IPortalUserSource;
@@ -35,10 +36,10 @@ public class UserController  implements IOsgiWebController
         String pageLimit = invocation.getRequest().getParameter("page_limit");
         String queryTerm = invocation.getRequest().getParameter("q");
 
-        Collection<UserData> users =  portalUserSource.getAllUsers();
-
-        if(queryTerm == null || queryTerm.isEmpty())
+        if(StringUtils.isEmpty(queryTerm))
         {
+            Collection<UserData> users =  portalUserSource.getAllUsers();
+
             result.setData(users);
 
             return result;

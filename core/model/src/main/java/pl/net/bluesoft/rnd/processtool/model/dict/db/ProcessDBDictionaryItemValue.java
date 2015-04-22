@@ -49,11 +49,12 @@ public class ProcessDBDictionaryItemValue extends AbstractPersistentEntity imple
 	@OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
 	@Cascade(value = org.hibernate.annotations.CascadeType.ALL)
 	@JoinColumn(name = "dictionary_item_value_id", nullable = true)
-	private List<ProcessDBDictionaryI18N>    localizedValues = new ArrayList<ProcessDBDictionaryI18N>();
+	private List<ProcessDBDictionaryI18N> localizedValues = new ArrayList<ProcessDBDictionaryI18N>();
 
 	@OneToMany(mappedBy = "itemValue", fetch = FetchType.EAGER, orphanRemoval = true, cascade=javax.persistence.CascadeType.ALL)
     @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
-    private Set<ProcessDBDictionaryItemExtension> extensions = new HashSet<ProcessDBDictionaryItemExtension>();
+	@OrderBy
+    private Set<ProcessDBDictionaryItemExtension> extensions = new LinkedHashSet<ProcessDBDictionaryItemExtension>();
 
 	public ProcessDBDictionaryItemValue() {
 	}
@@ -156,6 +157,36 @@ public class ProcessDBDictionaryItemValue extends AbstractPersistentEntity imple
 		extension.setItemValue(this);
 	}
 
+	public void addExtension(ProcessDBDictionaryDefaultItemExtension defaultExt) {
+		addExtension(defaultExt.getName(), defaultExt.getValue(), defaultExt.getDescription(), defaultExt.getValueType())
+				.setDefault_(true);
+	}
+
+	public ProcessDBDictionaryItemExtension addExtension(String name, String value, String description, String valueType) {
+		ProcessDBDictionaryItemExtension ext = getExt(name);
+		boolean toAdd = ext == null;
+
+		if (ext == null) {
+			ext = new ProcessDBDictionaryItemExtension();
+		}
+		ext.setName(name);
+		ext.setValue(value);
+		if (description != null) {
+			ext.setDescription(description);
+		}
+		if (valueType != null) {
+			ext.setValueType(valueType);
+		}
+		if (toAdd) {
+			addExtension(ext);
+		}
+		return ext;
+	}
+
+	public ProcessDBDictionaryItemExtension addOrUpdateExtension(ProcessDBDictionaryItemExtension ext) {
+		return addExtension(ext.getName(), ext.getValue(), ext.getDescription(), ext.getValueType());
+	}
+
 	@Override
 	public String getValue(String languageCode) {
 		return ProcessDBDictionaryI18N.getLocalizedText(localizedValues, languageCode, defaultValue);
@@ -181,9 +212,14 @@ public class ProcessDBDictionaryItemValue extends AbstractPersistentEntity imple
 
 	@Override
 	public String getExtValue(String name) {
+		ProcessDBDictionaryItemExtension ext = getExt(name);
+		return ext != null ? ext.getValue() : null;
+	}
+
+	private ProcessDBDictionaryItemExtension getExt(String name) {
 		for (ProcessDBDictionaryItemExtension ext : extensions) {
 			if(name.equals(ext.getName())) {
-				return ext.getValue();
+				return ext;
 			}
 		}
 		return null;
@@ -215,4 +251,8 @@ public class ProcessDBDictionaryItemValue extends AbstractPersistentEntity imple
         }
         return true;
     }
+
+	public void addLocalizedValue(String langCode, String value) {
+		localizedValues.add(new ProcessDBDictionaryI18N(langCode, value));
+	}
 }
