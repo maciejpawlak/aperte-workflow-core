@@ -307,8 +307,15 @@
         });
         $(dataControl).datepicker('update', currentItem.values[iRow].dateFrom);
         $(dataControl).on('changeDate',function(e){
-            var dateString = $.format.date(e.dates[0], "yyyy-MM-dd");
-            currentItem.values[iRow].dateFrom = dateString;
+                if(e.dates.length === 0)
+                {
+                    currentItem.values[iRow].dateFrom = null;
+                }
+                else
+                {
+                    var dateString = moment(e.dates[0]).format("YYYY-MM-DD");
+                    currentItem.values[iRow].dateFrom = dateString;
+                }
         });
         $(nTd).prepend(dataControl);
     }
@@ -322,8 +329,15 @@
         });
         $(dataControl).datepicker('update', currentItem.values[iRow].dateTo);
         $(dataControl).on('changeDate',function(e){
-            var dateString = $.format.date(e.dates[0], "yyyy-MM-dd");
-            currentItem.values[iRow].dateTo = dateString;
+                if(e.dates.length === 0)
+                {
+                    currentItem.values[iRow].dateTo = null;
+                }
+                else
+                {
+                    var dateString = moment(e.dates[0]).format("YYYY-MM-DD");
+                    currentItem.values[iRow].dateTo = dateString;
+                }
         });
         $(nTd).prepend(dataControl);
     }
