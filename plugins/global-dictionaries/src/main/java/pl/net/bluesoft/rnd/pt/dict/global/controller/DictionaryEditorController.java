@@ -149,8 +149,6 @@ public class DictionaryEditorController implements IOsgiWebController {//
 
     @ControllerMethod(action = "getItemValues")
     public GenericResultBean getItemValues(final OsgiWebRequest invocation) throws Exception {
-        // JQueryDataTable dataTable = JQueryDataTableUtil.analyzeRequest(invocation.getRequest().getParameterMap());
-        // JQueryDataTableColumn sortColumn = dataTable.getFirstSortingColumn();
         String dictId = invocation.getRequest().getParameter("dictId");
         String itemId = invocation.getRequest().getParameter("itemId");
         Collection<DictionaryItemValueDTO> dtos = Collections.emptyList();
@@ -171,8 +169,6 @@ public class DictionaryEditorController implements IOsgiWebController {//
             }
         }
         result.setData(dtos);
-        //DataPagingBean<DictionaryItemValueDTO> dataPagingBean =
-        //        new DataPagingBean<DictionaryItemValueDTO>(dtos, dtos.size(), dataTable.getDraw());
 
         return result;
     }
@@ -246,7 +242,7 @@ public class DictionaryEditorController implements IOsgiWebController {//
             dictionary = dao.refresh(dictionary);
             try {
                 if (dto.getId() == null) {
-                    itemToValidate = dto.toProcessDBDictionaryItem(messageSource.getLocale().getLanguage());
+                    itemToValidate = dto.toProcessDBDictionaryItem(dictionary, messageSource.getLocale().getLanguage());
                     dictionary.addItem(itemToValidate);
                 } else {
                     ProcessDBDictionaryItem dbItem = getItemById(dictionary.getItems(), String.valueOf(dto.getId()));
@@ -270,7 +266,7 @@ public class DictionaryEditorController implements IOsgiWebController {//
     private ProcessDBDictionaryItem updateItem(ProcessDBDictionary dictionary, ProcessDBDictionaryItem item, DictionaryItemDTO dto, I18NSource messageSource) {
         if (item.getId() != null && item.getId().equals(dto.getId())) {
             dictionary.removeItem(item.getKey());
-            dto.updateItem(item, messageSource.getLocale().getLanguage());
+            dto.updateItem(dictionary, item, messageSource.getLocale().getLanguage());
             dictionary.addItem(item);
             return item;
         }

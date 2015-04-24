@@ -227,6 +227,15 @@ public class ProcessDBDictionary extends AbstractPersistentEntity implements Pro
 			value.addExtension(defaultExt);
 		}
 	}
+
+	public boolean isDefaultExtenstion(String extensionName)
+	{
+		for(ProcessDBDictionaryDefaultItemExtension defaultItemExtension: this.defaultExtensions.values())
+			if(defaultItemExtension.getName().equals(extensionName))
+				return true;
+
+		return false;
+	}
     
     @Override
     public String toString() {
