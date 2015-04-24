@@ -1,6 +1,7 @@
 package pl.net.bluesoft.rnd.pt.dict.global.controller.bean;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import pl.net.bluesoft.rnd.processtool.model.dict.db.ProcessDBDictionary;
 import pl.net.bluesoft.rnd.processtool.model.dict.db.ProcessDBDictionaryItemExtension;
 import pl.net.bluesoft.rnd.util.i18n.I18NSource;
 
@@ -77,16 +78,18 @@ public class DictionaryItemExtDTO {
         this.toDelete = toDelete;
     }
 
-    public ProcessDBDictionaryItemExtension toProcessDBDictionaryItemExtension(String languageCode) {
+    public ProcessDBDictionaryItemExtension toProcessDBDictionaryItemExtension(ProcessDBDictionary dictionary, String languageCode) {
         final ProcessDBDictionaryItemExtension extension = new ProcessDBDictionaryItemExtension();
-        updateExtension(extension, languageCode);
+        updateExtension(dictionary, extension, languageCode);
         return extension;
     }
 
-    public void updateExtension(ProcessDBDictionaryItemExtension extension, String languageCode) {
+    public void updateExtension(ProcessDBDictionary dictionary, ProcessDBDictionaryItemExtension extension, String languageCode) {
         if (this.getId() != null)
             extension.setId(this.getId());
         extension.setValue(StringEscapeUtils.unescapeHtml4(this.getValue()));
         extension.setName(StringEscapeUtils.unescapeHtml4(this.getKey()));
+
+        extension.setDefault_(dictionary.isDefaultExtenstion(extension.getName()));
     }
 }
