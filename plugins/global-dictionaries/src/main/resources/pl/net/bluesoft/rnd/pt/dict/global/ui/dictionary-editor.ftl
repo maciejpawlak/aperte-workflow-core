@@ -353,13 +353,14 @@
 	}
 
 	function addNewValue() {
-		 $.getJSON(dispatcherPortlet, {
+            var widgetJson = $.post(dispatcherPortlet,
+            {
                 "controller": "dictionaryeditorcontroller",
                 "action": "getNewItemValuePrototype",
                 "itemId": currentItem.id,
                 "dictId": currentDict
-        })
-        .done(function(data) {
+            }, function(){}, 'json')
+            .done(function(data) {
             //<!-- Errors handling -->
             clearAlerts();
             var errors = [];
@@ -391,12 +392,13 @@
 
 	function remove(item) {
 	    if (confirm('<@spring.message "dictionary.editor.dictionaryItems.confirm.delete"/>')) {
-            var widgetJson = $.getJSON(dispatcherPortlet, {
-                "controller": "dictionaryeditorcontroller",
-                "action": "deleteDictionaryItem",
-                "item": JSON.stringify(item, null, 2),
-                "dictId": currentDict
-            })
+                var widgetJson = $.post(dispatcherPortlet,
+                {
+                    "controller": "dictionaryeditorcontroller",
+                    "action": "deleteDictionaryItem",
+                    "item": JSON.stringify(item, null, 2),
+                    "dictId": currentDict
+                }, function(){}, 'json')
             .done(function(data) {
                 //<!-- Errors handling -->
                 clearAlerts();
@@ -426,12 +428,13 @@
 
 	function refreshValuesTable() {
 	    // get values from server
-		var widgetJson = $.getJSON(dispatcherPortlet, {
-                "controller": "dictionaryeditorcontroller",
-                "action": "getItemValues",
-                "itemId": currentItem.id,
-                "dictId": currentDict
-        })
+        var widgetJson = $.post(dispatcherPortlet,
+        {
+            "controller": "dictionaryeditorcontroller",
+            "action": "getItemValues",
+            "itemId": currentItem.id,
+            "dictId": currentDict
+        }, function(){}, 'json')
         .done(function(data)
         {
             //<!-- Errors handling -->

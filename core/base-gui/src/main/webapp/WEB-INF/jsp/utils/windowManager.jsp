@@ -175,6 +175,11 @@
 		{
 			$('#process-queue-view').empty();
 		}
+
+		this.hideCurrentView = function()
+		{
+			$('#'+this.currentView).hide();
+		}
 		
 		
 		this.clearProcessView = function()
