@@ -2,12 +2,11 @@ package pl.net.bluesoft.rnd.processtool.ui.basewidgets.steps;
 
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
 import pl.net.bluesoft.rnd.processtool.bpm.ProcessToolBpmSession;
-import pl.net.bluesoft.rnd.processtool.model.BpmStep;
-import pl.net.bluesoft.rnd.processtool.model.BpmTask;
-import pl.net.bluesoft.rnd.processtool.model.ProcessInstance;
-import pl.net.bluesoft.rnd.processtool.model.ProcessInstanceLog;
+import pl.net.bluesoft.rnd.processtool.model.*;
+import pl.net.bluesoft.rnd.processtool.roles.IUserRolesManager;
 import pl.net.bluesoft.rnd.processtool.steps.ProcessToolProcessStep;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.annotations.AliasName;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.annotations.AutoWiredProperty;
@@ -32,6 +31,9 @@ public class GetAssignedToStep implements ProcessToolProcessStep {
     @AutoWiredProperty
     private String required = "false";
 
+    @Autowired
+    private IUserRolesManager userRolesManager;
+
 	private final static Logger logger = Logger.getLogger(GetAssignedToStep.class.getName());
 
     @Override
@@ -55,8 +57,16 @@ public class GetAssignedToStep implements ProcessToolProcessStep {
         if(task == null) {
             String controllerName = getControllerFromLogs(pi);
 
-            if (Boolean.parseBoolean(required) && StringUtils.isEmpty(controllerName))
-                throw new RuntimeException("No task with given step name: " + stepName);
+            if (StringUtils.isEmpty(controllerName))
+            {
+                UserData financialController = userRolesManager.getFirstUserWithRole("FINANCIAL_CONTROLLER");
+
+
+                if(financialController == null && Boolean.parseBoolean(required))
+                    throw new RuntimeException("No task with given step name: " + stepName);
+                else
+                    pi.setSimpleAttribute(attributeKey, financialController.getLogin());
+            }
             else
                 pi.setSimpleAttribute(attributeKey, controllerName);
         }

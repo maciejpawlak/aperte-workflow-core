@@ -367,7 +367,7 @@ public class JbpmService implements ProcessEventListener, TaskEventListener {
         return createTaskQuery()
                 .processInstanceId(processId)
                 .activityName(taskName)
-                .orderByCompleteDate()
+                .orderByCompleteDateDesc()
                 .first();
     }
 
