@@ -10,6 +10,7 @@ public interface ProcessDictionaryItemValue {
     Date getValidFrom();
     Date getValidTo();
     boolean isValidForDate(Date date);
+    boolean isEmptyValue();
     
     Collection<ProcessDictionaryItemExtension> getItemExtensions();
 	String getExtValue(String name);

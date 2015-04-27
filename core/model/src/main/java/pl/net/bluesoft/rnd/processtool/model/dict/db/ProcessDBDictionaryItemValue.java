@@ -252,6 +252,11 @@ public class ProcessDBDictionaryItemValue extends AbstractPersistentEntity imple
         return true;
     }
 
+	@Override
+	public boolean isEmptyValue() {
+		return false;
+	}
+
 	public void addLocalizedValue(String langCode, String value) {
 		localizedValues.add(new ProcessDBDictionaryI18N(langCode, value));
 	}
