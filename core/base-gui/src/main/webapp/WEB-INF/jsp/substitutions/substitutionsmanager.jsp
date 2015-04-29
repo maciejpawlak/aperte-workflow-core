@@ -355,9 +355,12 @@
 											"bSortable" : true,
 											"mData" : function(o) {
 											    out='';
-
+	
+												if('${isPermitted}' == 'true')
+													{
 												out += '<button class="btn btn-mini" onclick="editSubstitution('+o.id+','+o.dateFrom+','+o.dateTo+',\''+o.userLogin+'\',\''+o.userSubstituteLogin+'\')" data-toggle="modal" data-target="#NewSubstitutionModal">';
 												out += '<i class="glyphicon glyphicon-edit"></i></button>';
+													}
 
 
                                                 if('${aperteUser.login}'==o.userLogin || '${aperteUser.login}'==o.userSubstituteLogin || '${isPermitted}' == 'true'){
