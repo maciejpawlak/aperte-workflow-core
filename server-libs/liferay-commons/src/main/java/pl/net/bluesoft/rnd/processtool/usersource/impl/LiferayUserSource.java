@@ -56,6 +56,34 @@ public class LiferayUserSource implements IPortalUserSource, CacheProvider
         SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
     }
 
+    @Override
+    public Locale getUserLocale(String login)
+    {
+        if (login == null) {
+            return null;
+        }
+
+        long[] companyIds = PortalUtil.getCompanyIds();
+
+        for (long companyId : companyIds) {
+            try {
+
+                User u = UserLocalServiceUtil.getUserByScreenName(companyId, login);
+                if (u != null) {
+                    return u.getLocale();
+                }
+            }
+            catch (PortalException e) {
+                return new Locale("en");
+            }
+            catch (Exception e) {
+                throw new UserSourceException(e);
+            }
+        }
+
+        return new Locale("en");
+    }
+
 	@Override
 	public UserData getUserByLogin(final String login) throws UserSourceException
 	{
