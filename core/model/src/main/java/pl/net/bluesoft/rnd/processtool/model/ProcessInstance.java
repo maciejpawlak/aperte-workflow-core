@@ -393,8 +393,13 @@ public class ProcessInstance extends AbstractPersistentEntity implements IAttrib
         List<ProcessInstanceLog> list = new ArrayList<ProcessInstanceLog>(processLogs);
         Collections.sort(list, new Comparator<ProcessInstanceLog>() {
             @Override
-            public int compare(ProcessInstanceLog o1, ProcessInstanceLog o2) {
-                return o1.getEntryDate().compareTo(o2.getEntryDate());
+            public int compare(ProcessInstanceLog o1, ProcessInstanceLog o2)
+			{
+				int result = o1.getEntryDate().compareTo(o2.getEntryDate());
+				/** Same dates, compare to ids */
+				if(result == 0)
+					result = o1.getId().compareTo(o2.getId());
+                return result;
             }
         });
         return list;

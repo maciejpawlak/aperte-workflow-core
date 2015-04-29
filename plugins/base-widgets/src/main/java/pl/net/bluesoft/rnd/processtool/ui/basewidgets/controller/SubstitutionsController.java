@@ -156,6 +156,14 @@ public class SubstitutionsController implements IOsgiWebController {
 
 		Long id = request.getParameter("SubstitutionId").isEmpty() ? null : Long.parseLong(request.getParameter("SubstitutionId"));
 		String userLogin = request.getParameter("UserLogin");
+
+        UserData userData = invocation.getProcessToolRequestContext().getUser();
+        if (!userData.hasRole("Administrator"))
+        {
+            result.addError("System", "User do not have Administrator privileges!");
+            return result;
+        }
+
 		String userSubstituteLogin = request.getParameter("UserSubstituteLogin");
 		Date dateFrom = beginOfDay(parseShortDate(request.getParameter("SubstitutingDateFrom")));
 		Date dateTo = endOfDay(parseShortDate(request.getParameter("SubstitutingDateTo")));
