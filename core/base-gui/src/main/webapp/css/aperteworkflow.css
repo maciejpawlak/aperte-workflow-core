@@ -1542,7 +1542,10 @@ body.blue
     text-decoration: none;
 }
 
-.ie7 span.delete-capex-button, .ie7 span.remove-account-button{
+.ie7 span.delete-capex-button,
+.ie7 span.remove-account-button,
+.ie7 span.remove-comp 
+{
      width: 16px;
      height: 16px;
      background: url('../images/editing-delete-icon.png');
