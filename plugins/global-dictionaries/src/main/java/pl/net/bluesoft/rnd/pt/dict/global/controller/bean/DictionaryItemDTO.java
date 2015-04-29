@@ -131,7 +131,12 @@ public class DictionaryItemDTO {
         DictionaryItemDTO dto = new DictionaryItemDTO();
         dto.setId(item.getId());
         dto.setKey(item.getKey());
-        dto.setDescription(StringEscapeUtils.escapeHtml4(item.getDefaultDescription()));
+        String description = StringEscapeUtils.escapeHtml4(item.getDefaultDescription());
+        if(description != null) {
+            description = description.replaceAll("&oacute;", "ó"); //There is only ó, Ó into Catalan another characters are ok
+            description = description.replaceAll("&Oacute;", "Ó");
+        }
+        dto.setDescription(description);
         for (ProcessDBDictionaryI18N desc : item.getLocalizedDescriptions()) {
             DictionaryI18NDTO i18NDTO = DictionaryI18NDTO.createFrom(desc, messageSource);
             dto.getLocalizedDescriptions().put(i18NDTO.getLanguageCode(), i18NDTO);
