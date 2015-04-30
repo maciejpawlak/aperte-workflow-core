@@ -623,20 +623,23 @@ public class ProcessInstance extends AbstractPersistentEntity implements IAttrib
 		return result;
 	}
 
-
+	public void addProcessLogInfo(String infoHeader, String infoBody, Collection<String> parameters, Date date)
+	{
+		ProcessInstanceLog log = new ProcessInstanceLog();
+		log.setState(null);
+		log.setEntryDate(date);
+		log.setEventI18NKey(infoHeader);
+		log.setUserLogin("");
+		log.setLogType(ProcessInstanceLog.LOG_TYPE_INFO);
+		log.setOwnProcessInstance(this);
+		log.setLogValue(infoBody);
+		log.setAdditionalInfo(StringUtils.join(parameters, ","));
+		getRootProcessInstance().addProcessLog(log);
+	}
 
     public void addProcessLogInfo(String infoHeader, String infoBody, Collection<String> parameters)
     {
-        ProcessInstanceLog log = new ProcessInstanceLog();
-        log.setState(null);
-        log.setEntryDate(new Date());
-        log.setEventI18NKey(infoHeader);
-        log.setUserLogin("");
-        log.setLogType(ProcessInstanceLog.LOG_TYPE_INFO);
-        log.setOwnProcessInstance(this);
-        log.setLogValue(infoBody);
-        log.setAdditionalInfo(StringUtils.join(parameters, ","));
-        getRootProcessInstance().addProcessLog(log);
+        addProcessLogInfo(infoHeader, infoBody, parameters, new Date());
     }
 
     @Override
