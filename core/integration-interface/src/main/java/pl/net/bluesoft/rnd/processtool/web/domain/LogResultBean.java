@@ -2,6 +2,7 @@ package pl.net.bluesoft.rnd.processtool.web.domain;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -11,6 +12,7 @@ public class LogResultBean
 {
     private String messageKey;
     private String headerKey;
+    private Date date;
     private List<String> parameters = new ArrayList<String>();
 
     public LogResultBean(String headerKey, String messageKey, String ... params)
@@ -62,5 +64,13 @@ public class LogResultBean
     @Override
     public int hashCode() {
         return headerKey != null ? headerKey.hashCode() : 0;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }
