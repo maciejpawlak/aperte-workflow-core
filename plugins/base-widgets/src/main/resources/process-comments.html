@@ -119,7 +119,7 @@
         var fullDate = year + "-" + twoDigitMonth + "-" + day + " " +  time + ":" + date.getSeconds();
         var dateToDisplay = day + "-" + twoDigitMonth + "-" + twoDigitYear + " " +  time;
 
-        var body = $('#process_comments_body').val();
+        var body = $.trim($('#process_comments_body').val());
         body = $("<div/>").text(body).html();
         var author = '${user.login}';
         var authorFullName = '${user.realName}';
