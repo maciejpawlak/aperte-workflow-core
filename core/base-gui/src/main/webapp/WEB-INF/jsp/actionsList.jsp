@@ -116,7 +116,7 @@
 	
 	function performCommentModal()
 	{
-		var comment = $('#action-comment-textarea').val();
+		var comment = $.trim($('#action-comment-textarea').val());
 		$('#commentModal').modal('hide');
 		if(!comment)
 		{
