@@ -1,9 +1,6 @@
 package pl.net.bluesoft.rnd.pt.dict.global.controller;
 
-import pl.net.bluesoft.rnd.processtool.model.dict.db.ProcessDBDictionary;
-import pl.net.bluesoft.rnd.processtool.model.dict.db.ProcessDBDictionaryItem;
-import pl.net.bluesoft.rnd.processtool.model.dict.db.ProcessDBDictionaryItemExtension;
-import pl.net.bluesoft.rnd.processtool.model.dict.db.ProcessDBDictionaryItemValue;
+import pl.net.bluesoft.rnd.processtool.model.dict.db.*;
 import pl.net.bluesoft.rnd.pt.dict.global.exception.InvalidValueException;
 import pl.net.bluesoft.rnd.util.i18n.I18NSource;
 import pl.net.bluesoft.util.lang.DateUtil;
@@ -47,6 +44,10 @@ public class DictionaryValidator {
 
             for (ProcessDBDictionaryItemExtension extension : itemValue.getExtensions()) {
                 validateItemValueExtensionForEmptyValues(extension);
+            }
+
+            for(ProcessDBDictionaryI18N localizedValue: itemValue.getLocalizedValues()){
+                validateItemValueLocalizedValueForEmptyValues(localizedValue);
             }
 
             validateItemValueExtensionKeyDuplication(itemValue);
@@ -144,6 +145,12 @@ public class DictionaryValidator {
     private void validateItemValueExtensionForEmptyValues(ProcessDBDictionaryItemExtension itemExtension) throws InvalidValueException {
         if (!hasText(itemExtension.getName())) {
             throw new InvalidValueException(messageSource.getMessage("dictionary.editor.validator.valueExtensions.empty.key"));
+        }
+    }
+
+    private void validateItemValueLocalizedValueForEmptyValues(ProcessDBDictionaryI18N itemLocalizedValue) throws InvalidValueException {
+        if(!hasText(itemLocalizedValue.getLanguageCode())) {
+            throw new InvalidValueException(messageSource.getMessage("dictionary.editor.validator.valueLacalizedValue.empty.languageCode"));
         }
     }
 
