@@ -192,10 +192,6 @@ public class FilesController implements IOsgiWebController {
 
             String encoding = request.getCharacterEncoding();
 
-//            byte[] fileNameBytes = content.getName().getBytes(request.getCharacterEncoding());
-//            String dispositionFileName = "";
-//            for (byte b: fileNameBytes) dispositionFileName += (char)(b & 0xff);
-
             String browserType = request.getHeader("User-Agent");
             String disposition = "attachment; filename=\"" + URLEncoder.encode(content.getName(), "UTF-8") + "\"; "
                     + "filename*=UTF-8''" + URLEncoder.encode(content.getName(), "UTF-8");

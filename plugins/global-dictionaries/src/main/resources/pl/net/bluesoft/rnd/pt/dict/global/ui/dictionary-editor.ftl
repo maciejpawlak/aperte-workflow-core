@@ -460,7 +460,7 @@
 			[[ 0, "asc" ]]
 		);
 
-		$('#itemsTableTemplateDiv').css("display","none");
+		$('#itemsTableTemplateDiv').hide();
 
 
         function generateDescriptionColumn(o) {
@@ -541,12 +541,12 @@
 			if(currentDict=='cost_accounts')
 			{
 				itemsTable = itemsTableCostAccount;
-				$('#itemsTableTemplateDiv').css("display","none");
-				$('#itemsTableCostAccountDiv').css("display","initial");
+				$('#itemsTableTemplateDiv').hide();
+				$('#itemsTableCostAccountDiv').show();
 			} else {
 				itemsTable = itemsTableTemplate;
-				$('#itemsTableCostAccountDiv').css("display","none");
-				$('#itemsTableTemplateDiv').css("display","initial");
+				$('#itemsTableCostAccountDiv').hide();
+				$('#itemsTableTemplateDiv').show();
 			}
 			clearState();
 			refreshTable();
