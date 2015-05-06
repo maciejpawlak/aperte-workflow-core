@@ -211,11 +211,9 @@ public abstract class AbstractFilesController implements IOsgiWebController {
 
             String encoding = request.getCharacterEncoding();
 
-//            byte[] fileNameBytes = content.getName().getBytes(request.getCharacterEncoding());
-//            String dispositionFileName = "";
-//            for (byte b: fileNameBytes) dispositionFileName += (char)(b & 0xff);
+            String disposition = "attachment; filename=\"" + URLEncoder.encode(content.getName(), "UTF-8") + "\"; "
+                    + "filename*=UTF-8''" + URLEncoder.encode(content.getName(), "UTF-8");
 
-            String disposition = "attachment; filename=\"" + URLEncoder.encode(content.getName(), "UTF-8") + "\"";
             response.setHeader("Content-disposition", disposition);
             response.setContentType(content.getContentType());
             response.setCharacterEncoding("UTF-8");
@@ -226,13 +224,6 @@ public abstract class AbstractFilesController implements IOsgiWebController {
         } catch(UnsupportedEncodingException e) {
             logger.log(Level.SEVERE, "Download file error", e);
         }
-//        //response.addHeader("Content-Disposition", "attachment; filename*=\"'UTF-8'" + URLEncoder.encode(content.getName(), "UTF-8") + "\"");
-//        response.setHeader("Content-Disposition", "attachment; filename*=\"UTF-8" + content.getName() + "\"");
-//        response.setCharacterEncoding("UTF-8");
-//        response.setContentType(content.getContentType());
-//        ServletOutputStream soutStream = response.getOutputStream();
-//        IOUtils.write(content.getBytes(), soutStream);
-//        IOUtils.closeQuietly(soutStream);
     }
 
     private Long getFilesRepositoryItemId(HttpServletRequest request) {

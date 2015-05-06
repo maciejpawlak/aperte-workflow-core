@@ -331,7 +331,7 @@ ${b}	</tr>${b}
             }
         })
         .on('fileuploadadd', function (e, dataObj) {
-                    dataObj.context = $('<div/>').appendTo('#fileupload');
+                    dataObj.context = $('#fileupload').append($("<div><div></div></div>").innerHTML);
                 })
         .on('fileuploadprocessalways', function (e, data) {
 
