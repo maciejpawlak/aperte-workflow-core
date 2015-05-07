@@ -404,9 +404,13 @@ public class BpmNotificationEngine implements IBpmNotificationService
 					continue;
 				}
 	        }
-			if (hasText(attribute)) {
-				UserData user = getRegistry().getUserSource().getUserByLogin(attribute);
-				users.add(user);
+			if (hasText(attribute))
+            {
+                for(String login: StringUtils.split(attribute, ","))
+                {
+                    UserData user = getRegistry().getUserSource().getUserByLogin(login);
+                    users.add(user);
+                }
 			}
 		}
 		return users;
