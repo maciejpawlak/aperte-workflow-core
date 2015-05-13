@@ -41,8 +41,8 @@
                         <label name="tooltip" title="${messageSource.getMessage('substituting.date.from.tooltip')}" for="substituting-date-from-${widgetId}" class="control-label required">${messageSource.getMessage("substituting.date.from.label")}</label>
                     </div>
                     <div  class="col-sm-10">
-                        <div class="input-group input-group-sm  input-append date" id="substituting-date-from-datepicker-${widgetId}">
-                            <input type="text" class="form-control" data-placeholder="${messageSource.getMessage('substituting.user.datefrom.placeholder')}"  id="substituting-date-from-${widgetId}" <#if canEdit == "no">disabled</#if>>
+                        <div class="input-group input-group-sm  input-append date" id="substituting-date-from-datepicker-${widgetId}" <#if canEdit == "no">disabled</#if>>
+                            <input type="text" class="form-control" value="${substitutingDateFrom}" data-placeholder="${messageSource.getMessage('substituting.user.datefrom.placeholder')}"  id="substituting-date-from-${widgetId}" <#if canEdit == "no">disabled</#if>>
                             <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                         </div>
                     </div>
@@ -54,8 +54,8 @@
                         <label name="tooltip" title="${messageSource.getMessage('substituting.date.to.tooltip')}" for="substituting-date-to-${widgetId}" class="control-label required">${messageSource.getMessage("substituting.date.to.label")}</label>
                     </div>
                     <div class="col-sm-10">
-                        <div class="input-group input-group-sm  input-append date" id="substituting-date-to-datepicker-${widgetId}">
-                            <input type="text" class="form-control"  id="substituting-date-to-${widgetId}" <#if canEdit == "no">disabled</#if>>
+                        <div class="input-group input-group-sm  input-append date" id="substituting-date-to-datepicker-${widgetId}" >
+                            <input type="text" class="form-control"  id="substituting-date-to-${widgetId}" value="${substitutingDateTo}" <#if canEdit == "no">disabled</#if>>
                             <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                         </div>
                     </div>
@@ -127,7 +127,7 @@
         $("#substitute-user-${widgetId}").select2('val', '${substitutingUserLoginFullName}');
 
 
-
+        <#if canEdit != "no">
             $("#substituting-date-from-datepicker-${widgetId}").datepicker({
                 format: "dd-mm-yyyy",
                 startDate: moment().format("DD-MM-YYYY"),
@@ -137,10 +137,13 @@
                 todayHighlight : true
             });
             $("#substituting-date-from-datepicker-${widgetId}").datepicker('update', '${substitutingDateFrom}');
+		</#if>
 
 
 
 
+
+<#if canEdit != "no">
             $("#substituting-date-to-datepicker-${widgetId}").datepicker({
                 format: "dd-mm-yyyy",
                 startDate: moment().format("DD-MM-YYYY"),
@@ -150,11 +153,13 @@
                 todayHighlight : true
             });
             $("#substituting-date-to-datepicker-${widgetId}").datepicker('update', '${substitutingDateTo}');
+</#if>
+
 
 
 
     });
-    
+
 	function validateSubstitutingRequestData(){
 		var errors = [];
 		if("${canEdit}" == "no") { return errors; }
@@ -178,7 +183,6 @@
 		else
 		{
 		    var dateFrom = typeof substitutingDateFrom == 'string' ? moment(substitutingDateFrom, "DD-MM-YYYY") : null;
-            console.log('datefrom: '+dateFrom);
 		    if ((dateFrom.isValid()) && (now.isAfter(dateFrom))){
                 $('#warning').show();
                 errors.push('${messageSource.getMessage("substituting.date.from.past")}');
