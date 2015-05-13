@@ -96,7 +96,21 @@ public class TemplateDataProvider implements ITemplateDataProvider
             for (ProcessInstanceSimpleLargeAttribute attribute : pi.getProcessSimpleLargeAttributes())
                 if(isAttributeAllowed(attribute.getKey()))
                     templateData.addEntry(attribute.getKey(), attribute.getValue());
+
+			/** subprocess */
+			if(!pi.getRootProcessInstance().getId().equals(pi.getId()) )
+			{
+				for (ProcessInstanceSimpleAttribute attribute : pi.getRootProcessInstance().getProcessSimpleAttributes())
+					if(isAttributeAllowed(attribute.getKey()))
+						templateData.addEntry(attribute.getKey(), attribute.getValue());
+
+				for (ProcessInstanceSimpleLargeAttribute attribute : pi.getRootProcessInstance().getProcessSimpleLargeAttributes())
+					if(isAttributeAllowed(attribute.getKey()))
+						templateData.addEntry(attribute.getKey(), attribute.getValue());
+			}
+
         }
+
 		return this;
 	}
 

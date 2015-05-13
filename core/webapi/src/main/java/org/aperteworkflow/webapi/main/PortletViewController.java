@@ -1,9 +1,9 @@
 package org.aperteworkflow.webapi.main;
 
+import org.aperteworkflow.webapi.PortletUtil;
 import org.aperteworkflow.webapi.main.processes.controller.ProcessesListController;
 import org.aperteworkflow.webapi.main.processes.controller.TaskViewController;
 import org.aperteworkflow.webapi.main.queues.controller.QueuesController;
-import org.aperteworkflow.webapi.main.util.MappingJacksonJsonViewEx;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -116,8 +116,8 @@ public class PortletViewController extends AbstractMainController<ModelAndView>
             throw new PortletException("No action paramter!");
         } else {
             HttpServletResponse httpServletResponse = getHttpServletResponse(response);
-            return translate(PORTLET_JSON_RESULT_ROOT_NAME,
-                    mainDispatcher.invokeExternalController(controller, action, originalHttpServletRequest, httpServletResponse));
+            return PortletUtil.translate(PORTLET_JSON_RESULT_ROOT_NAME,
+                    mainDispatcher.invokeExternalController(controller, action, originalHttpServletRequest, httpServletResponse), controller, action);
         }
     }
 
@@ -162,7 +162,7 @@ public class PortletViewController extends AbstractMainController<ModelAndView>
     @ResponseBody
     public ModelAndView getUserQueues(ResourceRequest request, ResourceResponse response) {
         HttpServletRequest originalHttpServletRequest = getOriginalHttpServletRequest(request);
-        return translate(PORTLET_JSON_RESULT_ROOT_NAME, queuesController.getUserQueues(originalHttpServletRequest));
+        return PortletUtil.translate(PORTLET_JSON_RESULT_ROOT_NAME, queuesController.getUserQueues(originalHttpServletRequest));
     }
 
     @ResourceMapping("claimTaskFromQueue")
@@ -170,7 +170,7 @@ public class PortletViewController extends AbstractMainController<ModelAndView>
     public ModelAndView claimTaskFromQueue(ResourceRequest request, ResourceResponse response) throws IOException, ServletException {
         HttpServletRequest originalHttpServletRequest = getOriginalHttpServletRequest(request);
         HttpServletResponse httpServletResponse = portalUserSource.getHttpServletResponse(response);
-        return translate(PORTLET_JSON_RESULT_ROOT_NAME, taskViewController.claimTaskFromQueue(originalHttpServletRequest, httpServletResponse));
+        return PortletUtil.translate(PORTLET_JSON_RESULT_ROOT_NAME, taskViewController.claimTaskFromQueue(originalHttpServletRequest, httpServletResponse));
     }
 
     @ResourceMapping("loadTask")
@@ -191,28 +191,28 @@ public class PortletViewController extends AbstractMainController<ModelAndView>
     @ResponseBody
     public ModelAndView performAction(ResourceRequest request, ResourceResponse response) throws IOException, ServletException {
         HttpServletRequest originalHttpServletRequest = getOriginalHttpServletRequest(request);
-        return translate(PORTLET_JSON_RESULT_ROOT_NAME, processesListController.performAction(originalHttpServletRequest));
+        return PortletUtil.translate(PORTLET_JSON_RESULT_ROOT_NAME, processesListController.performAction(originalHttpServletRequest));
     }
 
     @ResourceMapping("saveAction")
     @ResponseBody
     public ModelAndView saveAction(ResourceRequest request, ResourceResponse response) throws IOException, ServletException {
         HttpServletRequest originalHttpServletRequest = getOriginalHttpServletRequest(request);
-        return translate(PORTLET_JSON_RESULT_ROOT_NAME, processesListController.saveAction(originalHttpServletRequest));
+        return PortletUtil.translate(PORTLET_JSON_RESULT_ROOT_NAME, processesListController.saveAction(originalHttpServletRequest));
     }
 
     @ResourceMapping("startNewProcess")
     @ResponseBody
     public ModelAndView startNewProcess(ResourceRequest request, ResourceResponse response) throws IOException, ServletException {
         HttpServletRequest originalHttpServletRequest = getOriginalHttpServletRequest(request);
-        return translate(PORTLET_JSON_RESULT_ROOT_NAME, processesListController.startNewProcess(originalHttpServletRequest));
+        return PortletUtil.translate(PORTLET_JSON_RESULT_ROOT_NAME, processesListController.startNewProcess(originalHttpServletRequest));
     }
 
     @ResourceMapping("searchTasks")
     @ResponseBody
     public ModelAndView searchTasks(ResourceRequest request, ResourceResponse response) throws IOException, ServletException {
         HttpServletRequest originalHttpServletRequest = getOriginalHttpServletRequest(request);
-        return translate(PORTLET_JSON_RESULT_ROOT_NAME, processesListController.searchTasks(originalHttpServletRequest));
+        return PortletUtil.translate(PORTLET_JSON_RESULT_ROOT_NAME, processesListController.searchTasks(originalHttpServletRequest));
     }
 
 
@@ -221,7 +221,7 @@ public class PortletViewController extends AbstractMainController<ModelAndView>
     public ModelAndView loadProcessesList(ResourceRequest request, ResourceResponse response) throws IOException, ServletException {
         HttpServletRequest originalHttpServletRequest = getOriginalHttpServletRequest(request);
 
-        return translate(PORTLET_JSON_RESULT_ROOT_NAME, processesListController.loadProcessesList(originalHttpServletRequest));
+        return PortletUtil.translate(PORTLET_JSON_RESULT_ROOT_NAME, processesListController.loadProcessesList(originalHttpServletRequest));
     }
 
     /**
@@ -255,17 +255,4 @@ public class PortletViewController extends AbstractMainController<ModelAndView>
         }
     }
 
-    /**
-     * Translate DTO object to json in model and view, which is required for portlet resource serving
-     */
-    private ModelAndView translate(String resultName, Object result) {
-        ModelAndView mav = new ModelAndView();
-        MappingJacksonJsonViewEx v = new MappingJacksonJsonViewEx();
-        v.setBeanName(resultName);
-
-        mav.setView(v);
-        mav.addObject(resultName, result);
-
-        return mav;
-    }
 }
