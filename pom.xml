@@ -34,12 +34,6 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-    <scm>
-        <connection>scm:git:https://github.com/bluesoft-rnd/aperte-workflow-core.git</connection>
-        <developerConnection>scm:git:https://github.com/bluesoft-rnd/aperte-workflow-core.git</developerConnection>
-        <url>https://github.com/bluesoft-rnd/aperte-workflow-core.git</url>
-      <tag>aperteworkflow-core-3.0-beta1</tag>
-  </scm>
 
 	<repositories>
 	
@@ -120,11 +114,6 @@
 
 	<dependencyManagement>
 		<dependencies>
-            <dependency>
-                <groupId>org.aperteworkflow</groupId>
-                <artifactId>webapi</artifactId>
-                <version>3.0-beta1</version>
-            </dependency>
 
             <dependency>
 				<groupId>asm</groupId>
