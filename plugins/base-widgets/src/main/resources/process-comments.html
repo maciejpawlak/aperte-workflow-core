@@ -109,43 +109,51 @@
 
     function process_comments_button_add_click() {
 
-        var date = new Date();
-        var day = date.getDate();
-        var twoDigitMonth = format_2_digit(date.getMonth() + 1);
-        var year = date.getFullYear();
-        var twoDigitYear = date.getFullYear().toString().substr(2,2);
 
-        var time = format_2_digit(date.getHours()) + ":" + format_2_digit(date.getMinutes());
-        var fullDate = year + "-" + twoDigitMonth + "-" + day + " " +  time + ":" + date.getSeconds();
-        var dateToDisplay = day + "-" + twoDigitMonth + "-" + twoDigitYear + " " +  time;
+        var massActionResult = $.post(dispatcherPortlet,
+		{
+		    "controller": "commentsController",
+		    "action": "getCommentTime"
+		}, function(){}, 'json')
+		.done(function(data)
+		{
+			var errors = [];
+			$.each(data.errors, function() {
+				errors.push(this);
+				addAlert(this.message);
+			});
 
-        var body = $.trim($('#process_comments_body').val());
-        body = $("<div/>").text(body).html();
-        var author = '${user.login}';
-        var authorFullName = '${user.realName}';
+            var body = $.trim($('#process_comments_body').val());
+            body = $("<div/>").text(body).html();
+            var author = '${user.login}';
+            var authorFullName = '${user.realName}';
 
-        if (!body || /^\s*$/.test(body)) {
-            return;
-        }
+            if (!body || /^\s*$/.test(body)) {
+                return;
+            }
 
-        processCommentsAddedComments.unshift({
-            createDate: fullDate,
-            body: body,
-            authorLogin: author,
-            authorFullName: authorFullName
-        });
+            processCommentsAddedComments.unshift({
+                createDate: data.data.time,
+                body: body,
+                authorLogin: author,
+                authorFullName: authorFullName
+            });
 
-        var text = '<li class="list-group-item">' +
-                '<h4 class="list-group-item-heading">'+
-                authorFullName + ' (' + author + ')' +
-                " [" + dateToDisplay + "] " +
-                '</h4><p class="list-group-item-text">'+
-                            body+
-                        '</p></li>';
+            var text = '<li class="list-group-item">' +
+                    '<h4 class="list-group-item-heading">'+
+                    authorFullName + ' (' + author + ')' +
+                    " [" + data.data.formattedTime + "] " +
+                    '</h4><p class="list-group-item-text">'+
+                                body+
+                            '</p></li>';
 
-        $("#process_comments_list").prepend(text);
+            $("#process_comments_list").prepend(text);
 
-        process_comments_button_cancel_click();
+            process_comments_button_cancel_click();
+
+		});
+
+
     }
 
     function process_comments_button_cancel_click() {

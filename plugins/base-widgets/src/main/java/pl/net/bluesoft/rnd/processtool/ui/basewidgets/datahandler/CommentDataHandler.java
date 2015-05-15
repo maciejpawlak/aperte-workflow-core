@@ -60,11 +60,7 @@ public class CommentDataHandler implements IWidgetDataHandler {
         comment.setBody(bean.getBody());
         comment.setProcessState(consumer.getProcessInstance().getBusinessStatus());
         comment.setProcessInstance(consumer.getProcessInstance());
-        try {
-            comment.setCreateTime(format.parse(bean.getCreateDate()));
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+        comment.setCreateTime(bean.getCreateDate());
         return comment;
     }
 }

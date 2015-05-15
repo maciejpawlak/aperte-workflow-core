@@ -34,12 +34,6 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-    <scm>
-        <connection>scm:git:https://github.com/bluesoft-rnd/aperte-workflow-core.git</connection>
-        <developerConnection>scm:git:https://github.com/bluesoft-rnd/aperte-workflow-core.git</developerConnection>
-        <url>https://github.com/bluesoft-rnd/aperte-workflow-core.git</url>
-      <tag>aperteworkflow-core-3.0-beta1</tag>
-  </scm>
 
 	<repositories>
 	
@@ -227,19 +221,6 @@
                         <pushChanges>false</pushChanges>
                         <mavenExecutorId>forked-path</mavenExecutorId>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>sign-artifacts</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>sign</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>

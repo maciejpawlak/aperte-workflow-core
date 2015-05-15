@@ -1,5 +1,6 @@
 package pl.net.bluesoft.rnd.processtool.ui.basewidgets.controller;
 
+import org.aperteworkflow.admin.controller.CommentTime;
 import org.aperteworkflow.ui.help.datatable.JQueryDataTable;
 import org.aperteworkflow.ui.help.datatable.JQueryDataTableColumn;
 import org.aperteworkflow.ui.help.datatable.JQueryDataTableUtil;
@@ -20,8 +21,8 @@ import pl.net.bluesoft.rnd.processtool.web.domain.GenericResultBean;
 import pl.net.bluesoft.rnd.processtool.web.domain.IProcessToolRequestContext;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static pl.net.bluesoft.util.lang.DateUtil.beginOfDay;
 import static pl.net.bluesoft.util.lang.DateUtil.endOfDay;
@@ -37,7 +38,16 @@ public class CommentsController implements IOsgiWebController {
     public GenericResultBean getCommentTime(final OsgiWebRequest invocation) {
 
         GenericResultBean resultBean = new GenericResultBean();
-        resultBean.setData(new Date());
+
+        CommentTime commentTime = new CommentTime();
+        Calendar calendar = GregorianCalendar.getInstance(TimeZone.getTimeZone("Europe/Warsaw"));
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yy HH:mm");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Europe/Warsaw"));
+
+        commentTime.setTime(calendar.getTime());
+        commentTime.setFormattedTime(simpleDateFormat.format(calendar.getTime()));
+
+        resultBean.setData(commentTime);
         return resultBean;
     }
 }

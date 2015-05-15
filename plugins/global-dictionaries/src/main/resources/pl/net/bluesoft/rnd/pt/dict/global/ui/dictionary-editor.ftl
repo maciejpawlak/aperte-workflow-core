@@ -454,7 +454,7 @@
 				 },
 				 { "sName":"actions", "bSortable": false , "mData": function(o) { return ""; }, "fnCreatedCell": function(nTd, sData, oData, iRow, iCol) { return generateActionsColumn(nTd, sData, oData, iRow, iCol) }
 				 },
-				 { "sName":"actions", "bSortable": false , "mData": function(o) { item = o; return o.values[0].value; }
+				 { "sName":"actions", "bSortable": false , "mData": function(o) { item = o; return o.values.length > 0 ? o.values[0].value : "";  }
 				 }
 			],
 			[[ 0, "asc" ]]
