@@ -900,6 +900,11 @@ public class BpmNotificationEngine implements IBpmNotificationService
     	String sender = findTemplate(notificationData.getTemplateData().getTemplateName() + SENDER_TEMPLATE_SUFFIX);
         String sentFolderName = templateProvider.getTemplateSentFolderName(notificationData.getTemplateData().getTemplateName());
 
+        if(StringUtils.isNotEmpty(topic) && topic.length() > 254)
+        {
+            topic = StringUtils.abbreviate(topic, 254);
+        }
+
 		if (hasText(notificationData.getSubjectOverride())) {
 			topic = notificationData.getSubjectOverride();
 		}
