@@ -324,6 +324,7 @@
 			
 			
 			$('#action-comment-textarea').val('');
+			$('#action-comment-button').prop('disabled', true);
 			$('#commentModal').appendTo("body").modal({
 			  keyboard: false
 			});
