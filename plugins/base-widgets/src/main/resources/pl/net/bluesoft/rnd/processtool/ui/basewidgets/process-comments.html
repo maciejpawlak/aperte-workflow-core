@@ -1,13 +1,13 @@
 <#if attributesProvider.processInstance??>
-    <#assign processComments = attributesProvider.processInstance.getCommentsOrderedByDate(true) />
+    <#assign processComments = attributesProvider.processInstance.getCommentsOrderedByDate(false) />
     <#assign internalId = task.internalTaskId />
 </#if>
 <#if !processComments??>
     <#assign commentsAttribute = attributesProvider.getAttribute('comments')!"" />
     <#if commentsAttribute?has_content>
         <#assign processComments = commentsAttribute.getCommentsOrderedByDate(true)! />
-    <#else>
-        <#assign processComments = [] />
+        <#else>
+            <#assign processComments = [] />
     </#if>
     <#assign internalId = attributesProvider.id />
 </#if>
@@ -16,15 +16,15 @@
 <style type="text/css" media="all">
     .add-new-comment-input
     {
-        margin-top: 10px;
-        margin-bottom: 10px;
-        width: 100%;
-        min-height: 100px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    min-height: 100px;
     }
 
     .add-comment-button
     {
-        margin-top: 10px;
+    margin-top: 10px;
     }
 </style>
 
@@ -36,7 +36,7 @@
                     <#assign substituteUser = processComment.substituteLogin!""/>
                     <li class="list-group-item">
                         <h4 class="list-group-item-heading">
-                            ${processComment.authorFullName} (${processComment.authorLogin}) [${processComment.getFormattedDate("dd-MM-yyyy HH:mm:ss")}]
+                            ${processComment.authorFullName} (${processComment.authorLogin}) [${processComment.getFormattedDate("dd-MM-yy HH:mm")}]
                             <#if substituteUser != "">
                                 ${messageSource.getMessage("process.history.subsituted.by")}
                                 ${processComment.substituteFullName} (${processComment.substituteLogin})
@@ -68,7 +68,7 @@
 
 
 <#if privileges?seq_contains("EDIT")>
-<script type="text/javascript">
+    <script type="text/javascript">
     processCommentsAddedComments = [];
 
     $(document).ready(function()
@@ -109,34 +109,51 @@
 
     function process_comments_button_add_click() {
 
-        var date = moment();
-        var body = $('#process_comments_body').val();
-        body = $("<div/>").text(body).html();
-        var author = '${user.login}';
-        var authorFullName = '${user.realName}';
 
-        if (!body || /^\s*$/.test(body)) {
-            return;
-        }
+        var massActionResult = $.post(dispatcherPortlet,
+		{
+		    "controller": "commentsController",
+		    "action": "getCommentTime"
+		}, function(){}, 'json')
+		.done(function(data)
+		{
+			var errors = [];
+			$.each(data.errors, function() {
+				errors.push(this);
+				addAlert(this.message);
+			});
 
-        processCommentsAddedComments.push({
-            createDate: date.format('DD-MM-YYYY HH:mm:ss'),
-            body: body,
-            authorLogin: author,
-            authorFullName: authorFullName
-        });
+            var body = $.trim($('#process_comments_body').val());
+            body = $("<div/>").text(body).html();
+            var author = '${user.login}';
+            var authorFullName = '${user.realName}';
 
-        var text = '<li class="list-group-item">' +
-                '<h4 class="list-group-item-heading">'+
-                authorFullName + ' (' + author + ')' +
-                " [" + date.format('DD-MM-YYYY HH:mm:ss')   + "] " +
-                '</h4><p class="list-group-item-text">'+
-                            body+
-                        '</p></li>';
+            if (!body || /^\s*$/.test(body)) {
+                return;
+            }
 
-        $("#process_comments_list").append(text);
+            processCommentsAddedComments.unshift({
+                createDate: data.data.time,
+                body: body,
+                authorLogin: author,
+                authorFullName: authorFullName
+            });
 
-        process_comments_button_cancel_click();
+            var text = '<li class="list-group-item">' +
+                    '<h4 class="list-group-item-heading">'+
+                    authorFullName + ' (' + author + ')' +
+                    " [" + data.data.formattedTime + "] " +
+                    '</h4><p class="list-group-item-text">'+
+                                body+
+                            '</p></li>';
+
+            $("#process_comments_list").prepend(text);
+
+            process_comments_button_cancel_click();
+
+		});
+
+
     }
 
     function process_comments_button_cancel_click() {

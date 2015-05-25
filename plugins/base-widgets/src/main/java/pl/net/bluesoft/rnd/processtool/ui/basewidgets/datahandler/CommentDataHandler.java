@@ -5,7 +5,6 @@ import org.codehaus.jackson.type.JavaType;
 import pl.net.bluesoft.rnd.processtool.model.BpmTask;
 import pl.net.bluesoft.rnd.processtool.model.IAttributesConsumer;
 import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
-import pl.net.bluesoft.rnd.processtool.model.ProcessInstance;
 import pl.net.bluesoft.rnd.processtool.model.processdata.ProcessComment;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.IWidgetDataHandler;
 import pl.net.bluesoft.rnd.processtool.ui.widgets.WidgetData;
@@ -16,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * @author: Maciej
@@ -24,7 +24,7 @@ public class CommentDataHandler implements IWidgetDataHandler {
     private static final String TYPE_COMMENT = "comment";
 
     @Override
-	public void handleWidgetData(IAttributesConsumer consumer, WidgetData data) {
+    public void handleWidgetData(IAttributesConsumer consumer, WidgetData data) {
         ObjectMapper mapper = new ObjectMapper();
         JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, ProcessCommentBean.class);
 
@@ -42,29 +42,25 @@ public class CommentDataHandler implements IWidgetDataHandler {
         }
     }
 
-    private List<ProcessComment> convert(List<ProcessCommentBean> list, IAttributesProvider provider) {
+    private List<ProcessComment> convert(List<ProcessCommentBean> list, IAttributesConsumer consumer) {
         List<ProcessComment> result = new ArrayList<ProcessComment>();
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone("Europe/Warsaw"));
 
         for (ProcessCommentBean bean : list) {
-            result.add(convert(bean, provider, format));
+            result.add(convert(bean,  consumer, format));
         }
         return result;
     }
 
-    private ProcessComment convert(ProcessCommentBean bean, IAttributesProvider provider, SimpleDateFormat format) {
+    private ProcessComment convert(ProcessCommentBean bean, IAttributesConsumer consumer, SimpleDateFormat format) {
         ProcessComment comment = new ProcessComment();
         comment.setAuthorLogin(bean.getAuthorLogin());
         comment.setAuthorFullName(bean.getAuthorFullName());
         comment.setBody(bean.getBody());
-        if(provider instanceof BpmTask)
-            comment.setProcessState(((BpmTask) provider).getTaskName());
-        comment.setProcessInstance(provider.getProcessInstance());
-        try {
-            comment.setCreateTime(format.parse(bean.getCreateDate()));
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+        comment.setProcessState(consumer.getProcessInstance().getBusinessStatus());
+        comment.setProcessInstance(consumer.getProcessInstance());
+        comment.setCreateTime(bean.getCreateDate());
         return comment;
     }
 }
