@@ -1,7 +1,9 @@
 package pl.net.bluesoft.rnd.pt.ext.bpmnotifications.step;
 
+import org.apache.commons.lang3.StringUtils;
 import org.aperteworkflow.files.IFilesRepositoryFacade;
 import org.springframework.beans.factory.annotation.Autowired;
+import pl.net.bluesoft.rnd.processtool.ISettingsProvider;
 import pl.net.bluesoft.rnd.processtool.model.BpmStep;
 import pl.net.bluesoft.rnd.processtool.model.UserData;
 import pl.net.bluesoft.rnd.processtool.steps.ProcessToolProcessStep;
@@ -49,6 +51,9 @@ public class SendMailStep implements ProcessToolProcessStep {
 	@Autowired
 	private IFilesRepositoryFacade filesRepository;
 
+	@Autowired
+	private ISettingsProvider settingsProvider;
+
     @Override
     public String invoke(BpmStep step, Map<String, String> params) throws Exception {
         IBpmNotificationService service = getRegistry().getRegisteredService(IBpmNotificationService.class);
@@ -59,6 +64,13 @@ public class SendMailStep implements ProcessToolProcessStep {
 
 		if (!hasText(profileName)) {
 			profileName = "Default";
+		}
+
+		String disabledMailTemplates = settingsProvider.getSetting("disabled.mail.template");
+		if(StringUtils.isNotEmpty(disabledMailTemplates) && disabledMailTemplates.contains(template))
+		{
+			logger.info("[MAIL] Template "+template+" disabled, skipping mail");
+			return STATUS_OK;
 		}
 
 		UserData user = EmailUtils.getRecipient(recipient);
