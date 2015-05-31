@@ -36,7 +36,7 @@
                     <#assign substituteUser = processComment.substituteLogin!""/>
                     <li class="list-group-item">
                         <h4 class="list-group-item-heading" style="font-size: 16px;">
-                            ${processComment.authorFullName} (${processComment.authorLogin}) [${processComment.getFormattedDate("dd-MM-yyyy HH:mm:ss")}]
+                            ${processComment.authorFullName} (${processComment.authorLogin}) [${processComment.getFormattedDate("dd-MM-yyyy HH:mm")}]
                             <#if substituteUser != "">
                                 ${messageSource.getMessage("process.history.subsituted.by")}
                                 ${processComment.substituteFullName} (${processComment.substituteLogin})
