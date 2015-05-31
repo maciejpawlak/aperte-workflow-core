@@ -118,7 +118,7 @@
 	
 	function performCommentModal()
 	{
-		var comment = $('#action-comment-textarea').val();
+		var comment = $.trim($('#action-comment-textarea').val());
 		$('#commentModal').modal('hide');
 		if(!comment)
 		{
@@ -155,7 +155,7 @@
 	
 	function checkActionCommentValue(event)
     {
-        var comment = $('#action-comment-textarea').val();
+        var comment = $.trim($('#action-comment-textarea').val());
 
          $('#action-comment-button').attr("disabled", comment == '');
     }

@@ -1,18 +1,20 @@
 package pl.net.bluesoft.rnd.processtool.ui.basewidgets.datahandler;
 
 
+import java.util.Date;
+
 public class ProcessCommentBean
 {
-    private String createDate;
+    private Date createDate;
     private String authorLogin;
     private String authorFullName;
     private String body;
 
-    public String getCreateDate() {
+    public Date getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(String createDate) {
+    public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
 

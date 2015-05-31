@@ -404,9 +404,13 @@ public class BpmNotificationEngine implements IBpmNotificationService
 					continue;
 				}
 	        }
-			if (hasText(attribute)) {
-				UserData user = getRegistry().getUserSource().getUserByLogin(attribute);
-				users.add(user);
+			if (hasText(attribute))
+            {
+                for(String login: StringUtils.split(attribute, ","))
+                {
+                    UserData user = getRegistry().getUserSource().getUserByLogin(login);
+                    users.add(user);
+                }
 			}
 		}
 		return users;
@@ -895,6 +899,11 @@ public class BpmNotificationEngine implements IBpmNotificationService
     	String topic = processTemplate(notificationData.getTemplateData().getTemplateName() + SUBJECT_TEMPLATE_SUFFIX, notificationData.getTemplateData());
     	String sender = findTemplate(notificationData.getTemplateData().getTemplateName() + SENDER_TEMPLATE_SUFFIX);
         String sentFolderName = templateProvider.getTemplateSentFolderName(notificationData.getTemplateData().getTemplateName());
+
+        if(StringUtils.isNotEmpty(topic) && topic.length() > 254)
+        {
+            topic = StringUtils.abbreviate(topic, 254);
+        }
 
 		if (hasText(notificationData.getSubjectOverride())) {
 			topic = notificationData.getSubjectOverride();

@@ -317,8 +317,12 @@ public class TaskViewBuilder extends AbstractViewBuilder<TaskViewBuilder> {
     }
 
     @Override
-    protected String getCancelButtonMessageKey() {
-        return "button.exit";
+    protected String getCancelButtonMessageKey()
+    {
+        if(isTaskHasNoOwner())
+            return "button.exit.noowner";
+        else
+            return "button.exit";
     }
 
     @Override

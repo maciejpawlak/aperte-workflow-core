@@ -580,6 +580,7 @@
             var dataControl = $('<div class="input-group date" style="width:150px"><input type="text" class="form-control datepicker" id="valueDateFrom" placeholder="<@spring.message 'dictionary.editor.itemValues.table.dateFrom'/>"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span></div>');
             $(dataControl).datepicker({
                 "format": "yyyy-mm-dd",
+                startDate: "2000-01-01",
                 language: "${.lang}",
                 clearBtn: true,
                 autoclose: true
@@ -603,6 +604,7 @@
             var dataControl = $('<div class="input-group date" style="width:150px"><input type="text" class="form-control datepicker" id="valueDateTo" placeholder="<@spring.message 'dictionary.editor.itemValues.table.dateTo'/>"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span></div>');
             $(dataControl).datepicker({
                 "format": "yyyy-mm-dd",
+                startDate: "2000-01-01",
                 language: "${.lang}",
                 clearBtn: true,
                 autoclose: true

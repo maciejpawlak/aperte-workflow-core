@@ -29,17 +29,17 @@ import java.util.logging.Logger;
 @Controller
 public class DispatcherController extends AbstractProcessToolServletController
 {
-    private static Logger logger = Logger.getLogger(DispatcherController.class.getName());
+	private static Logger logger = Logger.getLogger(DispatcherController.class.getName());
 
-    @RequestMapping(value = "/dispatcher/{controllerName}/{actionName}")
-    @ResponseBody
-    public Object invoke(final @PathVariable String controllerName, @PathVariable String actionName, final HttpServletRequest request, final HttpServletResponse response)
-    {
-          return invokeExternalController(controllerName, actionName, request, response);
-    }
+	@RequestMapping(value = "/dispatcher/{controllerName}/{actionName}")
+	@ResponseBody
+	public Object invoke(final @PathVariable String controllerName, @PathVariable String actionName, final HttpServletRequest request, final HttpServletResponse response)
+	{
+		return invokeExternalController(controllerName, actionName, request, response);
+	}
 
-    public Object invokeExternalController(final String controllerName, final String actionName, final HttpServletRequest request, final HttpServletResponse response)
-    {
+	public Object invokeExternalController(final String controllerName, final String actionName, final HttpServletRequest request, final HttpServletResponse response)
+	{
 		long start = System.currentTimeMillis();
 
 		try {
@@ -119,22 +119,22 @@ public class DispatcherController extends AbstractProcessToolServletController
 		}
 	}
 
-    /** Find controller method by ControllerMethod annotation */
-    private Method findAnnotatedMethod(IOsgiWebController servletController, String actionName)
-    {
+	/** Find controller method by ControllerMethod annotation */
+	private Method findAnnotatedMethod(IOsgiWebController servletController, String actionName)
+	{
 
-        for(Method method: servletController.getClass().getMethods())
-        {
-            ControllerMethod controllerMethodAnnotation = method.getAnnotation(ControllerMethod.class);
-            if(controllerMethodAnnotation == null)
-                continue;
+		for(Method method: servletController.getClass().getMethods())
+		{
+			ControllerMethod controllerMethodAnnotation = method.getAnnotation(ControllerMethod.class);
+			if(controllerMethodAnnotation == null)
+				continue;
 
-            if(!controllerMethodAnnotation.action().equals(actionName))
-                continue;
+			if(!controllerMethodAnnotation.action().equals(actionName))
+				continue;
 
-            return method;
-        }
+			return method;
+		}
 
-        return null;
-    }
+		return null;
+	}
 }
