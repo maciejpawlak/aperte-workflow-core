@@ -35,14 +35,14 @@
                 <#list processComments as processComment>
                     <#assign substituteUser = processComment.substituteLogin!""/>
                     <li class="list-group-item">
-                        <h4 class="list-group-item-heading">
+                        <h4 class="list-group-item-heading" style="font-size: 16px;">
                             ${processComment.authorFullName} (${processComment.authorLogin}) [${processComment.getFormattedDate("dd-MM-yyyy HH:mm:ss")}]
                             <#if substituteUser != "">
                                 ${messageSource.getMessage("process.history.subsituted.by")}
                                 ${processComment.substituteFullName} (${processComment.substituteLogin})
                             </#if>
                         </h4>
-                        <p class="list-group-item-text">
+                        <p class="list-group-item-text" style="font-size: 15px;">
                             <#assign processCommentType = processComment.commentType!""/>
                             <#if processCommentType != "">
                                 ${processCommentType}
