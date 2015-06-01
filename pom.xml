@@ -74,7 +74,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.compiler.source>1.6</project.build.compiler.source>
         <project.build.compiler.target>1.6</project.build.compiler.target>
-        <jbpm.version>5.4.0.Final</jbpm.version>
+        <jbpm.version>5.5.0.Final</jbpm.version>
         <spring.version>3.0.7.RELEASE</spring.version>
         <vaadin.version>6.8.10</vaadin.version>
 		<jackson.version>1.9.13</jackson.version>

@@ -13,7 +13,9 @@ import pl.net.bluesoft.rnd.pt.ext.jbpm.service.JbpmService;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.transaction.Status;
 import javax.transaction.UserTransaction;
+import java.util.concurrent.locks.LockSupport;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -86,7 +88,7 @@ public class ProcessToolContextFactoryImpl implements ProcessToolContextFactory
 
     @Override
     public <T> T withProcessToolContext(ReturningProcessToolContextCallback<T> callback, ExecutionType type) {
-        logger.info(">>>>>>>>> withProcessToolContext, executionType: " + type.toString() + ", threadId: " +  Thread.currentThread().getId());
+        logger.info(">>>>>>>>> withProcessToolContext, executionType: " + type.toString() + ", threadId: " + Thread.currentThread().getId());
         long start = System.currentTimeMillis();
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(ProcessToolRegistry.Util.getAwfClassLoader());
@@ -156,21 +158,24 @@ public class ProcessToolContextFactoryImpl implements ProcessToolContextFactory
         stats.beforeOpenSession();
         Session session = registry.getDataRegistry().getSessionFactory().openSession();
         stats.afterOpenSession();
-        try
-        {
-            stats.beforeBeginTransaction();
-            Transaction tx = session.beginTransaction();
-            stats.afterBeginTransaction();
+
+
+
             ProcessToolContext ctx = new ProcessToolContextImpl(session);
             ProcessToolContext.Util.setThreadProcessToolContext(ctx);
             try
             {
+                stats.beforeBeginTransaction();
+                UserTransaction ut = (UserTransaction) new InitialContext().lookup( "java:comp/UserTransaction" );
+                ut.begin();
+                stats.afterBeginTransaction();
+
                 result = callback.processWithContext(ctx);
 
                 try {
-                    if(!tx.wasCommitted()) {
+                    if(ut.getStatus() != Status.STATUS_COMMITTED) {
                         stats.beforeCommit();
-                        tx.commit();
+                        ut.commit();
                         stats.afterCommit();
                     }
                 }
@@ -178,9 +183,9 @@ public class ProcessToolContextFactoryImpl implements ProcessToolContextFactory
                 {
                     logger.log(Level.SEVERE, "Problem during context executing", ex);
                     try {
-                        if(!tx.wasRolledBack()) {
+                        if(ut.getStatus() != Status.STATUS_ROLLEDBACK) {
                             stats.beforeRollback();
-                            tx.rollback();
+                            ut.rollback();
                             stats.afterRollback();
                         }
 
@@ -230,40 +235,31 @@ public class ProcessToolContextFactoryImpl implements ProcessToolContextFactory
                     }
                     else
                     {
-                        throw ex;
+                        throw new RuntimeException(ex);
                     }
                 }
             }
-            catch (Throwable e)
+            catch (Throwable ex)
             {
-                logger.log(Level.SEVERE, e.getMessage(), e);
-                try {
-                    if(!tx.wasRolledBack()) {
-                        stats.beforeRollback();
-                        tx.rollback();
-                        stats.afterRollback();
-                    }
-                }
-                catch (Exception e1) {
-                    logger.log(Level.WARNING, e1.getMessage(), e1);
-                }
-                throw new RuntimeException(e);
+                logger.log(Level.SEVERE, "Problem with operation");
+                throw new RuntimeException(ex);
             }
             finally
             {
+                logger.log(Level.SEVERE, "Release lock for "+Thread.currentThread().getId());
+                LockSupport.unpark(Thread.currentThread());
+
+                JbpmService.getInstance().destroy();
+                if (session.isOpen()) {
+                    stats.beforeOpenSession();
+                    session.close();
+                    stats.afterOpenSession();
+                }
+
                 ctx.close();
                 ProcessToolContext.Util.removeThreadProcessToolContext();
             }
 
-        }
-        finally
-        {
-            if (session.isOpen()) {
-                stats.beforeOpenSession();
-                session.close();
-                stats.afterOpenSession();
-            }
-        }
         return result;
     }
 
@@ -452,6 +448,6 @@ public class ProcessToolContextFactoryImpl implements ProcessToolContextFactory
         JbpmService.getInstance().init();
     }
     private void reloadJbpm() {
-        JbpmService.getInstance().reloadSession();
+        JbpmService.getInstance().destroy();
     }
 }

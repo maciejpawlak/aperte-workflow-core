@@ -172,7 +172,7 @@ public class DeadlineEngine {
                     logger.log(Level.SEVERE, "Exception while sending deadline notification", e);
                 }
             }
-        }, ProcessToolContextFactory.ExecutionType.TRANSACTION_SYNCH);
+        }, ProcessToolContextFactory.ExecutionType.TRANSACTION);
     }
 
     private void signalDeadline(String processInstanceId, ProcessDeadline processDeadline) throws Exception {
