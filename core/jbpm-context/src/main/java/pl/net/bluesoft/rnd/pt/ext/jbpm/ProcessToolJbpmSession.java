@@ -110,27 +110,33 @@ public class ProcessToolJbpmSession extends AbstractProcessToolSession implement
     }
         @Override
     public StartProcessResult startProcess(String processDefinitionId, String externalKey, String source, Map<String, Object> simpleAttributes, Map<String, String> largeAttributes, Map<String, Object> complexAttributes) {
-        ProcessDefinitionConfig config = getContext().getProcessDefinitionDAO().getActiveConfigurationByKey(processDefinitionId);
+			/** Jbpm, why u are so shitty? */
 
-        if (!config.isEnabled()) {
-            throw new IllegalArgumentException("Process definition has been disabled!");
-        }
+			ProcessDefinitionConfig config = getContext().getProcessDefinitionDAO().getCachedDefinitionByBpmKey(processDefinitionId);
+			if (config == null) {
+				log.log(Level.SEVERE, "No config in data cache: " + config.getBpmDefinitionKey());
+				config = getContext().getProcessDefinitionDAO().getActiveConfigurationByKey(processDefinitionId);
+			}
 
-        Map<String, Object> initialParams = getInitialParams();
-        if(simpleAttributes != null)
-            initialParams.putAll(simpleAttributes);
+			if (!config.isEnabled()) {
+				throw new IllegalArgumentException("Process definition has been disabled!");
+			}
 
-            startProcessParams = new StartProcessParams(config, externalKey, source, userLogin, simpleAttributes, largeAttributes, complexAttributes);
+			Map<String, Object> initialParams = getInitialParams();
+			if (simpleAttributes != null)
+				initialParams.putAll(simpleAttributes);
 
-        try {
-            getJbpmService().startProcess(config.getBpmProcessId(), initialParams);
-            generateExternalKey(startProcessParams.newProcessInstance);
-            generateStepInfo(startProcessParams.createdTasks);
-            return new JbpmStartProcessResult(startProcessParams.newProcessInstance, startProcessParams.createdTasksForCurrentUser);
-        }
-        finally {
-            startProcessParams = null;
-        }
+			startProcessParams = new StartProcessParams(config, externalKey, source, userLogin, simpleAttributes, largeAttributes, complexAttributes);
+
+			try {
+				getJbpmService().startProcess(config.getBpmProcessId(), initialParams);
+				generateExternalKey(startProcessParams.newProcessInstance);
+				generateStepInfo(startProcessParams.createdTasks);
+				return new JbpmStartProcessResult(startProcessParams.newProcessInstance, startProcessParams.createdTasksForCurrentUser);
+			} finally {
+				startProcessParams = null;
+			}
+
     }
 
 	private static class JbpmStartProcessResult implements StartProcessResult {
@@ -695,7 +701,7 @@ public class ProcessToolJbpmSession extends AbstractProcessToolSession implement
 
 	@Override
 	public byte[] getProcessLatestDefinition(String definitionKey) {
-		ProcessDefinitionConfig config = getContext().getProcessDefinitionDAO().getActiveConfigurationByKey(definitionKey);
+		ProcessDefinitionConfig config = getContext().getProcessDefinitionDAO().getCachedDefinitionByBpmKey(definitionKey);
 		if (config == null) {
 			return null;
 		}
@@ -763,7 +769,7 @@ public class ProcessToolJbpmSession extends AbstractProcessToolSession implement
 
 	private static String getLatestProcessId(String bpmDefinitionKey) {
 		ProcessDefinitionConfig config = getContext().getProcessDefinitionDAO()
-				.getActiveConfigurationByKey(bpmDefinitionKey);
+				.getCachedDefinitionByBpmKey(bpmDefinitionKey);
 
 		// it is necessary that subprocess bundles are deployed before processes bundles
 

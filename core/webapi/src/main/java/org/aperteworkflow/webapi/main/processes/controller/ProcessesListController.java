@@ -615,7 +615,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
                 );
 
             }
-        }, ExecutionType.TRANSACTION_SYNCH);
+        }, ExecutionType.NO_TRANSACTION);
 
 		long t2 = System.currentTimeMillis();
 
@@ -708,7 +708,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
                                 "[6]: " + (t6-t5) + "ms, "
                 );
             }
-        }, ExecutionType.TRANSACTION_SYNCH);
+        }, ExecutionType.NO_TRANSACTION);
         return builder.toString();
     }
 	

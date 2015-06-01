@@ -27,6 +27,9 @@ public class ProcessDefinitionDAOImpl extends SimpleHibernateBean<ProcessDefinit
 	private static final ExpiringCache<Long, ProcessDefinitionConfig> DEFINITION_BY_ID =
 			new ExpiringCache<Long, ProcessDefinitionConfig>(Long.MAX_VALUE);
 
+	private static final ExpiringCache<String, ProcessDefinitionConfig> DEFINITION_BY_BPMKEY =
+			new ExpiringCache<String, ProcessDefinitionConfig>(Long.MAX_VALUE);
+
 	private static final ExpiringCache<Long, ProcessStateConfiguration> STATE_BY_ID =
 			new ExpiringCache<Long, ProcessStateConfiguration>(Long.MAX_VALUE);
 
@@ -103,6 +106,29 @@ public class ProcessDefinitionDAOImpl extends SimpleHibernateBean<ProcessDefinit
 		});
 	}
 
+	@Override
+	public ProcessDefinitionConfig getCachedDefinitionByBpmKey(String key) {
+		return DEFINITION_BY_BPMKEY.get(key, new ExpiringCache.NewValueCallback<String, ProcessDefinitionConfig>() {
+			@Override
+			public ProcessDefinitionConfig getNewValue(String key) {
+				ProcessDefinitionConfig config = (ProcessDefinitionConfig)getSession().createCriteria(ProcessDefinitionConfig.class)
+						.add(Restrictions.eq(_BPM_DEFINITION_KEY, key))
+						.add(Restrictions.eq(_LATEST, Boolean.TRUE))
+						.add(Restrictions.eq(_ENABLED, Boolean.TRUE))
+						.setFetchMode(_STATES, FetchMode.EAGER)
+						.setFetchMode(_PERMISSIONS, FetchMode.EAGER)
+						.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+						.uniqueResult();
+
+				if (config != null) {
+					fillCaches(config);
+				}
+
+				return config;
+			}
+		});
+	}
+
 	private void fillCaches(ProcessDefinitionConfig config) {
 		for (ProcessStateConfiguration state : config.getStates()) {
 			STATE_BY_ID.put(state.getId(), state);
@@ -122,8 +148,7 @@ public class ProcessDefinitionDAOImpl extends SimpleHibernateBean<ProcessDefinit
 
 	@Override
 	public ProcessDefinitionConfig getCachedDefinitionById(ProcessInstance processInstance) {
-		Long definitionId = (Long)getSession().getIdentifier(processInstance.getDefinition());
-		return getCachedDefinitionById(definitionId);
+		return getCachedDefinitionById(processInstance.getDefinition().getId());
 	}
 
 	@SuppressWarnings("unchecked")

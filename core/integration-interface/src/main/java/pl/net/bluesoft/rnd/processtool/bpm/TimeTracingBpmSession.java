@@ -13,6 +13,7 @@ import pl.net.bluesoft.rnd.util.i18n.I18NSource;
 
 import java.io.InputStream;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -43,6 +44,11 @@ public class TimeTracingBpmSession implements ProcessToolBpmSession {
 		long start = System.currentTimeMillis();
 		try {
 			return session.startProcess(bpmDefinitionId, externalKey, source);
+		}
+		catch(Throwable ex)
+		{
+			LOGGER.log(Level.SEVERE, "Error with process start: "+bpmDefinitionId);
+			throw new RuntimeException(ex);
 		}
 		finally {
 			LOGGER.info("[startProcess] t = " + (System.currentTimeMillis() - start));
