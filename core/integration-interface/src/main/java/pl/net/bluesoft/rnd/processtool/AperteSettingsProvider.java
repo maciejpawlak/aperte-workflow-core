@@ -40,7 +40,7 @@ public class AperteSettingsProvider implements ISettingsProvider
                         public String processWithContext(ProcessToolContext ctx) {
                             return ctx.getSetting(setting);
                         }
-                    });
+                    }, ProcessToolContextFactory.ExecutionType.NO_TRANSACTION);
             }
         });
     }

@@ -818,7 +818,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
                 );
 
             }
-        }, ExecutionType.NO_TRANSACTION);
+        }, ExecutionType.TRANSACTION);
 
 		long t2 = System.currentTimeMillis();
 

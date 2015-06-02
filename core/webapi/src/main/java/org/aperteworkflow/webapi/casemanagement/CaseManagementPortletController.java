@@ -15,6 +15,7 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 import pl.net.bluesoft.rnd.processtool.BasicSettings;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContextCallback;
+import pl.net.bluesoft.rnd.processtool.ProcessToolContextFactory;
 import pl.net.bluesoft.rnd.processtool.model.UserData;
 import pl.net.bluesoft.rnd.processtool.plugins.ProcessToolRegistry;
 import pl.net.bluesoft.rnd.processtool.usersource.IPortalUserSource;
@@ -94,7 +95,7 @@ public class CaseManagementPortletController {
                 }
                 modelView.addObject(REFRESH_INTERVAL, interval);
             }
-        });
+        }, ProcessToolContextFactory.ExecutionType.NO_TRANSACTION);
     }
 
 

@@ -66,6 +66,14 @@ public class SendMailStep implements ProcessToolProcessStep {
 			profileName = "Default";
 		}
 
+		/** Hotfix, remove after 10.06.2015 */
+		if(StringUtils.isNotEmpty(template) && template.equals("complaint_registration_send_pdf"))
+		{
+			String forwardedEmail = step.getProcessInstance().getSimpleAttributeValue("forwardedEmailFix");
+			if(StringUtils.isNotEmpty(forwardedEmail))
+				 recipient = forwardedEmail;
+		}
+
 		String disabledMailTemplates = settingsProvider.getSetting("disabled.mail.template");
 		if(StringUtils.isNotEmpty(disabledMailTemplates) && disabledMailTemplates.contains(template))
 		{

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContextCallback;
+import pl.net.bluesoft.rnd.processtool.ProcessToolContextFactory;
 import pl.net.bluesoft.rnd.processtool.bpm.BpmEvent;
 import pl.net.bluesoft.rnd.processtool.bpm.BpmEvent.Type;
 import pl.net.bluesoft.rnd.processtool.di.ClassDependencyManager;
@@ -86,7 +87,7 @@ public class Activator implements BundleActivator, EventListener<BpmEvent>
                 processToolRegistry.getGuiRegistry().registerGenericPortletViewRenderer("admin", BpmAdminPortletRender.INSTANCE);
                 processToolRegistry.getGuiRegistry().registerGenericPortletViewRenderer("user", BpmAdminPortletRender.INSTANCE);
 			}
-   		     });
+   		     }, ProcessToolContextFactory.ExecutionType.NO_TRANSACTION);
 
 
 	}
