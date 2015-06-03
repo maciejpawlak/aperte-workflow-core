@@ -247,7 +247,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 		                pi.setSimpleAttribute("commentAdded", "true");
 		            }
 	            }
-            }, ExecutionType.TRANSACTION_SYNCH);
+            }, ExecutionType.TRANSACTION);
 		
 		    resultBean.setNextTask(bpmTaskBean);
 
@@ -380,7 +380,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
                         resultBean.addError(SYSTEM_SOURCE, e.getLocalizedMessage());
                     }
                 }
-            }, ExecutionType.TRANSACTION_SYNCH);
+            }, ExecutionType.TRANSACTION);
 
         }
         catch(BusinessException e)
@@ -501,7 +501,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
                     );
 
                 }
-            }, ExecutionType.TRANSACTION_SYNCH);
+            }, ExecutionType.TRANSACTION);
             
     		long t2 = System.currentTimeMillis();
 

@@ -1,9 +1,7 @@
 package org.aperteworkflow.files;
 
+import org.apache.commons.lang3.StringUtils;
 import org.aperteworkflow.files.dao.*;
-import org.aperteworkflow.files.dao.config.FilesRepositoryConfigFactory;
-import org.aperteworkflow.files.dao.config.FilesRepositoryConfigFactoryImpl;
-import org.aperteworkflow.files.dao.config.FilesRepositoryStorageConfig;
 import org.aperteworkflow.files.exceptions.DeleteFileException;
 import org.aperteworkflow.files.exceptions.DownloadFileException;
 import org.aperteworkflow.files.exceptions.UpdateDescriptionException;
@@ -11,6 +9,9 @@ import org.aperteworkflow.files.exceptions.UploadFileException;
 import org.aperteworkflow.files.model.FileItemContent;
 import org.aperteworkflow.files.model.IFilesRepositoryItem;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import pl.net.bluesoft.rnd.processtool.ISettingsProvider;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
 import pl.net.bluesoft.rnd.processtool.model.IAttributesConsumer;
 import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
@@ -30,18 +31,33 @@ import static pl.net.bluesoft.util.lang.Formats.nvl;
 public class FilesRepositoryFacade implements IFilesRepositoryFacade {
 
     private static Logger logger = Logger.getLogger(FilesRepositoryFacade.class.getName());
+    public static final String FILESREPOSITORY_STORAGE_ROOTDIR_PATH_KEY = "filesrepository.storage.rootdir.path";
 
-    private FilesRepositoryConfigFactory configFactory;
+    @Autowired
+    private ISettingsProvider settingsProvider;
+
     private Session customSession;
 
     public FilesRepositoryFacade() {
-        this(null, new FilesRepositoryConfigFactoryImpl());
+        this(null);
     }
 
 
-    public FilesRepositoryFacade(Session customSession, FilesRepositoryConfigFactory configFactory) {
+    public FilesRepositoryFacade(Session customSession) {
+        SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
         this.customSession = customSession;
-        this.configFactory = configFactory;
+
+    }
+
+    private String getRootPath()
+    {
+        String storageRootDirPath = settingsProvider.getSetting(FILESREPOSITORY_STORAGE_ROOTDIR_PATH_KEY);
+
+        if (StringUtils.isEmpty(storageRootDirPath)) {
+            throw new RuntimeException("Storage root directory not defined either in db or plugin.propeties file!");
+        }
+
+        return storageRootDirPath;
     }
 
     private FilesRepositoryItemDAO getFilesRepositoryItemDAO() {
@@ -54,11 +70,7 @@ public class FilesRepositoryFacade implements IFilesRepositoryFacade {
     }
 
     private FilesRepositoryStorageDAO getFilesRepositoryStorageDAO() {
-        return new FilesRepositoryStorageDAOImpl(getStorageConfig());
-    }
-
-    private FilesRepositoryStorageConfig getStorageConfig() {
-        return configFactory.createFilesRepositoryStorageConfig();
+        return new FilesRepositoryStorageDAOImpl(getRootPath());
     }
 
     @Override

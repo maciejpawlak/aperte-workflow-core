@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import pl.net.bluesoft.rnd.processtool.IProcessToolSettings;
+import pl.net.bluesoft.rnd.processtool.ISettingsProvider;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
 import pl.net.bluesoft.rnd.processtool.bpm.ProcessToolSessionFactory;
 import pl.net.bluesoft.rnd.processtool.bpm.exception.ProcessToolException;
@@ -39,6 +40,9 @@ public class ProcessToolContextImpl implements ProcessToolContext {
 
     @Autowired
     private ProcessToolRegistry processToolRegistry;
+
+    @Autowired
+    private ISettingsProvider settingsProvider;
 
     private Map<Class<? extends HibernateBean>, HibernateBean> daoCache = new HashMap<Class<? extends HibernateBean>, HibernateBean>();
 
@@ -153,25 +157,12 @@ public class ProcessToolContextImpl implements ProcessToolContext {
     @Override
     public String getSetting(String key)
     {
-        verifyContextOpen();
-        ProcessToolSetting setting = (ProcessToolSetting) hibernateSession.createCriteria(ProcessToolSetting.class)
-                .add(Restrictions.eq("key", key)).uniqueResult();
-        return setting != null ? setting.getValue() : null;
+        return settingsProvider.getSetting(key);
     }
 
     @Override
     public void setSetting(IProcessToolSettings key, String value) {
-        verifyContextOpen();
-        List list = hibernateSession.createCriteria(ProcessToolSetting.class).add(Restrictions.eq("key", key.toString())).list();
-        ProcessToolSetting setting;
-        if (list.isEmpty()) {
-            setting = new ProcessToolSetting();
-            setting.setKey(key.toString());
-        } else {
-            setting = (ProcessToolSetting) list.get(0);
-        }
-        setting.setValue(value);
-        hibernateSession.saveOrUpdate(setting);
+        settingsProvider.setSetting(key, value);
     }
 
     @Override

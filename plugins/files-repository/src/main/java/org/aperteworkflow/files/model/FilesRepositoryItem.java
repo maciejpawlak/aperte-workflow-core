@@ -3,9 +3,7 @@ package org.aperteworkflow.files.model;
 import org.hibernate.annotations.Index;
 import pl.net.bluesoft.rnd.processtool.model.PersistentEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -20,7 +18,7 @@ import java.util.Date;
                         columnNames = {"id"}
                 )
         })
-public class FilesRepositoryItem extends PersistentEntity implements IFilesRepositoryItem {
+public class FilesRepositoryItem implements IFilesRepositoryItem {
     public static final String COLUMN_PROCESS_INSTANCE_ID = "process_instance_id";
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_RELATIVE_PATH = "relative_path";
@@ -29,6 +27,20 @@ public class FilesRepositoryItem extends PersistentEntity implements IFilesRepos
     public static final String COLUMN_CREATOR_LOGIN = "creator_login";
     public static final String COLUMN_CONTENT_TYPE = "content_type";
     public static final String COLUMN_SEND_WITH_MAIL = "send_with_mail";
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator="db_seq_pt_files_repository_item")
+	@SequenceGenerator(name="db_seq_pt_files_repository_item", sequenceName="db_seq_pt_files_repository_item", allocationSize=1)
+	@Column(name = "id")
+	protected Long id;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
     @Column(name = COLUMN_NAME, nullable = false)
     @Index(name = "idx_pt_files_name")

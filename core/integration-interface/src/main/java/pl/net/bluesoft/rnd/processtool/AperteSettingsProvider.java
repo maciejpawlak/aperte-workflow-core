@@ -5,6 +5,10 @@ import org.springframework.stereotype.Component;
 import pl.net.bluesoft.rnd.processtool.plugins.ProcessToolRegistry;
 import pl.net.bluesoft.util.lang.ExpiringCache;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
 /**
  *
  * Aperte settings provider
@@ -25,22 +29,43 @@ public class AperteSettingsProvider implements ISettingsProvider
     }
 
     @Override
-    public String getSetting(String key)
+    public String getSetting(final String key)
     {
         return settings.get(key, new ExpiringCache.NewValueCallback<String, String>() {
             @Override
             public String getNewValue(final String setting)
             {
-                ProcessToolContext ctx = ProcessToolContext.Util.getThreadProcessToolContext();
-                if(ctx != null)
-                    return ctx.getSetting(setting);
-                else
-                    return processToolRegistry.withProcessToolContext(new ReturningProcessToolContextCallback<String>() {
-                        @Override
-                        public String processWithContext(ProcessToolContext ctx) {
-                            return ctx.getSetting(setting);
-                        }
-                    }, ProcessToolContextFactory.ExecutionType.NO_TRANSACTION);
+                Connection connection = null;
+                try {
+                    connection = processToolRegistry.getDataRegistry().getDataSourceProxy().getConnection();
+
+                    PreparedStatement preparedStatement =
+                                connection.prepareStatement("select value_ from pt_setting where key_ = '"+key+"'");
+
+                        ResultSet resultSet = preparedStatement.executeQuery();
+                        if(resultSet.next())
+                            return resultSet.getString(1);
+                        else
+                            return null;
+
+
+                    }
+                    catch (Throwable ex)
+                    {
+                        throw new RuntimeException("[SETTINGS] Error", ex);
+                    }
+                    finally {
+                        try {
+                            if(!connection.isClosed())
+                            connection.close();
+                    }
+                    catch(Throwable ex)
+                    {
+
+                    }
+                }
+
+
             }
         });
     }
@@ -50,16 +75,29 @@ public class AperteSettingsProvider implements ISettingsProvider
     {
         settings.put(settingKey.toString(), value);
 
-        ProcessToolContext ctx = ProcessToolContext.Util.getThreadProcessToolContext();
-        if(ctx != null)
-            ctx.setSetting(settingKey, value);
-        else
-            processToolRegistry.withProcessToolContext(new ProcessToolContextCallback() {
-                @Override
-                public void withContext(ProcessToolContext ctx) {
-                    ctx.setSetting(settingKey, value);
-                }
-            });
+        Connection connection = null;
+        try {
+            connection = processToolRegistry.getDataRegistry().getDataSourceProxy().getConnection();
+
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement("update pt_setting value_= '"+value+"' where key_ = '"+settingKey.toString()+"'");
+
+            preparedStatement.executeUpdate();
+        }
+        catch (Throwable ex)
+        {
+            throw new RuntimeException("[SETTINGS] Error", ex);
+        }
+        finally {
+            try {
+                if(!connection.isClosed())
+                    connection.close();
+            }
+            catch(Throwable ex)
+            {
+
+            }
+        }
     }
 
     @Override

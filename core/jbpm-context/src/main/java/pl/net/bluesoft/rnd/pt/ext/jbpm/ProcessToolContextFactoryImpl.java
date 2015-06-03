@@ -159,106 +159,100 @@ public class ProcessToolContextFactoryImpl implements ProcessToolContextFactory
         Session session = registry.getDataRegistry().getSessionFactory().openSession();
         stats.afterOpenSession();
 
+        ProcessToolContext ctx = new ProcessToolContextImpl(session);
+        ProcessToolContext.Util.setThreadProcessToolContext(ctx);
 
+        UserTransaction ut = null;
+        try {
+            stats.beforeBeginTransaction();
+            ut = (UserTransaction) new InitialContext().lookup( "java:comp/UserTransaction" );
+            ut.begin();
+            stats.afterBeginTransaction();
 
-            ProcessToolContext ctx = new ProcessToolContextImpl(session);
-            ProcessToolContext.Util.setThreadProcessToolContext(ctx);
-            try
-            {
-                stats.beforeBeginTransaction();
-                UserTransaction ut = (UserTransaction) new InitialContext().lookup( "java:comp/UserTransaction" );
-                ut.begin();
-                stats.afterBeginTransaction();
+            result = callback.processWithContext(ctx);
 
-                result = callback.processWithContext(ctx);
-
-                try {
-                    if(ut.getStatus() != Status.STATUS_COMMITTED) {
-                        stats.beforeCommit();
-                        ut.commit();
-                        stats.afterCommit();
-                    }
-                }
-                catch (Throwable ex)
-                {
-                    logger.log(Level.SEVERE, "Problem during context executing", ex);
-                    try {
-                        if(ut.getStatus() != Status.STATUS_ROLLEDBACK) {
-                            stats.beforeRollback();
-                            ut.rollback();
-                            stats.afterRollback();
-                        }
-
-                    }
-                    catch (Exception e1) {
-                        logger.log(Level.WARNING, e1.getMessage(), e1);
-                    }
-
-
-                    if (reload && ExceptionsUtils.isExceptionOfClassExistis(ex, StaleObjectStateException.class))
-                    {
-                        /* Hardcore fix //TODO change */
-                        logger.severe("Ksession problem, retry: "+reload);
-
-                        /* Clean up before retry */
-                        if (session.isOpen()) {
-                            stats.beforeCloseSession();
-                            session.close();
-                            stats.afterCloseSession();
-                        }
-
-                        ctx.close();
-
-                        stats.beforeReloadJbpm();
-                        reloadJbpm();
-                        stats.afterReloadJbpm();
-
-                        ProcessToolContext.Util.removeThreadProcessToolContext();
-                        executeWithProcessToolContextNonJta(callback,false, stats);
-                    }
-                    else if (reload && ExceptionsUtils.isExceptionOfClassExistis(ex, TransactionException.class))
-                    {
-                        /* Hardcore fix //TODO change */
-                        logger.severe("UserTransaction problem, retry: "+reload);
-
-                        /* Clean up before retry */
-                        if (session.isOpen()) {
-                            stats.beforeCloseSession();
-                            session.close();
-                            stats.afterCloseSession();
-                        }
-
-                        ctx.close();
-
-                        ProcessToolContext.Util.removeThreadProcessToolContext();
-                        executeWithProcessToolContextNonJta(callback,false, stats);
-                    }
-                    else
-                    {
-                        throw new RuntimeException(ex);
-                    }
-                }
+            if(ut.getStatus() != Status.STATUS_COMMITTED) {
+                stats.beforeCommit();
+                ut.commit();
+                stats.afterCommit();
             }
-            catch (Throwable ex)
-            {
-                logger.log(Level.SEVERE, "Problem with operation");
-                throw new RuntimeException(ex);
-            }
-            finally
-            {
-                logger.log(Level.SEVERE, "Release lock for "+Thread.currentThread().getId());
-                LockSupport.unpark(Thread.currentThread());
-
-                JbpmService.getInstance().destroy();
-                if (session.isOpen()) {
-                    stats.beforeOpenSession();
-                    session.close();
-                    stats.afterOpenSession();
+        }
+        catch (Throwable ex)
+        {
+            logger.log(Level.SEVERE, "Problem during context executing", ex);
+            try {
+                if(ut.getStatus() != Status.STATUS_ROLLEDBACK) {
+                    stats.beforeRollback();
+                    ut.rollback();
+                    stats.afterRollback();
                 }
 
-                ctx.close();
-                ProcessToolContext.Util.removeThreadProcessToolContext();
             }
+            catch (Exception e1) {
+                logger.log(Level.WARNING, e1.getMessage(), e1);
+            }
+
+            throw new RuntimeException(ex);
+
+
+//            if (reload && ExceptionsUtils.isExceptionOfClassExistis(ex, StaleObjectStateException.class))
+//            {
+//                /* Hardcore fix //TODO change */
+//                logger.severe("Ksession problem, retry: "+reload);
+//
+//                /* Clean up before retry */
+//                if (session.isOpen()) {
+//                    stats.beforeCloseSession();
+//                    session.close();
+//                    stats.afterCloseSession();
+//                }
+//
+//                ctx.close();
+//
+//                stats.beforeReloadJbpm();
+//                reloadJbpm();
+//                stats.afterReloadJbpm();
+//
+//                ProcessToolContext.Util.removeThreadProcessToolContext();
+//                executeWithProcessToolContextNonJta(callback,false, stats);
+//            }
+//            else if (reload && ExceptionsUtils.isExceptionOfClassExistis(ex, TransactionException.class))
+//            {
+//                /* Hardcore fix //TODO change */
+//                logger.severe("UserTransaction problem, retry: "+reload);
+//
+//                /* Clean up before retry */
+//                if (session.isOpen()) {
+//                    stats.beforeCloseSession();
+//                    session.close();
+//                    stats.afterCloseSession();
+//                }
+//
+//                ctx.close();
+//
+//                ProcessToolContext.Util.removeThreadProcessToolContext();
+//                executeWithProcessToolContextNonJta(callback,false, stats);
+//            }
+//            else
+//            {
+//                throw new RuntimeException(ex);
+//            }
+        }
+        finally
+        {
+            logger.log(Level.SEVERE, "Release lock for "+Thread.currentThread().getId());
+            LockSupport.unpark(Thread.currentThread());
+
+            JbpmService.getInstance().destroy();
+            if (session.isOpen()) {
+                stats.beforeOpenSession();
+                session.close();
+                stats.afterOpenSession();
+            }
+
+            ctx.close();
+            ProcessToolContext.Util.removeThreadProcessToolContext();
+        }
 
         return result;
     }

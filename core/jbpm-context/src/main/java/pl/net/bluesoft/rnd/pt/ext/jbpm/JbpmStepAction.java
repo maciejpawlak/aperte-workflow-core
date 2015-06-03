@@ -32,7 +32,7 @@ public class JbpmStepAction {
             public String processWithContext(ProcessToolContext ctx) {
                 return doInvoke(processInstanceId, stepName, params != null ? params : Collections.<String, String>emptyMap(), ctx);
             }
-        }, ExecutionType.TRANSACTION_SYNCH);
+        }, ExecutionType.TRANSACTION);
 		}
 		finally {
 			LOGGER.info("[invoke] stepName=" + stepName + " t=" + (System.currentTimeMillis() - start));
