@@ -182,6 +182,8 @@ public class ProcessDefinitionDAOImpl extends SimpleHibernateBean<ProcessDefinit
 
 		ALL_DEFINITION_DESCRIPTIONS.clear();
 		ALL_STATES_DESCRIPTIONS.clear();
+		DEFINITION_BY_BPMKEY.clear();
+		DEFINITION_BY_ID.clear();
 	}
 
 

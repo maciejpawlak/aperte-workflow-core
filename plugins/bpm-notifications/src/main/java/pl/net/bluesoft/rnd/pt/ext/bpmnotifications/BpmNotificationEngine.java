@@ -6,6 +6,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import pl.net.bluesoft.rnd.processtool.ISettingsProvider;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContextCallback;
 import pl.net.bluesoft.rnd.processtool.bpm.ProcessToolBpmSession;
@@ -91,6 +92,9 @@ public class BpmNotificationEngine implements IBpmNotificationService
 
     @Autowired
     private ProcessToolRegistry registry;
+
+    @Autowired
+    private ISettingsProvider settingsProvider;
     
 
     /** Provider for mail main session and mail connection properties */
@@ -154,7 +158,14 @@ public class BpmNotificationEngine implements IBpmNotificationService
     /** The method check if there are any new notifications in database to be sent */
     public void handleNotifications()
     {
+        SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
         try {
+            String mailScannerDisabled = settingsProvider.getSetting("notifications.disabled");
+            if(StringUtils.isNotEmpty(mailScannerDisabled) && mailScannerDisabled.equals("true")) {
+                logger.log(Level.INFO, "[NOTIFICATIONS] NOTIFICATIONS DISABLED!");
+                return;
+            }
+
             if (lock.tryLock()) {
 				try {
 					registry.withOperationLock(new OperationWithLock<Object>() {
@@ -341,7 +352,7 @@ public class BpmNotificationEngine implements IBpmNotificationService
                 }
 				if (hasText(cfg.getNotifyUserAttributes())) 
 				{
-					recipients.addAll(extractUsers(cfg.getNotifyUserAttributes(), ctx, pi));
+					recipients.addAll(EmailUtils.extractUsers(cfg.getNotifyUserAttributes(), pi));
 				}
                 if (recipients.isEmpty()) {
                     logger.info("Despite matched rules, no emails qualify to notify for cfg #" + cfg.getId());
@@ -391,30 +402,7 @@ public class BpmNotificationEngine implements IBpmNotificationService
     	}
     }
 
-	private Collection<UserData> extractUsers(String notifyUserAttributes, ProcessToolContext ctx, ProcessInstance pi) {
-		pi = ctx.getProcessInstanceDAO().refresh(pi);
 
-		Collection<UserData> users = new HashSet<UserData>();
-		for (String attribute : notifyUserAttributes.split(",")) {
-			attribute = attribute.trim();
-			if(attribute.matches("#\\{.*\\}")){
-	        	String loginKey = attribute.replaceAll("#\\{(.*)\\}", "$1");
-	        	attribute = pi.getInheritedSimpleAttributeValue(loginKey);
-				if(attribute != null && attribute.matches("#\\{.*\\}")) {
-					continue;
-				}
-	        }
-			if (hasText(attribute))
-            {
-                for(String login: StringUtils.split(attribute, ","))
-                {
-                    UserData user = getRegistry().getUserSource().getUserByLogin(login);
-                    users.add(user);
-                }
-			}
-		}
-		return users;
-	}
 
 
 	@Override

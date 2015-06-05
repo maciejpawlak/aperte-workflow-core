@@ -165,7 +165,8 @@
                             pl.net.bluesoft.rnd.processtool.ui.basewidgets.steps.GetAssignedToStep,
                             pl.net.bluesoft.rnd.processtool.ui.basewidgets.steps.SetProcessBusinessStatus,
                             pl.net.bluesoft.rnd.processtool.ui.basewidgets.steps.AddNewCommentStep,
-                            pl.net.bluesoft.rnd.processtool.ui.basewidgets.steps.GetStepDate
+                            pl.net.bluesoft.rnd.processtool.ui.basewidgets.steps.GetStepDate,
+                            pl.net.bluesoft.rnd.processtool.ui.basewidgets.steps.GetUsersWithRoleStep
                         </ProcessTool-Step-Enhancement>
                         <ProcessTool-Controller>
                             pl.net.bluesoft.rnd.processtool.ui.basewidgets.controller.UserController,

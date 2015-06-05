@@ -133,6 +133,8 @@ public class Activator implements BundleActivator, EventListener<BpmEvent>
         processToolRegistry.getEventBusManager().unsubscribe(MailEvent.class, mailEventListener);
 		mailEventListener = null;
 
+		schedulerActivator.cancelJob();
+
         processToolRegistry.getGuiRegistry().unregisterGenericPortletViewRenderer("admin", BpmAdminPortletRender.INSTANCE);
         processToolRegistry.getGuiRegistry().unregisterGenericPortletViewRenderer("user", BpmAdminPortletRender.INSTANCE);
 	}

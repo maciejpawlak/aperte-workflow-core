@@ -2,11 +2,14 @@ package pl.net.bluesoft.rnd.pt.ext.bpmnotifications.utils;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.aperteworkflow.files.IFilesRepositoryFacade;
 import org.aperteworkflow.files.exceptions.DownloadFileException;
 import org.aperteworkflow.files.model.FileItemContent;
 import org.aperteworkflow.files.model.IFilesRepositoryItem;
+import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
 import pl.net.bluesoft.rnd.processtool.model.IAttributesProvider;
+import pl.net.bluesoft.rnd.processtool.model.ProcessInstance;
 import pl.net.bluesoft.rnd.processtool.model.UserData;
 import pl.net.bluesoft.rnd.processtool.model.UserDataBean;
 import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.dao.BpmNotificationMailPropertiesDAO;
@@ -82,6 +85,38 @@ public class EmailUtils {
             return result;
         }
         return getRegistry().getUserSource().getUserByLogin(recipient);
+    }
+
+    public static Collection<UserData> extractUsers(String notifyUserAttributes, ProcessInstance pi) {
+
+        Collection<UserData> users = new HashSet<UserData>();
+        for (String attribute : notifyUserAttributes.split(",")) {
+            attribute = attribute.trim();
+            if(attribute.matches("#\\{.*\\}")){
+                String loginKey = attribute.replaceAll("#\\{(.*)\\}", "$1");
+                attribute = pi.getInheritedSimpleAttributeValue(loginKey);
+                if(attribute != null && attribute.matches("#\\{.*\\}")) {
+                    continue;
+                }
+            }
+            if (hasText(attribute))
+            {
+                for(String recipient: StringUtils.split(attribute, ","))
+                {
+                    if (recipient.contains("@")) {
+                        UserDataBean result = new UserDataBean();
+                        result.setEmail(recipient);
+                        users.add(result);
+                    }
+                    else {
+                        UserData user = getRegistry().getUserSource().getUserByLogin(recipient);
+                        if (user != null)
+                            users.add(user);
+                    }
+                }
+            }
+        }
+        return users;
     }
 
     public static List<BpmAttachment> getAttachments(IAttributesProvider provider, List<Long> attachmentIds, IFilesRepositoryFacade filesRepository, EmailScope scope) {

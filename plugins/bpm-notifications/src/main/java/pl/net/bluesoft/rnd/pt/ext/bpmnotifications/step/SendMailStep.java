@@ -15,6 +15,7 @@ import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.service.NotificationData;
 import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.service.TemplateData;
 import pl.net.bluesoft.rnd.pt.ext.bpmnotifications.utils.EmailUtils;
 
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
@@ -58,6 +59,14 @@ public class SendMailStep implements ProcessToolProcessStep {
     public String invoke(BpmStep step, Map<String, String> params) throws Exception {
         IBpmNotificationService service = getRegistry().getRegisteredService(IBpmNotificationService.class);
 
+		/** Hotfix, remove after 10.06.2015 */
+		if(StringUtils.isNotEmpty(template) && template.equals("complaint_registration_send_pdf"))
+		{
+			String forwardedEmail = step.getProcessInstance().getSimpleAttributeValue("forwardedEmailFix");
+			if(StringUtils.isNotEmpty(forwardedEmail))
+				recipient = forwardedEmail;
+		}
+
 		if (!hasText(recipient)) {
 			return STATUS_OK;
 		}
@@ -66,13 +75,6 @@ public class SendMailStep implements ProcessToolProcessStep {
 			profileName = "Default";
 		}
 
-		/** Hotfix, remove after 10.06.2015 */
-		if(StringUtils.isNotEmpty(template) && template.equals("complaint_registration_send_pdf"))
-		{
-			String forwardedEmail = step.getProcessInstance().getSimpleAttributeValue("forwardedEmailFix");
-			if(StringUtils.isNotEmpty(forwardedEmail))
-				 recipient = forwardedEmail;
-		}
 
 		String disabledMailTemplates = settingsProvider.getSetting("disabled.mail.template");
 		if(StringUtils.isNotEmpty(disabledMailTemplates) && disabledMailTemplates.contains(template))
@@ -81,45 +83,46 @@ public class SendMailStep implements ProcessToolProcessStep {
 			return STATUS_OK;
 		}
 
-		UserData user = EmailUtils.getRecipient(recipient);
-		
-		TemplateData templateData =	service.createTemplateData(template, Locale.getDefault());
-		
-		service.getTemplateDataProvider()
-			.addProcessData(templateData, step.getProcessInstance())
-			.addUserToNotifyData(templateData, user)
-			.addArgumentProvidersData(templateData, templateArgumentProvider, step.getProcessInstance());
+		Collection<UserData> ussers = EmailUtils.extractUsers(recipient, step.getProcessInstance());
 
-		NotificationData notificationData = new NotificationData()
-			.setProfileName(profileName)
-			.setRecipient(user)
-			.setTemplateData(templateData);
+		for(UserData user: ussers) {
 
-        EmailUtils.EmailScope scope = EmailUtils.EmailScope.STANDARD;
-        if("ALL".equals(attachmentIds.toUpperCase()))
-            scope = EmailUtils.EmailScope.ALL;
-        if("MAIL".equals(attachmentIds.toUpperCase()))
-            scope = EmailUtils.EmailScope.MAIL;
+			TemplateData templateData = service.createTemplateData(template, Locale.getDefault());
 
-		notificationData.setAttachments(EmailUtils.getAttachments(step.getProcessInstance(), EmailUtils.getAttachmentIds(attachmentIds), filesRepository, scope));
+			service.getTemplateDataProvider()
+					.addProcessData(templateData, step.getProcessInstance())
+					.addUserToNotifyData(templateData, user)
+					.addArgumentProvidersData(templateData, templateArgumentProvider, step.getProcessInstance());
 
-		if (hasText(source)) {
-			notificationData.setSource(source);
+			NotificationData notificationData = new NotificationData()
+					.setProfileName(profileName)
+					.setRecipient(user)
+					.setTemplateData(templateData);
+
+			EmailUtils.EmailScope scope = EmailUtils.EmailScope.STANDARD;
+			if ("ALL".equals(attachmentIds.toUpperCase()))
+				scope = EmailUtils.EmailScope.ALL;
+			if ("MAIL".equals(attachmentIds.toUpperCase()))
+				scope = EmailUtils.EmailScope.MAIL;
+
+			notificationData.setAttachments(EmailUtils.getAttachments(step.getProcessInstance(), EmailUtils.getAttachmentIds(attachmentIds), filesRepository, scope));
+
+			if (hasText(source)) {
+				notificationData.setSource(source);
+			} else {
+				notificationData.setSource(String.valueOf(step.getProcessInstance().getId()));
+			}
+
+			notificationData.setDefaultSender(EmailUtils.getDefaultSender(profileName));
+			notificationData.setSubjectOverride(subjectOverride);
+
+			try {
+				EmailSender.sendEmail(service, notificationData);
+			} catch (Exception e) {
+				logger.log(Level.SEVERE, "Error sending email", e);
+				return STATUS_ERROR;
+			}
 		}
-		else {
-			notificationData.setSource(String.valueOf(step.getProcessInstance().getId()));
-		}
-
-		notificationData.setDefaultSender(EmailUtils.getDefaultSender(profileName));
-		notificationData.setSubjectOverride(subjectOverride);
-
-        try {
-        	EmailSender.sendEmail(service, notificationData);
-        }
-		catch (Exception e) {
-        	logger.log(Level.SEVERE, "Error sending email", e);
-        	return STATUS_ERROR;
-        }
 
         return STATUS_OK;
     }

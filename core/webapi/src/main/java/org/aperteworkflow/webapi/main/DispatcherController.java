@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import pl.net.bluesoft.rnd.processtool.ProcessToolContext;
+import pl.net.bluesoft.rnd.processtool.ProcessToolContextFactory;
 import pl.net.bluesoft.rnd.processtool.ReturningProcessToolContextCallback;
 import pl.net.bluesoft.rnd.processtool.exceptions.BusinessException;
 import pl.net.bluesoft.rnd.processtool.exceptions.ExceptionsUtils;
@@ -13,6 +14,7 @@ import pl.net.bluesoft.rnd.processtool.web.controller.IOsgiWebController;
 import pl.net.bluesoft.rnd.processtool.web.controller.OsgiWebRequest;
 import pl.net.bluesoft.rnd.processtool.web.domain.GenericResultBean;
 import pl.net.bluesoft.rnd.processtool.web.domain.IProcessToolRequestContext;
+import pl.net.bluesoft.rnd.util.ControllerUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,6 +69,8 @@ public class DispatcherController extends AbstractProcessToolServletController
 				return resultBean;
 			}
 
+			boolean noTransaction = Boolean.parseBoolean(request.getParameter("noTransaction"));
+
 			return getProcessToolRegistry().withProcessToolContext(new ReturningProcessToolContextCallback<Object>() {
 				@Override
 				public Object processWithContext(ProcessToolContext ctx) {
@@ -112,7 +116,8 @@ public class DispatcherController extends AbstractProcessToolServletController
 					}
 
 				}
-			});
+			}, noTransaction ? ProcessToolContextFactory.ExecutionType.NO_TRANSACTION :
+					ProcessToolContextFactory.ExecutionType.TRANSACTION);
 		}
 		finally {
 			logger.info("Controller invocation: " + controllerName + '.' + actionName + ", time: " + (System.currentTimeMillis() - start));

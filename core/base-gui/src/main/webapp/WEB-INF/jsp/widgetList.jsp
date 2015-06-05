@@ -16,7 +16,7 @@
 <script type="text/javascript">
 
     function sticky_relocate() {
-        var window_top = $(window).scrollTop();
+        var window_top = $(window).scrollTop() + 36;
 
         var anchors =  $('[class*=fixed-element-anchor-]');
         if(!anchors) { return; }
