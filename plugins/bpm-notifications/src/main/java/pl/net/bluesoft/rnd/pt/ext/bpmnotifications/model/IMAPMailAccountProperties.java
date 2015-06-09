@@ -23,6 +23,8 @@ public class IMAPMailAccountProperties
 
     private String mailToProcessFolder;
 
+    private String mailProcessingFolder;
+
     private String mailProcessedFolder;
 
     private String mailErrorFolder;
@@ -145,5 +147,13 @@ public class IMAPMailAccountProperties
 
     public void setMail(String mail) {
         this.mail = mail;
+    }
+
+    public String getMailProcessingFolder() {
+        return mailProcessingFolder;
+    }
+
+    public void setMailProcessingFolder(String mailProcessingFolder) {
+        this.mailProcessingFolder = mailProcessingFolder;
     }
 }

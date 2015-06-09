@@ -80,7 +80,7 @@ public class AperteSettingsProvider implements ISettingsProvider
             connection = processToolRegistry.getDataRegistry().getDataSourceProxy().getConnection();
 
             PreparedStatement preparedStatement =
-                    connection.prepareStatement("update pt_setting value_= '"+value+"' where key_ = '"+settingKey.toString()+"'");
+                    connection.prepareStatement("update pt_setting set value_= '"+value+"' where key_ = '"+settingKey.toString()+"'");
 
             preparedStatement.executeUpdate();
         }

@@ -55,6 +55,7 @@ public class IMAPPropertiesSessionProvider implements IIMAPMailSessionProvider
                 accountProperties.setProfileName(profileName);
                 accountProperties.setMail(getPrefixedProperty("exchange.accounts.mail", accountName, props));
                 accountProperties.setMailErrorFolder(getPrefixedProperty("exchange.accounts.errorFolder", accountName, props));
+                accountProperties.setMailProcessingFolder(getPrefixedProperty("exchange.accounts.processingFolder", accountName, props));
                 accountProperties.setMailProcessedFolder(getPrefixedProperty("exchange.accounts.processedFolder", accountName, props));
                 accountProperties.setMailToProcessFolder(getPrefixedProperty("exchange.accounts.toProcessFolder", accountName, props));
                 accountProperties.setMailHost(getPrefixedProperty("exchange.accounts.mailHost", accountName, props));
