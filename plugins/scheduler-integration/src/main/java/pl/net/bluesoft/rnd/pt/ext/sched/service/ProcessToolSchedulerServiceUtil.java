@@ -52,5 +52,11 @@ public class ProcessToolSchedulerServiceUtil {
 		service.cancelScheduledJobGroup(clazz.getName());
 	}
 
+	public static void unschedule(String className) {
+		ProcessToolSchedulerService service = getRegistry().getRegisteredService(ProcessToolSchedulerService.class);
+
+		service.cancelScheduledJobGroup(className);
+	}
+
 	private ProcessToolSchedulerServiceUtil() {}
 }
