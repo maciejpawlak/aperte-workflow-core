@@ -607,7 +607,7 @@ public class BpmNotificationEngine implements IBpmNotificationService
     {
 		try {
 			Store store = imapPropertiesSessionProvider.connect(profileName);
-
+            logger.log(Level.INFO, "Saving mail in sent folder: "+folderName);
 			Folder dfolder = getFolder(store, folderName);
 			Message[] messages = new Message[1];
 			messages[0] = message;

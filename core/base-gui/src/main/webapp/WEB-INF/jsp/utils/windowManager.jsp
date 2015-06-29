@@ -44,13 +44,21 @@
 		{
 			if(window.history && typeof(window.history.pushState) === 'function')
 			{
+				var currentState = window.history.location.search;
+					
 				if(newUrl == '')
 				{
+					if(!currentState || currentState === '')
+						return;
+					
 					var currentUrl = location.href.replace(/&?taskId=([^&]$|[^&]*)/i, "");
 					window.history.pushState('', '', currentUrl);
 				}
 				else
 				{
+					if(currentState && currentState === newUrl)
+						return;
+					
 					window.history.pushState('', '', newUrl);
 				}
 			}

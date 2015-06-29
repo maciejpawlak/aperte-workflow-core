@@ -65,6 +65,35 @@
                reloadQueues();
             });
 		reloadQueuesLoopTimer.set({ time : queueInterval, autostart : true });
+		
+		$(window).on('popstate', function(e) {
+            var allHref = location.href;
+            if (allHref){
+                var arguments = allHref.split("?");
+                if (arguments.length > 1 && arguments[1] !== 'strip=0' && arguments[1] !== ''){
+				     $(arguments).each(function(indx){
+                        var argument = this;
+                        if (argument.indexOf("#") > -1){
+                            return;
+                        }
+                        var keyval = argument.split("=");
+                        if (keyval.length > 1){
+                            var varName = keyval[0];
+                            var varValue = keyval[1];
+                            if (varName === "taskId"){
+								loadProcessView(varValue);
+                            }
+                        }
+                    });
+                }
+                else
+                {
+					closeProcessView();
+					queueViewManager.loadCurrentQueue();
+
+                }
+            }
+        });
 	});
 
 	function showNoEditRoleError()
