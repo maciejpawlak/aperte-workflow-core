@@ -1,13 +1,11 @@
 package pl.net.bluesoft.rnd.processtool;
 
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import pl.net.bluesoft.rnd.processtool.model.config.ProcessToolSetting;
 import pl.net.bluesoft.rnd.processtool.plugins.ProcessToolRegistry;
 import pl.net.bluesoft.util.lang.ExpiringCache;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 /**
  *
@@ -29,45 +27,31 @@ public class AperteSettingsProvider implements ISettingsProvider
     }
 
     @Override
-    public String getSetting(final String key)
+    public String getSetting(String key)
     {
         return settings.get(key, new ExpiringCache.NewValueCallback<String, String>() {
             @Override
             public String getNewValue(final String setting)
             {
-                Connection connection = null;
-                try {
-                    connection = processToolRegistry.getDataRegistry().getDataSourceProxy().getConnection();
-
-                    PreparedStatement preparedStatement =
-                                connection.prepareStatement("select value_ from pt_setting where key_ = '"+key+"'");
-
-                        ResultSet resultSet = preparedStatement.executeQuery();
-                        if(resultSet.next())
-                            return resultSet.getString(1);
-                        else
-                            return null;
-
-
-                    }
-                    catch (Throwable ex)
-                    {
-                        throw new RuntimeException("[SETTINGS] Error", ex);
-                    }
-                    finally {
-                        try {
-                            if(!connection.isClosed())
-                            connection.close();
-                    }
-                    catch(Throwable ex)
-                    {
-
-                    }
-                }
-
-
+                ProcessToolContext ctx = ProcessToolContext.Util.getThreadProcessToolContext();
+                if(ctx != null)
+                    return getSettingWithContext(ctx, setting);
+                else
+                    return processToolRegistry.withProcessToolContext(new ReturningProcessToolContextCallback<String>() {
+                        @Override
+                        public String processWithContext(ProcessToolContext ctx) {
+                            return getSettingWithContext(ctx, setting);
+                        }
+                    }, ProcessToolContextFactory.ExecutionType.NO_TRANSACTION);
             }
         });
+    }
+
+    private String getSettingWithContext(ProcessToolContext ctx, String key)
+    {
+        ProcessToolSetting setting = (ProcessToolSetting) ctx.getHibernateSession().createCriteria(ProcessToolSetting.class)
+                .add(Restrictions.eq("key", key)).uniqueResult();
+        return setting != null ? setting.getValue() : null;
     }
 
     @Override
@@ -75,34 +59,35 @@ public class AperteSettingsProvider implements ISettingsProvider
     {
         settings.put(settingKey.toString(), value);
 
-        Connection connection = null;
-        try {
-            connection = processToolRegistry.getDataRegistry().getDataSourceProxy().getConnection();
-
-            PreparedStatement preparedStatement =
-                    connection.prepareStatement("update pt_setting set value_= '"+value+"' where key_ = '"+settingKey.toString()+"'");
-
-            preparedStatement.executeUpdate();
-        }
-        catch (Throwable ex)
-        {
-            throw new RuntimeException("[SETTINGS] Error", ex);
-        }
-        finally {
-            try {
-                if(!connection.isClosed())
-                    connection.close();
-            }
-            catch(Throwable ex)
-            {
-
-            }
-        }
+        ProcessToolContext ctx = ProcessToolContext.Util.getThreadProcessToolContext();
+        if(ctx != null)
+            setSettingWithContext(ctx, settingKey.toString(), value);
+        else
+            processToolRegistry.withProcessToolContext(new ProcessToolContextCallback() {
+                @Override
+                public void withContext(ProcessToolContext ctx) {
+                    setSettingWithContext(ctx, settingKey.toString(), value);
+                }
+            });
     }
 
     @Override
     public void invalidateCache() {
         settings.clear();
+    }
+
+    private void setSettingWithContext(ProcessToolContext ctx, String key, String newValue)
+    {
+        ProcessToolSetting setting = (ProcessToolSetting) ctx.getHibernateSession().createCriteria(ProcessToolSetting.class)
+                .add(Restrictions.eq("key", key)).uniqueResult();
+
+        if(setting == null)
+        {
+            setting = new ProcessToolSetting();
+            setting.setKey(key.toString());
+        }
+        setting.setValue(newValue);
+        ctx.getHibernateSession().saveOrUpdate(setting);
     }
 
 }
