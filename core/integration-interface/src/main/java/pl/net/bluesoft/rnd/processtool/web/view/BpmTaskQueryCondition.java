@@ -14,6 +14,7 @@ public class BpmTaskQueryCondition implements IBpmTaskQueryCondition
     private static final String CREATOR_NAME_COLUMN = "creator";
     private static final String ASSIGNEE_NAME_COLUMN = "assignee";
     private static final String CREATED_DATE_COLUMN = "creationDate";
+    private static final String RECEIVED_DATE_COLUMN = "receivedDate";
     private static final String TASK_CREATION_DATE = "assignDate";
     private static final String TASK_DEADLINE_DATE = "deadline";
 
@@ -29,6 +30,8 @@ public class BpmTaskQueryCondition implements IBpmTaskQueryCondition
                 return "createdOn";
         else if(columnName.equals(CREATED_DATE_COLUMN))
                 return "createdOn";
+        else if(columnName.equals(RECEIVED_DATE_COLUMN))
+            return "task_.createdon";
         else if(columnName.equals(TASK_DEADLINE_DATE))
                 return "taskDeadline";
         else if(columnName.equals( PROCESS_CODE_COLUMN))
