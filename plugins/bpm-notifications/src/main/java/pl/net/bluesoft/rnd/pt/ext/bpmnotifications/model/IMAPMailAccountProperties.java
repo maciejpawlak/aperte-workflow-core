@@ -37,6 +37,10 @@ public class IMAPMailAccountProperties
 
     private String mailSocketFactoryClass;
 
+    private String partialFetch;
+
+    private String fetchSize;
+
     public String getMailProtocol() {
         return mailProtocol;
     }
@@ -155,5 +159,21 @@ public class IMAPMailAccountProperties
 
     public void setMailProcessingFolder(String mailProcessingFolder) {
         this.mailProcessingFolder = mailProcessingFolder;
+    }
+
+    public String getPartialFetch() {
+        return partialFetch;
+    }
+
+    public void setPartialFetch(String partialFetch) {
+        this.partialFetch = partialFetch;
+    }
+
+    public String getFetchSize() {
+        return fetchSize;
+    }
+
+    public void setFetchSize(String fetchSize) {
+        this.fetchSize = fetchSize;
     }
 }

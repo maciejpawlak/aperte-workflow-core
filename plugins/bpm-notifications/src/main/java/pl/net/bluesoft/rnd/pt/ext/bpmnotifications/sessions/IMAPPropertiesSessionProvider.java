@@ -67,6 +67,8 @@ public class IMAPPropertiesSessionProvider implements IIMAPMailSessionProvider
                 accountProperties.setMailAuthMechanism(getPrefixedProperty("exchange.accounts.auth.mechanisms", accountName, props));
                 accountProperties.setMailNTLMDomain(getPrefixedProperty("exchange.accounts.store.ntlm.domain", accountName, props));
                 accountProperties.setMailStoreClass(getPrefixedProperty("exchange.accounts.imap.class", accountName, props));
+                accountProperties.setPartialFetch(getPrefixedProperty("exchange.accounts.imap.partialfetch", accountName, props));
+                accountProperties.setFetchSize(getPrefixedProperty("exchange.accounts.imap.fetchSize", accountName, props));
 
                 mailAccountPropertieses.put(profileName, accountProperties);
             }
@@ -100,6 +102,9 @@ public class IMAPPropertiesSessionProvider implements IIMAPMailSessionProvider
         String host = mailAccountProperties.getMailHost();
         String port = mailAccountProperties.getMailPort();
 
+        String partialFetch = mailAccountProperties.getPartialFetch();
+        String fetchSize = mailAccountProperties.getFetchSize();
+
         String decryptedPassword = decryptPassword(encryptedPassword);
 
         logger.info("[IMAP] Properties loaded");
@@ -116,6 +121,8 @@ public class IMAPPropertiesSessionProvider implements IIMAPMailSessionProvider
         props.setProperty("mail.imaps.ssl.trust", "*");
         props.setProperty("mail.mime.encodefilename", "true");
         props.setProperty("mail.mime.decodefilename", "true");
+        props.setProperty("mail.imap.partialfetch", partialFetch);
+        props.setProperty("mail.imap.fetchsize", fetchSize);
 
         if(StringUtils.isNotEmpty(mailAccountProperties.getMailAuthMechanism()))
             props.setProperty("mail.imap.auth.mechanisms", mailAccountProperties.getMailAuthMechanism());

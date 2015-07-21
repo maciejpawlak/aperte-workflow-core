@@ -88,7 +88,7 @@ public class ProcessToolContextFactoryImpl implements ProcessToolContextFactory
 
     @Override
     public <T> T withProcessToolContext(ReturningProcessToolContextCallback<T> callback, ExecutionType type) {
-        logger.info(">>>>>>>>> withProcessToolContext, executionType: " + type.toString() + ", threadId: " + Thread.currentThread().getId());
+        //logger.info(">>>>>>>>> withProcessToolContext, executionType: " + type.toString() + ", threadId: " + Thread.currentThread().getId());
         long start = System.currentTimeMillis();
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(ProcessToolRegistry.Util.getAwfClassLoader());
@@ -138,7 +138,7 @@ public class ProcessToolContextFactoryImpl implements ProcessToolContextFactory
 
         }
         finally {
-            logger.info("<<<<<<<<< withProcessToolContext: " +  Thread.currentThread().getId() + " time: " + (System.currentTimeMillis() - start) + (stats != null ? " stats:\n" + stats.toString() : ""));
+            //logger.info("<<<<<<<<< withProcessToolContext: " +  Thread.currentThread().getId() + " time: " + (System.currentTimeMillis() - start) + (stats != null ? " stats:\n" + stats.toString() : ""));
             Thread.currentThread().setContextClassLoader(contextClassLoader);
         }
     }
@@ -193,54 +193,9 @@ public class ProcessToolContextFactoryImpl implements ProcessToolContextFactory
             }
 
             throw new RuntimeException(ex);
-
-
-//            if (reload && ExceptionsUtils.isExceptionOfClassExistis(ex, StaleObjectStateException.class))
-//            {
-//                /* Hardcore fix //TODO change */
-//                logger.severe("Ksession problem, retry: "+reload);
-//
-//                /* Clean up before retry */
-//                if (session.isOpen()) {
-//                    stats.beforeCloseSession();
-//                    session.close();
-//                    stats.afterCloseSession();
-//                }
-//
-//                ctx.close();
-//
-//                stats.beforeReloadJbpm();
-//                reloadJbpm();
-//                stats.afterReloadJbpm();
-//
-//                ProcessToolContext.Util.removeThreadProcessToolContext();
-//                executeWithProcessToolContextNonJta(callback,false, stats);
-//            }
-//            else if (reload && ExceptionsUtils.isExceptionOfClassExistis(ex, TransactionException.class))
-//            {
-//                /* Hardcore fix //TODO change */
-//                logger.severe("UserTransaction problem, retry: "+reload);
-//
-//                /* Clean up before retry */
-//                if (session.isOpen()) {
-//                    stats.beforeCloseSession();
-//                    session.close();
-//                    stats.afterCloseSession();
-//                }
-//
-//                ctx.close();
-//
-//                ProcessToolContext.Util.removeThreadProcessToolContext();
-//                executeWithProcessToolContextNonJta(callback,false, stats);
-//            }
-//            else
-//            {
-//                throw new RuntimeException(ex);
-//            }
         }
         finally
         {
-            logger.log(Level.SEVERE, "Release lock for "+Thread.currentThread().getId());
             LockSupport.unpark(Thread.currentThread());
 
             JbpmService.getInstance().destroy();

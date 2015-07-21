@@ -68,6 +68,6 @@ public class ProcessToolJbpmSessionFactory implements ProcessToolSessionFactory
 	}
 
 	private ProcessToolBpmSession wrap(ProcessToolJbpmSession session) {
-		return new TimeTracingBpmSession(session);
+		return session;
 	}
 }

@@ -120,7 +120,7 @@ public class DispatcherController extends AbstractProcessToolServletController
 					ProcessToolContextFactory.ExecutionType.TRANSACTION);
 		}
 		finally {
-			logger.info("Controller invocation: " + controllerName + '.' + actionName + ", time: " + (System.currentTimeMillis() - start));
+			//logger.info("Controller invocation: " + controllerName + '.' + actionName + ", time: " + (System.currentTimeMillis() - start));
 		}
 	}
 
