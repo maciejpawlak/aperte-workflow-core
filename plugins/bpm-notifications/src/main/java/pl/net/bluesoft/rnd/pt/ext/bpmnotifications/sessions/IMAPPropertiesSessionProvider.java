@@ -45,7 +45,7 @@ public class IMAPPropertiesSessionProvider implements IIMAPMailSessionProvider
             String accountsString = props.getProperty("exchange.accounts");
             Collection<String> accounts = Arrays.asList(StringUtils.split(accountsString, ","));
 
-            logger.info("[IMAP] Properties loaded for accounts");
+            logger.finest("[IMAP] Properties loaded for accounts");
 
             for (String accountName : accounts) {
 
@@ -107,8 +107,6 @@ public class IMAPPropertiesSessionProvider implements IIMAPMailSessionProvider
 
         String decryptedPassword = decryptPassword(encryptedPassword);
 
-        logger.info("[IMAP] Properties loaded");
-
         props.setProperty("mail.store.protocol", mailAccountProperties.getMailProtocol());
         props.setProperty("mail.imap.port", port);
         props.setProperty("mail.imap.user", user);
@@ -137,8 +135,6 @@ public class IMAPPropertiesSessionProvider implements IIMAPMailSessionProvider
         Session session = Session.getInstance(props, null);
         Store store = session.getStore(new URLName("imap://"+email));
         store.connect(host, user, decryptedPassword);
-
-        logger.info("[IMAP] Connected!");
 
         return store;
     }

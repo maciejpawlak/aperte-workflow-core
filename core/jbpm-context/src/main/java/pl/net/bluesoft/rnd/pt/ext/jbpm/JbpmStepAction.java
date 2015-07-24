@@ -35,7 +35,7 @@ public class JbpmStepAction {
         }, ExecutionType.TRANSACTION);
 		}
 		finally {
-			LOGGER.info("[invoke] stepName=" + stepName + " t=" + (System.currentTimeMillis() - start));
+			LOGGER.finest("[invoke] stepName=" + stepName + " t=" + (System.currentTimeMillis() - start));
 		}
 	}
 

@@ -242,24 +242,24 @@ public class JbpmService implements ProcessEventListener, TaskEventListener {
     {
         JbpmContext jbpmContext = getJbpmContext();
 
-        log.info("JBPMService getTask: " + taskId);
+        log.finest("JBPMService getTask: " + taskId);
         return jbpmContext.getService().getTask(taskId);
     }
 
     public void claimTask(long taskId, String userLogin) {
-        log.info("JBPMService claimTask: " + taskId + ", userLogin: " + userLogin);
+        log.finest("JBPMService claimTask: " + taskId + ", userLogin: " + userLogin);
         JbpmContext jbpmContext = getJbpmContext();
         jbpmContext.getService().claim(taskId, userLogin);
     }
 
     public void forwardTask(long taskId, String userLogin, String targetUserLogin) {
-        log.info("JBPMService forwardTask: " + taskId + ", userLogin: " + userLogin);
+        log.finest("JBPMService forwardTask: " + taskId + ", userLogin: " + userLogin);
         JbpmContext jbpmContext = getJbpmContext();
         jbpmContext.getService().forward(taskId, userLogin, targetUserLogin);
     }
 
     public void endTask(long taskId, String userLogin, ContentData outputData, boolean startNeeded) {
-        log.info("JBPMService endTask: " + taskId + ", userLogin: " + userLogin);
+        log.finest("JBPMService endTask: " + taskId + ", userLogin: " + userLogin);
         JbpmContext jbpmContext = getJbpmContext();
         if (startNeeded) {
             jbpmContext.getService().start(taskId, userLogin);
@@ -269,20 +269,20 @@ public class JbpmService implements ProcessEventListener, TaskEventListener {
     }
 
     public ProcessInstance getProcessInstance(long processId) {
-        log.info("JBPMService getProcessInstance: " + processId);
+        log.finest("JBPMService getProcessInstance: " + processId);
         JbpmContext jbpmContext = getJbpmContext();
         return jbpmContext.getStatefulKnowledgeSession().getProcessInstance(processId);
     }
 
     public void startProcess(String processId, Map<String,Object> parameters) {
-        log.info("Aquiare lock... " + Thread.currentThread().getId());
+        log.finest("Aquiare lock... " + Thread.currentThread().getId());
         log.info("JBPMService startProcess: " + processId);
         JbpmContext jbpmContext = getJbpmContext();
         jbpmContext.getStatefulKnowledgeSession().startProcess(processId, parameters);
     }
 
     public void abortProcessInstance(long processId) {
-        log.info("JBPMService abortProcessInstance: " + processId);
+        log.finest("JBPMService abortProcessInstance: " + processId);
         JbpmContext jbpmContext = getJbpmContext();
         jbpmContext.getStatefulKnowledgeSession().abortProcessInstance(processId);
     }

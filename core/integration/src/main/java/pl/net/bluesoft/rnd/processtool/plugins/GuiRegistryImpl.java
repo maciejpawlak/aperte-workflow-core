@@ -84,14 +84,14 @@ public class GuiRegistryImpl implements GuiRegistry {
 	public synchronized void registerWidget(Class<? extends ProcessToolWidget> clazz) {
 		String aliasName = getAliasName(clazz);
 		widgets.put(aliasName, clazz);
-		logger.info("Registered widget alias: " + aliasName + " -> " + clazz.getName());
+		logger.fine("Registered widget alias: " + aliasName + " -> " + clazz.getName());
 	}
 
 	@Override
 	public synchronized void unregisterWidget(Class<? extends ProcessToolWidget> clazz) {
 		String aliasName = getAliasName(clazz);
 		widgets.remove(aliasName);
-		logger.info("Unregistered widget alias: " + aliasName + " -> " + clazz.getName());
+		logger.fine("Unregistered widget alias: " + aliasName + " -> " + clazz.getName());
 	}
 
 	@Override
@@ -117,7 +117,7 @@ public class GuiRegistryImpl implements GuiRegistry {
 	public synchronized void unregisterButton(Class<? extends ProcessToolActionButton> clazz) {
 		String aliasName = getAliasName(clazz);
 		buttons.remove(aliasName);
-		logger.info("Unregistered button alias: " + aliasName + " -> " + clazz.getName());
+		logger.fine("Unregistered button alias: " + aliasName + " -> " + clazz.getName());
 	}
 
 	@Override

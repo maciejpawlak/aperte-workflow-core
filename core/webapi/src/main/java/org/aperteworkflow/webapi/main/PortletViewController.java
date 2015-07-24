@@ -66,7 +66,6 @@ public class PortletViewController extends AbstractMainController<ModelAndView>
 
     @RenderMapping()
     public ModelAndView handleMainRenderRequest(RenderRequest request, RenderResponse response, Model model) {
-        System.out.println("PortletViewController.handleMainRenderRequest... ");
 
         ModelAndView modelView = new ModelAndView();
         modelView.setViewName("main");
@@ -112,7 +111,7 @@ public class PortletViewController extends AbstractMainController<ModelAndView>
         String action = originalHttpServletRequest.getParameter("action");
         //final Long processId = Long.parseLong(originalHttpServletRequest.getParameter("processId"));
 
-        logger.log(Level.INFO, "controllerName: " + controller + ", action: " + action);
+        logger.finest("controllerName: " + controller + ", action: " + action);
 
         if (controller == null || controller.isEmpty()) {
             logger.log(Level.SEVERE, "[ERROR] No controller paramter in dispatcher invocation!");
@@ -150,7 +149,7 @@ public class PortletViewController extends AbstractMainController<ModelAndView>
         String controller = originalHttpServletRequest.getParameter("controller");
         String action = originalHttpServletRequest.getParameter("action");
 
-        logger.log(Level.INFO, "fileDispatcher: controllerName: " + controller + ", action: " + action);
+        logger.finest("fileDispatcher: controllerName: " + controller + ", action: " + action);
 
         if (controller == null || controller.isEmpty()) {
             logger.log(Level.SEVERE, "[ERROR] fileDispatcher: No controller paramter in dispatcher invocation!");
