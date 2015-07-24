@@ -586,53 +586,45 @@
 	});
 	
 	$('#TabsContainer a[href="#SentNotificationsPanel"]').on('shown.bs.tab', function (e) {
-		$.ajax({
-			url : dispatcherPortlet,
-			type : "POST",
-			data : {
+		$.post(dispatcherPortlet,
+			{
 				controller : 'bpmnotificationscontroller',
 				action : 'getNotificationHistory'
-			}
-		}).done(function(resp){
+			}, function(){}, 'json')
+		.done(function(resp){
 			loadNotificationHistory(resp)
 			});
-		})
+		});
 
 	$("#ProfileSelection button").click(function(e) {
-		$.ajax({
-			url : dispatcherPortlet,
-			type : "POST",
-			data : {
+		$.post(dispatcherPortlet,
+			{
 				controller : 'bpmnotificationscontroller',
 				action : 'getProfiles'
-			}
-		}).done(function(resp){
+			}, function(){}, 'json')
+		.done(function(resp){
 			getObjectsRequestDone(resp, "Profile", "profileName");
 		});
 	});
 	
 	$("#TemplateSelection button").click(function(e) {
-		$.ajax({
-			url : dispatcherPortlet,
-			type : "POST",
-			data : {
+		$.post(dispatcherPortlet,
+			{
 				controller : 'bpmnotificationscontroller',
 				action : 'getTemplates'
-			}
-		}).done(function(resp){
+			}, function(){}, 'json')
+		.done(function(resp){
 			getObjectsRequestDone(resp, "Template", "templateName");
 			});
 	});
 	
 	$("#NotificationSelection button").click(function(e) {
-		$.ajax({
-			url : dispatcherPortlet,
-			type : "POST",
-			data : {
+		$.post(dispatcherPortlet,
+			{
 				controller : 'bpmnotificationscontroller',
 				action : 'getNotifications'
-			}
-		}).done(function(resp){
+			}, function(){}, 'json')
+		.done(function(resp){
 			getObjectsRequestDone(resp, "Notification", "id");
 			});
 	});
@@ -735,9 +727,10 @@
 	$("#NewProfile").submit(function(e) {
 		e.preventDefault(); 
 		var postData = $(this).serializeObject();
-		postData.controller = 'bpmnotificationscontroller'
-		postData.action = 'addProfile'
-		var formUrl = dispatcherPortlet
+		postData.controller = 'bpmnotificationscontroller';
+		postData.action = 'addProfile';
+		var formUrl = dispatcherPortlet;
+
 		$.ajax({
 			url : dispatcherPortlet,
 			type : "POST",
@@ -864,7 +857,7 @@
 			$("#NotificationNotifyEmails").val(obj.notifyEmailAddresses);
 			$("#NotificationNotifyUsers").val(obj.notifyUserAttributes);
 		}
-	}
+	};
 
 	function objectSelectionClick(e, selection, objects, target, parm) {
 		e.preventDefault();
@@ -905,35 +898,32 @@
 
 	function loadSettings(){
 		$('#SettingsOptions').html('');
-		var postData = {};
-		postData.controller = 'settingscontroller';
-		postData.action = 'getSettings';
-		var formUrl = dispatcherPortlet;
-		$.ajax({
-			url : dispatcherPortlet,
-			type : "POST",
-			data : postData,
-			success: function(data, textStatus, jqXHR){
-				for (var lp in data['data']){
-					var obj = data['data'][lp];
-					$('#SettingsOptions').append('\
-						<div class="control-group string required profile_name">\
-							<label for="'+obj["key"]+'_id" class="string required control-label">\
-								'+obj["key"]+'\
-								<br />\
-								'+(obj["description"] ? obj["description"] : '')+'\
-							</label>\
-							<div class="controls">\
-								<input type="text" name="'+obj["key"]+'" id="'+obj["key"]+'_id"\
-									   value="'+obj["value"].replace(/"/g, '&quot;')+'" class="string required span6">\
-							</div>\
-						</div>\
-					');
 
-				}
-	        }
+		$.post(dispatcherPortlet,
+		{
+		    "controller": "settingscontroller",
+		    "action": "getSettings"
+		}, function(){}, 'json')
+		.done(function(data) {
+			for (var lp in data['data']){
+				var obj = data['data'][lp];
+				$('#SettingsOptions').append('\
+					<div class="control-group string required profile_name">\
+						<label for="'+obj["key"]+'_id" class="string required control-label">\
+							'+obj["key"]+'\
+							<br />\
+							'+(obj["description"] ? obj["description"] : '')+'\
+						</label>\
+						<div class="controls">\
+							<input type="text" name="'+obj["key"]+'" id="'+obj["key"]+'_id"\
+								   value="'+obj["value"].replace(/"/g, '&quot;')+'" class="string required span6">\
+						</div>\
+					</div>\
+				');
+
+			}
 		});
-	}
+	};
 
 	$("#SettingsForm").submit(function(e) {
 		e.preventDefault();

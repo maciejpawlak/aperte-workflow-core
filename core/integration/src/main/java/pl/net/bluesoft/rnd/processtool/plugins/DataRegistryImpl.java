@@ -105,13 +105,13 @@ public class DataRegistryImpl implements DataRegistry {
 
     @Override
     public synchronized boolean registerModelExtension(Class<?>... cls) {
-        logger.warning("Registered model extensions: " + FormatUtil.joinClassNames(cls));
+        logger.finest("Registered model extensions: " + FormatUtil.joinClassNames(cls));
         return addAnnotatedClass(cls);
     }
 
     @Override
     public synchronized boolean unregisterModelExtension(Class<?>... cls) {
-        logger.warning("Unregistered model extensions: " + FormatUtil.joinClassNames(cls));
+        logger.finest("Unregistered model extensions: " + FormatUtil.joinClassNames(cls));
         return removeAnnotatedClass(cls);
     }
 
