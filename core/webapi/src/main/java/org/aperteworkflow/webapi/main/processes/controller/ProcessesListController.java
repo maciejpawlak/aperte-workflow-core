@@ -79,7 +79,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 	@ResponseBody
 	public PerformActionResultBean performAction(final HttpServletRequest request)
 	{
-		logger.info("performAction ...");
+		logger.finest("performAction ...");
 		
 		final PerformActionResultBean resultBean = new PerformActionResultBean();
         try
@@ -280,10 +280,10 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 	@ResponseBody
 	public GenericResultBean saveAction(final HttpServletRequest request)
 	{
-		logger.info("saveAction ...");
+		logger.finest("saveAction ...");
 		long t0 = System.currentTimeMillis();
 
-		logger.warning("SAVE!");
+		logger.finest("SAVE!");
 		final GenericResultBean resultBean = new GenericResultBean();
 		
 		/* Initilize request context */
@@ -429,7 +429,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 	@ResponseBody
 	public NewProcessInstanceBean startNewProcess(final HttpServletRequest request)
 	{
-		logger.info("startNewProcess ...");
+		logger.finest("startNewProcess ...");
 		final NewProcessInstanceBean newProcessInstanceBO = new NewProcessInstanceBean();
 
         try
@@ -525,7 +525,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
     @ResponseBody
     public DataPagingBean<TasksListViewBean> searchTasks(final HttpServletRequest request)
     {
-		logger.info("searchTasks ...");
+		logger.finest("searchTasks ...");
 		long t0 = System.currentTimeMillis();
 
     	final JQueryDataTable dataTable = JQueryDataTableUtil.analyzeRequest(request.getParameterMap());
@@ -631,7 +631,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
     @ResponseBody
     public void loadQueue(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException
     {
-        logger.info("loadQueue ...");
+        logger.finest("loadQueue ...");
         long t0 = System.currentTimeMillis();
 
         /* Get process state configuration db id */
@@ -716,7 +716,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 	@ResponseBody
 	public DataPagingBean<TasksListViewBean> loadProcessesList(final HttpServletRequest request)
 	{
-		logger.info("loadProcessesList ...");
+		logger.finest("loadProcessesList ...");
 		long t0 = System.currentTimeMillis();
 
         final JQueryDataTable dataTable = JQueryDataTableUtil.analyzeRequest(request.getParameterMap());

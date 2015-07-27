@@ -41,6 +41,8 @@ public class IMAPMailAccountProperties
 
     private String fetchSize;
 
+    private String timeout;
+
     public String getMailProtocol() {
         return mailProtocol;
     }
@@ -175,5 +177,13 @@ public class IMAPMailAccountProperties
 
     public void setFetchSize(String fetchSize) {
         this.fetchSize = fetchSize;
+    }
+
+    public String getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(String timeout) {
+        this.timeout = timeout;
     }
 }
