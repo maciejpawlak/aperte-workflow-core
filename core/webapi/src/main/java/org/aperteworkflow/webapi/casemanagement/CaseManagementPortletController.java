@@ -107,7 +107,7 @@ public class CaseManagementPortletController {
         String controller = originalHttpServletRequest.getParameter("controller");
         String action = originalHttpServletRequest.getParameter("action");
 
-        logger.log(Level.INFO, "controllerName: " + controller + ", action: " + action);
+        logger.log(Level.FINEST, "controllerName: " + controller + ", action: " + action);
 
         if (controller == null || controller.isEmpty()) {
             logger.log(Level.SEVERE, "[ERROR] No controller paramter in dispatcher invocation!");
@@ -131,7 +131,7 @@ public class CaseManagementPortletController {
         String controller = originalHttpServletRequest.getParameter("controller");
         String action = originalHttpServletRequest.getParameter("action");
 
-        logger.log(Level.INFO, "fileDispatcher: controllerName: " + controller + ", action: " + action);
+        logger.log(Level.FINEST, "fileDispatcher: controllerName: " + controller + ", action: " + action);
 
         if (controller == null || controller.isEmpty()) {
             logger.log(Level.SEVERE, "[ERROR] fileDispatcher: No controller paramter in dispatcher invocation!");

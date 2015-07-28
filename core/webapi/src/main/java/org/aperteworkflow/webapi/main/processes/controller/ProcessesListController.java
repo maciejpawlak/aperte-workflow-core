@@ -60,6 +60,7 @@ import static org.aperteworkflow.webapi.main.processes.controller.TaskViewContro
 public class ProcessesListController extends AbstractProcessToolServletController
 {
 	private static Logger logger = Logger.getLogger(ProcessesListController.class.getName());
+    private static Logger performanceLogger = Logger.getLogger("PRF");
 
     private static final String TASKS_LIST_VIEW_NAME_PARAM = "taskListViewName";
 
@@ -143,7 +144,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
                 @Override
                 public TasksListViewBean processWithContext(ProcessToolContext ctx) {
                     try {
-                        logger.log(Level.INFO, "performAction.withContext ... ");
+                        logger.log(Level.FINEST, "performAction.withContext ... ");
 
                         long t0 = System.currentTimeMillis();
                         long t1 = System.currentTimeMillis();
@@ -252,8 +253,8 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 		    resultBean.setNextTask(bpmTaskBean);
 
 		    long t2 = System.currentTimeMillis();
-		    
-			logger.log(Level.FINEST, "performAction total: " + (t2-t0) + "ms, " +
+
+            performanceLogger.log(Level.FINEST, "performAction total: " + (t2-t0) + "ms, " +
 					"[1]: " + (t1-t0) + "ms, " +
 					"[2]: " + (t2-t1) + "ms " 
 					);
@@ -283,7 +284,6 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 		logger.finest("saveAction ...");
 		long t0 = System.currentTimeMillis();
 
-		logger.finest("SAVE!");
 		final GenericResultBean resultBean = new GenericResultBean();
 		
 		/* Initilize request context */
@@ -367,7 +367,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 
                     long t4 = System.currentTimeMillis();
 
-                    logger.log(Level.FINEST, "saveAction.withContext total: " + (t4 - t0) + "ms, " +
+                        performanceLogger.log(Level.FINEST, "saveAction.withContext total: " + (t4 - t0) + "ms, " +
                             "[1]: " + (t1 - t0) + "ms, " +
                             "[2]: " + (t2 - t1) + "ms, " +
                             "[3]: " + (t3 - t2) + "ms, " +
@@ -408,7 +408,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 		
 		long t2 = System.currentTimeMillis();
 
-		logger.log(Level.FINEST, "saveAction total: " + (t2-t0) + "ms, " +
+        performanceLogger.log(Level.FINEST, "saveAction total: " + (t2-t0) + "ms, " +
 				"[1]: " + (t1-t0) + "ms, " +
 				"[2]: " + (t2-t1) + "ms " 
 				);
@@ -494,7 +494,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 
                     long t3 = System.currentTimeMillis();
 
-                    logger.log(Level.FINEST, "startNewProcess.withContext total: " + (t3 - t0) + "ms, " +
+                    performanceLogger.log(Level.FINEST, "startNewProcess.withContext total: " + (t3 - t0) + "ms, " +
                             "[1]: " + (t1 - t0) + "ms, " +
                             "[2]: " + (t2 - t1) + "ms, " +
                             "[3]: " + (t3 - t2) + "ms, "
@@ -505,7 +505,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
             
     		long t2 = System.currentTimeMillis();
 
-    		logger.log(Level.FINEST, "startNewProcess total: " + (t2-t0) + "ms, " +
+            performanceLogger.log(Level.FINEST, "startNewProcess total: " + (t2-t0) + "ms, " +
     				"[1]: " + (t1-t0) + "ms, " +
     				"[2]: " + (t2-t1) + "ms "
     				);
@@ -608,7 +608,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 
                 long t3 = System.currentTimeMillis();
 
-                logger.log(Level.FINEST, "searchTasks.withContext total: " + (t3 - t0) + "ms, " +
+                performanceLogger.log(Level.FINEST, "searchTasks.withContext total: " + (t3 - t0) + "ms, " +
                         "[1]: " + (t1 - t0) + "ms, " +
                         "[2]: " + (t2 - t1) + "ms " +
                         "[3]: " + (t3 - t2) + "ms "
@@ -619,7 +619,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 
 		long t2 = System.currentTimeMillis();
 
-		logger.log(Level.FINEST, "searchTasks total: " + (t2-t0) + "ms, " +
+        performanceLogger.log(Level.FINEST, "searchTasks total: " + (t2-t0) + "ms, " +
 				"[1]: " + (t1-t0) + "ms, " +
 				"[2]: " + (t2-t1) + "ms "
 				);
@@ -666,7 +666,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 
         long t3 = System.currentTimeMillis();
 
-        logger.log(Level.FINEST, "loadTask total: " + (t3-t0) + "ms, " +
+        performanceLogger.log(Level.FINEST, "loadTask total: " + (t3-t0) + "ms, " +
                         "[1]: " + (t1-t0) + "ms, " +
                         "[2]: " + (t2-t1) + "ms, " +
                         "[3]: " + (t3-t2) + "ms, "
@@ -703,10 +703,10 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
                 }
                 long t6 = System.currentTimeMillis();
 
-//                logger.log(Level.INFO, "loadTask.withContext total: " + (t6-t0) + "ms, " +
-//                                "[1]: " + (t1-t0) + "ms, " +
-//                                "[6]: " + (t6-t5) + "ms, "
-//                );
+                performanceLogger.log(Level.FINEST, "loadTask.withContext total: " + (t6-t0) + "ms, " +
+                                "[1]: " + (t1-t0) + "ms, " +
+                                "[6]: " + (t6-t5) + "ms, "
+                );
             }
         }, ExecutionType.NO_TRANSACTION);
         return builder.toString();
@@ -811,7 +811,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 
                 long t4 = System.currentTimeMillis();
 
-                logger.log(Level.FINEST, "loadProcessesList.withContext total: " + (t4 - t0) + "ms, " +
+                performanceLogger.log(Level.FINEST, "loadProcessesList.withContext total: " + (t4 - t0) + "ms, " +
                         "[1]: " + (t1 - t0) + "ms, " +
                         "[2]: " + (t2 - t1) + "ms, " +
                         "[" +
@@ -824,7 +824,7 @@ public class ProcessesListController extends AbstractProcessToolServletControlle
 
 		long t2 = System.currentTimeMillis();
 
-		logger.log(Level.FINEST, "loadProcessesList total: " + (t2-t0) + "ms, " +
+        performanceLogger.log(Level.FINEST, "loadProcessesList total: " + (t2-t0) + "ms, " +
 				"[1]: " + (t1-t0) + "ms, " +
 				"[2]: " + (t2-t1) + "ms "
 				);
