@@ -576,7 +576,7 @@ public class BundleInstallationHandler {
                     if (is != null) {
                         processToolRegistry.registerGlobalDictionaries(is);
                     } else {
-                        logger.log(Level.SEVERE, "No global dictionary stream found in package: " + pack);
+                        logger.log(Level.FINEST, "No global dictionary stream found in package: " + pack);
                     }
                 } catch (Exception e) {
                     logger.log(Level.SEVERE, e.getMessage(), e);
