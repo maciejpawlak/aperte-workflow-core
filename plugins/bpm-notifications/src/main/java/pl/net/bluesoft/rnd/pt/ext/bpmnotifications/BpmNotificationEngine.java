@@ -195,7 +195,7 @@ public class BpmNotificationEngine implements IBpmNotificationService
         {
             connection = registry.getDataRegistry().getDataSourceProxy().getConnection();
             connection.setAutoCommit(false);
-            logger.info("[NOTIFICATIONS JOB] Checking awaiting notifications... ");
+            logger.finest("[NOTIFICATIONS JOB] Checking awaiting notifications... ");
 
         /* Get all notifications waiting to be sent */
             Collection<BpmNotification> notificationsToSend = NotificationsJdbcFacade.getNotificationsToSend(connection, 30000, 10);
@@ -326,7 +326,7 @@ public class BpmNotificationEngine implements IBpmNotificationService
                         continue;
                 	}
                 }
-                logger.info("Matched notification #" + cfg.getId() + " for process state change #" + pi.getInternalId());
+                logger.finest("Matched notification #" + cfg.getId() + " for process state change #" + pi.getInternalId());
                 List<UserData> recipients = new LinkedList<UserData>();
                 if (task != null && cfg.isNotifyTaskAssignee()) {
                     UserData assignee = getRegistry().getUserSource().getUserByLogin(task.getAssignee());
@@ -334,7 +334,7 @@ public class BpmNotificationEngine implements IBpmNotificationService
                             assignee != null &&
                             assignee.getLogin() != null &&
                             assignee.getLogin().equals(userLogin)) {
-                        logger.info("Not notifying user " + assignee.getLogin() + " - this user has initiated processed action");
+                        logger.warning("Not notifying user " + assignee.getLogin() + " - this user has initiated processed action");
                         continue;
                     }
                     if (assignee != null && hasText(assignee.getEmail())) {
@@ -355,7 +355,7 @@ public class BpmNotificationEngine implements IBpmNotificationService
 					recipients.addAll(EmailUtils.extractUsers(cfg.getNotifyUserAttributes(), pi));
 				}
                 if (recipients.isEmpty()) {
-                    logger.info("Despite matched rules, no emails qualify to notify for cfg #" + cfg.getId());
+                    logger.warning("Despite matched rules, no emails qualify to notify for cfg #" + cfg.getId());
                     continue;
                 }
                 String templateName = cfg.getTemplateName();
@@ -464,7 +464,7 @@ public class BpmNotificationEngine implements IBpmNotificationService
 
             bpmSession = getRegistry().getProcessToolSessionFactory().createAutoSession();
             
-            logger.info("Mail configuration updated. Interval is set to "+refrshInterval);
+            logger.finest("Mail configuration updated. Interval is set to "+refrshInterval);
         }
 
     }
@@ -590,7 +590,7 @@ public class BpmNotificationEngine implements IBpmNotificationService
 
 			history.notificationSent(notification);
 
-	    	logger.info("Emails sent");
+	    	logger.finest("Emails sent");
         }
         catch (Exception e) 
         {
@@ -642,7 +642,7 @@ public class BpmNotificationEngine implements IBpmNotificationService
 
 		if (recipientSubstiteEmails != null) {
 			message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(recipientSubstiteEmails));
-            logger.info(String.format("Sending email to %s with CC %s", notification.getRecipient(), recipientSubstiteEmails));
+            logger.finest(String.format("Sending email to %s with CC %s", notification.getRecipient(), recipientSubstiteEmails));
 		}
 
 		message.setSubject(notification.getSubject());
@@ -673,7 +673,7 @@ public class BpmNotificationEngine implements IBpmNotificationService
 		        content.addBodyPart(attachmentPart);
 
 				if (logger.isLoggable(Level.INFO)) {
-					logger.info("Added attachment " + attachment.getName());
+					logger.finest("Added attachment " + attachment.getName());
 				}
 	        }
 

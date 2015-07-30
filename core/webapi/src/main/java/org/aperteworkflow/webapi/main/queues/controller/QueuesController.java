@@ -26,13 +26,13 @@ import pl.net.bluesoft.rnd.processtool.userqueues.UserProcessQueuesSizeProvider.
 public class QueuesController extends AbstractProcessToolServletController
 {
 	private static Logger logger = Logger.getLogger(QueuesController.class.getName());
-
+	private static Logger performanceLogger = Logger.getLogger("PRF");
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/getUserQueues.json")
 	@ResponseBody
 	public Collection<UsersQueuesDTO> getUserQueues(final HttpServletRequest request)
 	{
-		logger.log(Level.INFO,"getUserQueues ...");
+		performanceLogger.log(Level.FINEST,"getUserQueues ...");
 		
 		long t0 = System.currentTimeMillis();
 		
@@ -51,8 +51,8 @@ public class QueuesController extends AbstractProcessToolServletController
 		userQueues.addAll(queues);
 		
 		long t2 = System.currentTimeMillis();
-		
-		logger.log(Level.INFO, "getUserQueues total: " + (t2-t0) + "ms, " +
+
+		performanceLogger.log(Level.FINEST, "getUserQueues total: " + (t2-t0) + "ms, " +
 				"[1]: " + (t1-t0) + "ms, " +
 				"[2]: " + (t2-t1) + "ms " 
 				);
