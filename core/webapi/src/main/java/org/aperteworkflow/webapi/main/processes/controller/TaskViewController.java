@@ -49,7 +49,7 @@ public class TaskViewController extends AbstractProcessToolServletController
 	@ResponseBody
 	public TasksListViewBean claimTaskFromQueue(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException
 	{
-		logger.info("claimTaskFromQueue ...");
+		logger.finest("claimTaskFromQueue ...");
 		long t0 = System.currentTimeMillis();
 
         		/* Initilize request context */
@@ -139,7 +139,7 @@ public class TaskViewController extends AbstractProcessToolServletController
 	@ResponseBody
 	public void loadTask(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException
 	{
-            logger.info("loadTask ...");
+            logger.finest("loadTask ...");
             long t0 = System.currentTimeMillis();
 
             /* Get process state configuration db id */
@@ -173,7 +173,7 @@ public class TaskViewController extends AbstractProcessToolServletController
 
             long t3 = System.currentTimeMillis();
 
-            logger.log(Level.INFO, "loadTask total: " + (t3-t0) + "ms, " +
+            logger.log(Level.FINEST, "loadTask total: " + (t3-t0) + "ms, " +
                     "[1]: " + (t1-t0) + "ms, " +
                     "[2]: " + (t2-t1) + "ms, " +
                     "[3]: " + (t3-t2) + "ms, "
@@ -236,7 +236,7 @@ public class TaskViewController extends AbstractProcessToolServletController
                 }
                 long t6 = System.currentTimeMillis();
 
-                logger.log(Level.INFO, "loadTask.withContext total: " + (t6-t0) + "ms, " +
+                logger.log(Level.FINEST, "loadTask.withContext total: " + (t6-t0) + "ms, " +
                                 "[1]: " + (t1-t0) + "ms, " +
                                 "[2]: " + (t2-t1) + "ms, " +
                                 "[3]: " + (t3-t2) + "ms, " +
