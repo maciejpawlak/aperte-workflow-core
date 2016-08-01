@@ -1,5 +1,6 @@
 package org.aperteworkflow.webapi.main.processes.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.aperteworkflow.webapi.main.AbstractProcessToolServletController;
 import org.aperteworkflow.webapi.main.processes.ActionPseudoTaskBean;
 import org.aperteworkflow.webapi.main.processes.TasksListViewBeanFactoryWrapper;
@@ -87,15 +88,42 @@ public class TaskViewController extends AbstractProcessToolServletController
 		taskBean = getProcessToolRegistry().withProcessToolContext(new ReturningProcessToolContextCallback<TasksListViewBean>() {
 			@Override
 			public TasksListViewBean processWithContext(ProcessToolContext ctx) {
-                BpmTask newTask;
-                /* Task assigned from virtual queue */
-                if(isNull(queueName))
-                    newTask = getBpmSession(context, userId).assignTaskToUser(taskId, userId);
-                else
-                    newTask = getBpmSession(context, userId).assignTaskFromQueue(queueName, taskId);
 
-				if (newTask != null) {
-					return new TasksListViewBeanFactoryWrapper().createFrom(newTask, messageSource, viewName);
+				/** Check rights to claim task from queue */
+				BpmTask currentTask = getBpmSession(context, userId).getTaskData(taskId);
+
+				String subsitutionLogin  = getSubstitutedUserLogin(ctx, context, currentTask);
+
+				if(StringUtils.isEmpty(subsitutionLogin) && !isOwner(ctx, context, currentTask)) {
+
+					TasksListViewBean errorBean = new BpmTaskBean();
+					errorBean.addError(SYSTEM_SOURCE, messageSource.getMessage("request.claim.norights.error"));
+					return errorBean;
+				}
+
+				try {
+					BpmTask newTask;
+					String userLogin = userId;
+
+					/* Do not claim task for current user but for substituted user */
+					if(StringUtils.isNotEmpty(subsitutionLogin))
+					{
+						userLogin = subsitutionLogin;
+					}
+                	/* Task assigned from virtual queue */
+					if (isNull(queueName))
+						newTask = getBpmSession(context, userLogin).assignTaskToUser(taskId, userLogin);
+					else
+						newTask = getBpmSession(context, userLogin).assignTaskFromQueue(queueName, taskId);
+
+					if (newTask != null) {
+						return new TasksListViewBeanFactoryWrapper().createFrom(newTask, messageSource, viewName);
+					}
+				} catch (Exception ex)
+				{
+					TasksListViewBean errorBean = new BpmTaskBean();
+					errorBean.addError(SYSTEM_SOURCE, messageSource.getMessage("request.claim.norights.error"));
+					return errorBean;
 				}
 
 				try {
@@ -267,6 +295,31 @@ public class TaskViewController extends AbstractProcessToolServletController
 		}
 
 		return task;
+	}
+
+	private boolean isOwner(ProcessToolContext ctx, IProcessToolRequestContext context, BpmTask task)
+	{
+		if(task.getPotentialOwners().contains(context.getUser().getLogin()))
+			return true;
+
+		for(String queueName:  context.getUserQueues())
+			if(task.getQueues().contains(queueName))
+				return true;
+
+		return false;
+	}
+
+
+	/* Get substituted user login */
+	private String getSubstitutedUserLogin(ProcessToolContext ctx, IProcessToolRequestContext context, BpmTask task)
+	{
+		List<String> substitutedUsersLogins = ctx.getUserSubstitutionDAO().getCurrentSubstitutedUserLogins(context.getUser().getLogin());
+		for(String substitutiedUserLogin: substitutedUsersLogins) {
+			if (task.getPotentialOwners().contains(substitutiedUserLogin))
+				return substitutiedUserLogin;
+		}
+
+		return null;
 	}
 
 	private static final Comparator<ProcessStateWidget> BY_WIDGET_PRIORITY = new Comparator<ProcessStateWidget>() {

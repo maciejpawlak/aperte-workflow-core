@@ -354,6 +354,12 @@ public class TaskViewBuilder extends AbstractViewBuilder<TaskViewBuilder> {
             if (task.getQueues().contains(queueName))
                 return true;
 
+        List<String> substitutedUsersLogins = ctx.getUserSubstitutionDAO().getCurrentSubstitutedUserLogins(user.getLogin());
+        for(String substitutiedUserLogin: substitutedUsersLogins) {
+            if (task.getPotentialOwners().contains(substitutiedUserLogin))
+                return true;
+        }
+
         return false;
     }
 

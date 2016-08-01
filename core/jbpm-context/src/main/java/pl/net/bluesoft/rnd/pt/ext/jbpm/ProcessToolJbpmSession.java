@@ -1,5 +1,6 @@
 package pl.net.bluesoft.rnd.pt.ext.jbpm;
 
+import org.apache.commons.lang3.StringUtils;
 import org.aperteworkflow.util.SimpleXmlTransformer;
 import org.drools.event.process.*;
 import org.drools.runtime.process.NodeInstance;
@@ -301,7 +302,35 @@ public class ProcessToolJbpmSession extends AbstractProcessToolSession implement
         if (task == null) {
             return null;
         }
-        return getBpmTask(task);
+
+		Collection<String> parameters = new ArrayList<String>();
+
+		UserData userData = userSource.getUserByLogin(userLogin);
+		String userName = userLogin;
+		if(userData != null)
+			userName = userData.getRealName() + "("+userLogin+")";
+
+		parameters.add(userName);
+
+		BpmTask bpmTask = getBpmTask(task);
+
+		addProcessLogInfo(bpmTask, "process.log.task.claimed.header", "process.log.task.claimed.body", parameters);
+
+		return bpmTask;
+	}
+
+	public void addProcessLogInfo(BpmTask task, String infoHeader, String infoBody, Collection<String> parameters)
+	{
+		ProcessInstanceLog log = new ProcessInstanceLog();
+		log.setState(null);
+		log.setEntryDate(new Date());
+		log.setEventI18NKey(infoHeader);
+		log.setUserLogin("");
+		log.setLogType(ProcessInstanceLog.LOG_TYPE_INFO);
+		log.setOwnProcessInstance(task.getProcessInstance());
+		log.setLogValue(infoBody);
+		log.setAdditionalInfo(StringUtils.join(parameters, ","));
+		task.getRootProcessInstance().addProcessLog(log);
 	}
 
 	@Override

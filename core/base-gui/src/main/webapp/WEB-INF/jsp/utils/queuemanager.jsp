@@ -178,11 +178,20 @@
             "queueName": queueName,
             "taskId": taskId,
             "userId": queueViewManager.currentOwnerLogin
-        }, function(task)
+        }, function(data)
         {
             clearAlerts();
+            var errors = [];
+			$.each(data.errors, function() {
+				errors.push(this);
+				windowManager.addError(this.message);
+			});
+
+            if(errors.length > 0) { return; }
+
+
             reloadQueues();
-            loadProcessView(task.taskId);
+            loadProcessView(data.taskId);
         })
         .fail(function(request, status, error)
         {
